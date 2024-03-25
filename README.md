@@ -13,7 +13,7 @@ So, if a system is supposed to execute actions such as _updating customer score_
 
 This is the frame of perspective which is going to define a software, according to the clean architecture literature. 
 
-Once that is defined and implemented at the source code level, the next step is to engage in defining what is going to execute the use cases _(components called primary adapters)_ and what is going to provide for the use cases during their executions _(components called secondary adapters)_. It is only at that moment, after having built the use cases, that it matters whether or not they will end up being available as Kafka Topic Consumers, Spring MVC Endpoints, AWS Lambda Functions or whatever. It is only then that it matters if the database will be SQL or NoSQL, if the data will be retrieved from a REST API or directly from a database. 
+Once it is defined and implemented at the source code level, the next step is to engage in defining what is going to execute the use cases _(components called primary adapters)_ and what is going to provide for the use cases during their executions _(components called secondary adapters)_. It is only at that moment, after having built the use cases, that it matters whether or not they will end up being available as Kafka Topic Consumers, Spring MVC Endpoints, AWS Lambda Functions or whatever. It is only then that it matters if the database will be SQL or NoSQL, if the data will be retrieved from a REST API or directly from a database. 
 
 When the use cases are built in a well defined manner, it is possible to reuse them in any flavor.
 
@@ -24,7 +24,7 @@ This concept is implemented by the _cae-framework_. Whenever a new use case is c
 - SupplierUseCase
 - RunnableUseCase
 
-It will depend on the kind of contract the use case has. 
+It will depend on the kind of contract the use case has:
 
 - Does it have input AND output? Then, it is a FunctionUseCase.
 - Does it have ONLY input? In this case, it is a ConsumerUseCase.
