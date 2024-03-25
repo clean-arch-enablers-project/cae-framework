@@ -19,9 +19,9 @@ When the use cases are built in a well defined manner, it is possible to reuse t
 
 This concept is implemented by the _cae-framework_. Whenever a new use case is created, it will have one of the following types:
 
-- FunctionUseCase<I, O>
-- ConsumerUseCase<I>
-- SupplierUseCase<O>
+- FunctionUseCase < I, O >
+- ConsumerUseCase < I >
+- SupplierUseCase < O >
 - RunnableUseCase
 
 It will depend on the kind of contract the use case has. 
