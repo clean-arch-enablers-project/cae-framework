@@ -6,7 +6,6 @@ import com.cae.use_cases.io.annotations.NotBlankInputField;
 import com.cae.use_cases.io.annotations.NotEmptyInputField;
 import com.cae.use_cases.io.annotations.NotNullInputField;
 import com.cae.use_cases.io.annotations.ValidInnerPropertiesInputField;
-import br.com.stockio.use_cases.io.exceptions.*;
 import com.cae.use_cases.io.exceptions.*;
 import lombok.Getter;
 import lombok.Setter;
