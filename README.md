@@ -2,7 +2,7 @@
 Welcome to the _CleanArchEnablers_ framework repository! The _cae-framework_ is open-source and meant to make the experience of developing software with clean architecture easier. Feel free to explore the source code and its documentation.
 <br><br>
 
-### The _Use Cases_ concept
+### 💡 The _Use Cases_ concept
 
 The axis of this architecture is the Use Case concept: a system is not defined by being event driven, distributed in microservices, or anything of that nature. A system is defined by its use cases, how they are gonna be provided is another story. This is the premise. 
 
