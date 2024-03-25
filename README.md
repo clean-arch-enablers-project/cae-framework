@@ -36,3 +36,4 @@ The illustration below might help the visualization:
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/61ae50f2-be24-4713-8c8c-3294154154b5)
 
+[THIS README IS A WORK IN PROGRESS. IF YOU ARE HERE, PLEASE, WAIT FOR THE REST OF ITS DOCUMENTATION]
