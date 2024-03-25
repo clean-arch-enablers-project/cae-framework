@@ -19,9 +19,9 @@ When the use cases are built in a well defined manner, it is possible to reuse t
 
 This concept is implemented by the _cae-framework_. Whenever a new use case is created, it will have one of the following types:
 
-- FunctionUseCase < I, O >
-- ConsumerUseCase < I >
-- SupplierUseCase < O >
+- FunctionUseCase
+- ConsumerUseCase
+- SupplierUseCase
 - RunnableUseCase
 
 It will depend on the kind of contract the use case has. 
@@ -30,3 +30,9 @@ It will depend on the kind of contract the use case has.
 - Does it have ONLY input? In this case, it is a ConsumerUseCase.
 - Does it have ONLY output? That is a SupplierUseCase.
 - Does it NOT have input NOR output? This one is a RunnableUseCase.
+
+The illustration below might help the visualization:
+<br>
+
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/61ae50f2-be24-4713-8c8c-3294154154b5)
+
