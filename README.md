@@ -103,7 +103,7 @@ That's it about the Use Case contract. Now, what about its implementation? Take 
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/037a03a1-493d-46a3-90a6-e0c35739fb1c)
 
-Extremely simple, for this Use Case. The implementation class will inherit the method _applyInternalLogic_, which is supposed to wrap the internal workflow logic of the Use Case. Inside this scope the code is supposed to form a visual workflow of high abstraction steps. It is meant to just take a look and understand the application rule for that specific Use Case. In this specific instance, it is very simple, because the workflow is composed by only 1 step: make the query. Once it is done, the result is returned.
+Extremely simple, for this Use Case. The implementation class will inherit the method _applyInternalLogic_, which is supposed to wrap the internal workflow logic of the Use Case. Inside this scope the code is supposed to form a visual workflow of high abstraction steps. It is meant to be easily understandable, just by taking a look at it. In this specific instance, the workflow is very simple, because it is composed by only 1 step: make the query. Once it is done, the result is returned.
 
 Now, take a look at another Use Case implementation example:
 
