@@ -133,7 +133,7 @@ Now, how do the implementations interact with their respective dependencies? For
 
 ### 💡 The _Adapters_ Concept
 
-![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/de79a39b-ac87-4916-a3dd-f288027241e0)
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/704209bd-f0d3-4360-9722-d63508074a36)
 
 When a Use Case implementation needs to interact with something that is external to its scope, it does it by interacting with abstractions. So if what's being actually interacted with changes, there'll be no coupling. The workflow is free from the peripheral parts of the system. Such abstractions are called _Ports_. They will define what the Use Case is able and willing to interact with, and the other side of it will have to do what's necessary to meet such requirements. The other side is the real dependency, like a HTTP Client to call an external API, or some Repository to manipulate data from a database.Though that's the case, a HTTP Client library will not know what are the specific requirements from Use Cases of a random project that is using it. That's where the Adapter concept joins the conversation.
 
