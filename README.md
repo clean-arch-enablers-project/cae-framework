@@ -94,6 +94,32 @@ That's it about the Use Case contract. Now, what about its implementation? Take 
 
 Extremely simple, for this Use Case. The implementation class will inherit the method _applyInternalLogic_, which is supposed to wrap the internal workflow logic of the Use Case. Inside this scope the code is supposed to form a visual workflow of high abstraction steps. It is meant to just take a look and understand the application rule for that specific Use Case. In this specific instance, it is very simple, because the workflow is composed by only 1 step: make the query. Once it is done, the result is returned.
 
+Now, take a look at another Use Case implementation example:
 
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/8af67b14-9e64-49b9-aded-603d03a4567b)
+
+It is very clear what are the steps:
+
+- It increases the number of transactions the new customer has
+- It activates the new customer
+- It validates the new customer
+- It stores the new customer at the persistence layer
+
+How these steps are implemented is something one can find out entering each respective lower level. 
+
+Take a look at another example of Use Case implementation:
+
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/4b4ffc8e-9cf6-4243-ab54-024138efa6d2)
+
+- It stores the new company
+- It handles a new generic account for the new company
+- It handles the first enrollment for that new company
+- It handles the plan contract for the new company
+
+If any further details are needed, just entering the lower level will be enough, but the whole picture is easily understandable.
+
+Now, how the implementations interact with their respective dependencies? For instance, how the _RetrieveCustomersUseCaseImplementation_ retrieved the data from the persistence layer?
+
+### 💡 The Adapters Concept
 
 [THIS README IS A WORK IN PROGRESS. IF YOU ARE HERE, PLEASE, WAIT FOR THE REST OF ITS DOCUMENTATION]
