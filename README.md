@@ -135,9 +135,13 @@ Now, how do the implementations interact with their respective dependencies? For
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/704209bd-f0d3-4360-9722-d63508074a36)
 
-When a Use Case implementation needs to interact with something that is external to its scope, it does it by interacting with abstractions. So if what's being actually interacted with changes, there'll be no coupling. The workflow is free from the peripheral parts of the system. Such abstractions are called _Ports_. They will define what the Use Case is able and willing to interact with, and the other side of it will have to do what's necessary to meet such requirements. The other side is the real dependency, like a HTTP Client to call an external API, or some Repository to manipulate data from a database.Though that's the case, a HTTP Client library will not know what are the specific requirements from Use Cases of a random project that is using it. That's where the Adapter concept joins the conversation.
+When a Use Case implementation needs to interact with something that is external to its scope, it does it by interacting with abstractions. So if what's being actually interacted with changes, there'll be no coupling. The workflow is free from the peripheral parts of the system. Such abstractions are called _Ports_. They will define what the Use Case is able and willing to interact with, and the other side of it will have to do what's necessary to meet such requirements. The other side is the real dependency, like a HTTP Client to call an external API, or some Repository to manipulate data from a database. Though that's the case, a HTTP Client library will not know what are the specific requirements from Use Cases of a random project that is using it. That's where the _Adapter_ concept joins the conversation.
 
-Adapters are meant to... adapt... what the Use Cases know how to deal with to what the real dependencies know how to deal with.
+Adapters are meant to... adapt... _what_ the Use Cases know how to deal with to _what_ the real dependencies know how to deal with.
+
+So the Ports are like slots, spaces to use plugins. The Adapters are the plugins, which will adapt the contract from the Ports to the Real Dependencies, and vice versa. The Real Dependencies are the real deal outside of the domain world: components such as Kafka Producers, Cloud Provider Clients, DAO repositories, etc.
+
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/3940cf6e-98a5-4ae2-bdc4-0673905bee65)
 
 
 [THIS README IS A WORK IN PROGRESS. IF YOU ARE HERE, PLEASE, WAIT FOR THE REST OF ITS DOCUMENTATION]
