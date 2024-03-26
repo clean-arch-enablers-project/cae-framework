@@ -97,6 +97,8 @@ Here it is a REST API Endpoint making the RetrieveCustomersUseCase available to 
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/b328c58d-cbcf-410c-ad10-6d72e92bbcb5)
 
+The value of the UUID is received as a parameter because if the whole lifecycle of a request that starts from the Frontend Web App is supposed to be easily traced, the same UUID would be used from there down to the backend service, so the UUID value is open to be given.
+
 That's it about the Use Case contract. Now, what about its implementation? Take a look at the next image:
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/037a03a1-493d-46a3-90a6-e0c35739fb1c)
