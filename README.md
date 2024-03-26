@@ -120,6 +120,8 @@ If any further details are needed, just entering the lower level will be enough,
 
 Now, how the implementations interact with their respective dependencies? For instance, how the _RetrieveCustomersUseCaseImplementation_ retrieved the data from the persistence layer?
 
-### 💡 The Adapters Concept
+### 💡 The _Adapters_ Concept
+
+<br><br>
 
 [THIS README IS A WORK IN PROGRESS. IF YOU ARE HERE, PLEASE, WAIT FOR THE REST OF ITS DOCUMENTATION]
