@@ -127,12 +127,17 @@ Take a look at another example of Use Case implementation:
 - It handles the first enrollment for that new company
 - It handles the plan contract for the new company
 
-If any further details are needed, just entering the lower level will be enough, but the whole picture is easily understandable.
+If any further details are needed, just entering the lower level surely would be enough. With the whole picture being easily understandable, it is more likely to go down into the right precise chunk of code where the further details are located.
 
-Now, how the implementations interact with their respective dependencies? For instance, how the _RetrieveCustomersUseCaseImplementation_ retrieved the data from the persistence layer?
+Now, how do the implementations interact with their respective dependencies? For instance, how the _RetrieveCustomersUseCaseImplementation_ retrieved the data from the persistence layer?
 
 ### 💡 The _Adapters_ Concept
 
-<br><br>
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/de79a39b-ac87-4916-a3dd-f288027241e0)
+
+When a Use Case implementation needs to interact with something that is external to its scope, it does it by interacting with abstractions. So if what's being actually interacted with changes, there'll be no coupling. The workflow is free from the peripheral parts of the system. Such abstractions are called _Ports_. They will define what the Use Case is able and willing to interact with, and the other side of it will have to do what's necessary to meet such requirements. The other side is the real dependency, like a HTTP Client to call an external API, or some Repository to manipulate data from a database.Though that's the case, a HTTP Client library will not know what are the specific requirements from Use Cases of a random project that is using it. That's where the Adapter concept joins the conversation.
+
+Adapters are meant to... adapt... what the Use Cases know how to deal with to what the real dependencies know how to deal with.
+
 
 [THIS README IS A WORK IN PROGRESS. IF YOU ARE HERE, PLEASE, WAIT FOR THE REST OF ITS DOCUMENTATION]
