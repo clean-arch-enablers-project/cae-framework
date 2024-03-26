@@ -159,7 +159,7 @@ Which of these steps seems like something out of the domain layer?
 
 Increasing the number of transactions is something that looks like a business rule. If one guessed that, the guess would be correct. Once that is the case, such logic could be located within an Entity, and that's exactly what it is. The "addNewTransaction" (line 30) is a method from an Entity called Customer. That's why it was necessary to map the input object (SaveNewCustomerUseCaseInput) to the Entity format in the first place: to be able to use the Entity's API. Once the Customer object is created, it is possible to use its methods with its business rules. 
 
-- Customer::addNewInstance
+- Customer::addNewTransaction
 - Customer::activate
 - Customer::validate
 
