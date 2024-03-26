@@ -143,5 +143,47 @@ So the Ports are like slots, spaces to use plugins. The Adapters are the plugins
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/3940cf6e-98a5-4ae2-bdc4-0673905bee65)
 
+Let's take a look at how it is done with the _cae-framework_:
+
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/cf3acb72-c2b3-48a7-9ee5-9414c6e32a31)
+
+Considering the workflow, these are the steps:
+
+- Map the input to an Entity object
+- Increase the new customer number of transactions
+- Activate the new customer
+- Validate the new customer
+- Store it at the persistence layer
+
+Which of these steps seems like something out of the domain layer? 
+
+Increasing the number of transactions is something that looks like a business rule. If one guessed that, the guess would be correct. Once that is the case, such logic could be located within an Entity, and that's exactly what it is. the "addNewTransaction" (line 30) is a method from an Entity called Customer. That's why it was necessary to map the input object (SaveNewCustomerUseCaseInput) to the Entity format in the first place: to be able to use the Entity's API. Once the Customer object is created, it is possible to use its methods with its business rules. 
+
+- Customer::addNewInstance
+- Customer::activate
+- Customer::validate
+
+How these methods are implemented, what their business rules are, that's within the Entity scope.
+
+Once the business rules are applied, it is time to apply the application rule of storing what's being generated at a persistence layer.
+
+That's the part of the workflow where external components are needed. To represent them, an abstraction is created: the _StoreNewCustomerPort_.
+
+Since it is a dependency which will be injected, it is declared as a global attribute (line 14), which will be initialized at the constructor, when the Use Case implementation object is instantiated (line 22).
+
+That's how the Port component looks like:
+
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/a4396290-85c0-47fa-a06f-1f3b1142348f)
+
+It is just an abstract class that extends a kind of _Port_ from the _cae-framework_.
+
+Just like the Use Case types, the Port types come in four:
+
+- FunctionPort (I/O)
+- ConsumerPort (I)
+- SupplierPort (O)
+- RunnablePort
+
+Once a class inherits one of these types, it will come with an execution method. It will always receive the UseCaseExecutionCorrelation parameter, and depending on its base type, a generic typed input. Just like the Use Case types contract.
 
 [THIS README IS A WORK IN PROGRESS. IF YOU ARE HERE, PLEASE, WAIT FOR THE REST OF ITS DOCUMENTATION]
