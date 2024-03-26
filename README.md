@@ -36,7 +36,16 @@ The illustration below might help the visualization:
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/61ae50f2-be24-4713-8c8c-3294154154b5)
 
-Take a look at some examples.
+Some examples of possible Use Cases by type are:
+
+- SaveNewUser: it will receive input (the payload with the new user's data to be persisted) and return some output (usually the ID of what has been created, in this case, the new user). That's a FunctionUseCase.
+- UpdateProduct: it will receive input (the payload with the product's data to be updated). Once the update is done, usually it is not necessary to return anything. That's a ConsumerUseCase.
+- RetrieveLatestCompanyCreated: it will return the newest company at the database. It doesn't need any input to get it going. So, that's a SupplierUseCase.
+- DeleteOldMessages: it will delete old messages without having to receive input, nor it has to return any output. That's a RunnableUseCase.
+
+Every example of Use Case mentioned above can be developed to be made available as REST API Endpoints, Queue Consumers, Topic Consumers, CRON jobs. You name it. If each Use Case is its own thing, it becomes a piece of software possible to be reused in a plug-in/plug-out fashion. In this manner a Use Case is **not** a REST API Endpoint, but instead is *dispatched* by one.
+
+Take a look at some real examples.
 
 ![exem1](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/1590b936-8bb8-4947-95c6-491ce2318f4e)
 
