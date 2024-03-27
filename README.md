@@ -228,14 +228,60 @@ The way we do it is creating another Java project, called {domain-name}-assemble
 
 The Assemblers layer is responsible for... assembling... the Use Case instances. There the developer will select which Adapter instances will be injected. 
 
+It has the Adapters layer as a dependency, which inherits the core layer as dependency as well.
+
+Below follows an example of Assembler for a Use Case:
+
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/3effd191-21a3-4887-8561-4c68a642a519)
 
-This way it is possible to adopt an immutability policy, meaning new versions of the Use Case Adapters won't necessarily override previous versions: at the Assemblers layer each assembled version can be preserved, only increasing the available ones.
+This way it is possible to adopt an immutability policy, meaning new versions of the assembled Use Cases won't necessarily override previous ones: each assembled version can be preserved, only increasing the available ones.
 
-For example, instead of ASSEMBLED_INSTANCE (line 14) it could be V1 and whenever a new version gets created new static final fields follow: V2, V3, VN...
+For example, instead of ASSEMBLED_INSTANCE (line 14) it could be V1 and whenever a new version gets created, a new static final field follows: V2, V3, VN...
 
-### :warning: Constraints worth being noted
+That's it. Once an Assembler is built, any piece of external code can use the Use Case API from the library. This way it can be reused in any flavor of external architecture/framework:
 
+- Spring
+- Micronaut
+- REST API
+- Kafka Consumer
+- Queue Consumer
+- CRON Jobs
+- Functions as a Service
+- On AWS
+- On Azure
+- On Google Cloud
+- ...
 
+The only constraint is the external piece of code being the same programming language or one that has interoperability with Java, such as Kotlin.
+
+### 💡 The Mapped Exceptions Concept
+...
+
+### 🔜 Future features
+
+#### ⏳ Optionality for logging out of the box
+- Currently every declared Use Case has to receive an implementation of the Logger interface from the _cae-framework_ via constructor. It means you'll have to create a class that implements the internal Logger interface and pass this instance via each Use Case constructor you create. That's because of the feature of generating logs out of the box just by executing Use Case instances. The logging logic is internal to the framework, but for not making client projects coupled to a specific Logger tool, we created an abstraction layer and let you choose which Logger tool will be used, the tradeoff being you having to pass it via constructor everytime.
+
+  Though that's the current scenario, it is on the roadmap to make that feature optional, so if you don't want to pass an instance, the automatic logging won't be triggered.
+
+  That's an example of a class implementing the Logger interface:
+
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/3f10c726-b1a6-4278-838d-6483badf2b52)
+
+  And because of that constraint, every Assembler will look like that, until we evolve to the optionality of it:
+
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/38002ecc-9d32-489d-869b-d0fcfd69206b)
+
+#### ⏳ Aggregated logs
+- ...
+
+#### ⏳ Caching Use Case & Port executions
+- ...
+
+#### ⏳ Documentation out of the box
+- ...
+
+#### ⏳ More Input validations
+- ...
 
 [THIS README IS A WORK IN PROGRESS. IF YOU ARE HERE, PLEASE, WAIT FOR THE REST OF ITS DOCUMENTATION]
