@@ -326,3 +326,4 @@ If you are developing a REST API with Springboot, for example, you could use you
 Want a full layer example? Check that out: [some-core-layer](https://github.com/lucioalmeidastockio/some-core-layer)
 
 That's an overall didact documentation of the _cae-framework_. Feel free to engage! Welcome to the _CleanArchEnablers_ environment.
+
