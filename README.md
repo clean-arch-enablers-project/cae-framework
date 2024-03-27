@@ -256,27 +256,46 @@ That's it. Once an Assembler is built, any piece of external code can use the Us
 
 The only constraint is the external piece of code being the same programming language or one that has interoperability with Java, such as Kotlin.
 
-### 💡 The _Mapped Exceptions_ Concept
+### 💡 The _Proxy Area_ and _Mapped Exceptions_ Concepts
 Every inheritor of any Use Case or Port component will have at least two main methods to be interacted with:
+
 - A public method for getting the execution triggered
 - A protected method for executing the internal logic of such component
 
-In the Use Case used as an example previously, we can see them:
+In the Use Case used as an example previously, there they are:
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/851f8f40-b14f-4ed4-a401-c94da21d0fe9)
 
-In this image above the Use Case is triggered to be executed at line 33, calling the _execute_ method. That's the public one. But when we take a look at the Use Case implementation, it doesn't seem to be the same method:
+The Use Case is triggered to be executed at line 33, with the _execute_ method. That's the public one. But when we take a look at the Use Case implementation, it doesn't seem to be the same method:
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/037a03a1-493d-46a3-90a6-e0c35739fb1c)
 
-The method within the implementation is _applyInternalLogic_. It is not the one which is being called at the REST API Endpoint layer because it is only meant to be called internally, at the Use Case executor, which is fully managed by the _cae-framework_. 
+The method within the implementation is _applyInternalLogic_. It is not the one being called at the REST API Endpoint layer because it is only meant to be called internally, at the Use Case executor, which is fully managed by the _cae-framework_. 
 
-It is in this proxy area between the _execute_ and the _applyInternalLogic_ that the automatic logs are generated and the input objects are validated. Soon enough caching features will be added at this level too. Another feature which is currently enabled is the exception handling, which operates in the following manner:
+It is in this _Proxy Area_ between the _execute_ and the _applyInternalLogic_ that the automatic logs are generated and the input objects are validated. Soon enough caching features will be added at this level too. 
 
-1. Intercepts an exception being thrown
-2. Is this exception expected to happen?
-2.1. yes
-2.2. no
+Another feature, which is currently enabled at the Proxy Area, is the exception handling. It uses a component from the _cae-framework_ called _Trier_.
+
+The Trier component does the work of a try-catch with some specifics:
+
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/5ec28ad3-5c14-4fba-b379-b86da96bc8e3)
+
+If the exception being thrown during a Trier execution extends the type _MappedException_, the Trier will consider it as part of the expected flow that you've designed, so it will let it go. On the other hand, if the exception does not extend the _MappedException_ type, the Trier will consider it a breach and catch it, passing it to the parameterized handler specified at the Trier instantiation phase.
+
+The handler is only for in cases of unexpected exceptions being thrown during the execution. The handler must follow the functional interface of UnexpectedExceptionHandler, which is the contract of accepting an Exception instance and returning a MappedException instance.
+
+You can use it wherever you want in your code. As mentioned, the Use Case and Port types use it, and in case something goes unexpectedly wrong during their execution, they will throw respectively:
+
+🛑 UseCaseExecutionException
+🛑 PortExecutionException
+
+Both of them are types that extend MappedException.
+
+#### MappedException subtypes
+
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/64385f5d-7d7e-4b0d-9fc1-77f62399a572)
+
+If you are developing a REST API with Springboot, for example, you could use your @ControllerAdvice to map with the @ExceptionHandler methods the NotFoundMappedException to return a 404 status code, the InputMappedException to return a 400 status code, and the InternalMappedException to return a 500. This way any exception extending the NotFoundMappedException would automatically return a 404, the ones extending the InputMappedException would return a 400 and the InternalMappedException ones a 500. No need to specify each specific type (UserNotFoundException, CreditCardNotFoundException, etc.) unless there is a good reason for it.
 
 ### 🔜 Future features
 
