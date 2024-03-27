@@ -190,7 +190,7 @@ The implementation of this Port is the Adapter: a concrete class that extends th
 
 It usually is located at another entirely separated Java project. This one we've been using as the example is like a library. Then we create another library to keep the Adapters. The example of using a REST API Endpoint to dispatch the Use Case functionality was a different project which used the libraries with the Use Case implementation and its respective Adapters.
 
-Let's take a look at how this other project for the Adapters is structured:
+Let's take a look at how this is structured:
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/e774ad84-9844-476c-9731-f82618de5ac2)
 
@@ -201,11 +201,40 @@ The axis of both projects are the domain and its use cases:
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/3dbea6b3-9ec1-439e-b81b-1e2cca2abdbf)
 
-Inside the pom.xml of the Adapters project it is possible to find the Core project as dependency:
+Inside the pom.xml of the Adapters project it is possible to find the Core project as a dependency:
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/450e8fd7-0802-4ce2-97d1-f76199687ceb)
 
 This way the Adapters project can reference the Ports it has to adapt for the real dependencies. 
+
+For our specific Use Case, that's how it took place:
+
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/60cba08e-0d5b-4665-9f7e-1cc97c89c3a8)
+
+And at the code level:
+
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/1f53753c-cebb-4a09-b073-f38a3508d96c)
+
+The Adapter class extends its respective Port. Because of that it inherits the abstract method "executeLogic", which is supposed to have its implementation keeping the logic for the adaptation. There it does what it has to do to integrate with its real dependencies: 
+
+- CustomersTableRepository
+- CustomersPhoneTableRepository
+
+Once every Adapter is implemented, the Use Case is enabled to be instantiated receiving them via constructor.
+
+The way we do it is creating another Java project, called {domain-name}-assemblers.
+
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/628da807-6dfb-403a-9ea6-c781c8ef449e)
+
+The Assemblers layer is responsible for... assembling... the Use Case instances. There the developer will select which Adapter instances will be injected. 
+
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/3effd191-21a3-4887-8561-4c68a642a519)
+
+This way it is possible to adopt an immutability policy, meaning new versions of the Use Case Adapters won't necessarily override previous versions: at the Assemblers layer each assembled version can be preserved, only increasing the available ones.
+
+For example, instead of ASSEMBLED_INSTANCE (line 14) it could be V1 and whenever a new version gets created new static final fields follow: V2, V3, VN...
+
+### :warning: Constraints worth being noted
 
 
 
