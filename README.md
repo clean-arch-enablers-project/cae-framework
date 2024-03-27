@@ -260,9 +260,9 @@ The only constraint is the external piece of code being the same programming lan
 Every inheritor of any Use Case or Port component will have at least two main methods to be interacted with:
 
 - A public method for getting the execution triggered
-- A protected method for executing the internal logic of such component
+- A protected method for executing the internal logic of such inheritor
 
-In the Use Case used as an example previously, there they are:
+In the Use Case used as an example previously, there they are, respectively:
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/851f8f40-b14f-4ed4-a401-c94da21d0fe9)
 
@@ -295,12 +295,12 @@ Both of them are types that extend MappedException.
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/64385f5d-7d7e-4b0d-9fc1-77f62399a572)
 
-If you are developing a REST API with Springboot, for example, you could use your @ControllerAdvice to map with the @ExceptionHandler methods the NotFoundMappedException to return a 404 status code, the InputMappedException to return a 400 status code, and the InternalMappedException to return a 500. This way any exception extending the NotFoundMappedException would automatically return a 404, the ones extending the InputMappedException would return a 400 and the InternalMappedException ones a 500. No need to specify each specific type (UserNotFoundException, CreditCardNotFoundException, etc.) unless there is a good reason for it.
+If you are developing a REST API with Springboot, for example, you could use your @ControllerAdvice to map, with the @ExceptionHandler methods, the NotFoundMappedException to return a 404 status code, the InputMappedException to return a 400 status code, and the InternalMappedException to return a 500. This way any exception extending the NotFoundMappedException would automatically return a 404, the ones extending the InputMappedException would return a 400 and the InternalMappedException ones a 500. No need to specify each type (UserNotFoundException, CreditCardNotFoundException, etc.) unless there is a good reason for it.
 
 ### 🔜 Future features
 
 #### ⏳ Optionality for logging out of the box
-- Currently every declared Use Case has to receive an implementation of the Logger interface from the _cae-framework_ via constructor. It means you'll have to create a class that implements the internal Logger interface and pass this instance via each Use Case constructor you create. That's because of the feature of generating logs out of the box just by executing Use Case instances. The logging logic is internal to the framework, but for not making client projects coupled to a specific Logger tool, we created an abstraction layer and let you choose which Logger tool will be used, the tradeoff being you having to pass it via constructor everytime.
+- Currently every declared Use Case has to receive an instance of the Logger interface via constructor. It means you'll have to create a class that implements the internal Logger interface and pass its instance via each Use Case constructor you create. That's because of the feature of generating logs out of the box just by executing Use Case instances. The logging logic is internal to the framework, but for not making client projects coupled to a specific Logger tool, we created an abstraction layer and let you choose which Logger tool will be used, the tradeoff being you having to pass it via constructor everytime.
 
   Though that's the current scenario, it is on the roadmap to make that feature optional, so if you don't want to pass an instance, the automatic logging won't be triggered.
 
