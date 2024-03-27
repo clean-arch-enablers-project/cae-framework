@@ -95,7 +95,7 @@ Once such contract is defined, it is possible to build the client code which wil
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/851f8f40-b14f-4ed4-a401-c94da21d0fe9)
 
-Here it is a REST API Endpoint making the RetrieveCustomersUseCase available to be used. In order to get the use case to be executed, the Controller endpoint execution instantiated an object for the input (useCaseInput, line 27) and passed it at the execution method call (FunctionUseCase::execute, line 33). The execution call receives a second parameter as well, still not mentioned up to this moment. The correlation ID is a string value in UUID format. Use Case executions will always receive an instance of UseCaseExecutionCorrelation, which encapsulates the UUID string value. This is a design decision to generate logs at each Use Case execution with a unique identifier just out of the box. So every execution of any Use Case will have a log generated with a UUID identifier in it, telling if the Use Case execution was successful or not.
+Here it is a REST API Endpoint making the RetrieveCustomersUseCase available to be used. In order to get the use case to be executed, the Controller endpoint execution instantiated an object for the input (useCaseInput, line 27) and passed it at the execution method call (FunctionUseCase::execute, line 33). The execution call receives a second parameter as well, still not mentioned up to this moment. The correlation ID is a string value in UUID format. Use Case executions will always receive an instance of UseCaseExecutionCorrelation, which encapsulates the UUID string value. This is a design decision to generate logs at each Use Case execution with a unique identifier right out of the box. So every execution of any Use Case will have a log generated with a UUID identifier in it, telling if the Use Case execution was successful or not.
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/b328c58d-cbcf-410c-ad10-6d72e92bbcb5)
 
@@ -299,8 +299,8 @@ If you are developing a REST API with Springboot, for example, you could use you
 
 ### 🔜 Future features
 
-#### ⏳ Optionality for logging out of the box
-- Currently every declared Use Case has to receive an instance of the Logger interface via constructor. It means you'll have to create a class that implements the internal Logger interface and pass its instance via each Use Case constructor you create. That's because of the feature of generating logs out of the box just by executing Use Case instances. The logging logic is internal to the framework, but for not making client projects coupled to a specific Logger tool, we created an abstraction layer and let you choose which Logger tool will be used, the tradeoff being you having to pass it via constructor everytime.
+#### ⏳ Optionality for logging right out of the box
+- Currently every declared Use Case has to receive an instance of the Logger interface via constructor. It means you'll have to create a class that implements the internal Logger interface and pass its instance via each Use Case constructor you create. That's because of the feature of generating logs right out of the box just by executing Use Case instances. The logging logic is internal to the framework, but for not making client projects coupled to a specific Logger tool, we created an abstraction layer and let you choose which Logger tool will be used, the tradeoff being you having to pass it via constructor everytime.
 
   Though that's the current scenario, it is on the roadmap to make that feature optional, so if you don't want to pass an instance, the automatic logging won't be triggered.
 
@@ -314,7 +314,7 @@ If you are developing a REST API with Springboot, for example, you could use you
 #### ⏳ Caching Use Case & Port executions
 - ...
 
-#### ⏳ Documentation out of the box
+#### ⏳ Documentation right out of the box
 - ...
 
 #### ⏳ More Input validations
