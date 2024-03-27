@@ -78,6 +78,8 @@ At the right side of the image it is possible to observe how such contracts were
 - asc (required)
 - active (required)
 
+_(note that for the annotations to work as intended the input class must extend the UseCaseInput type, from the cae-framework)_
+
 And as output:
 
 - customers
