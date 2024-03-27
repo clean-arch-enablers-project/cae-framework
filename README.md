@@ -256,7 +256,7 @@ That's it. Once an Assembler is built, any piece of external code can use the Us
 
 The only constraint is the external piece of code being the same programming language or one that has interoperability with Java, such as Kotlin.
 
-### 💡 The Mapped Exceptions Concept
+### 💡 The _Mapped Exceptions_ Concept
 ...
 
 ### 🔜 Future features
