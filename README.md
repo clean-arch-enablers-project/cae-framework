@@ -257,7 +257,26 @@ That's it. Once an Assembler is built, any piece of external code can use the Us
 The only constraint is the external piece of code being the same programming language or one that has interoperability with Java, such as Kotlin.
 
 ### 💡 The _Mapped Exceptions_ Concept
-...
+Every inheritor of any Use Case or Port component will have at least two main methods to be interacted with:
+- A public method for getting the execution triggered
+- A protected method for executing the internal logic of such component
+
+In the Use Case used as an example previously, we can see them:
+
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/851f8f40-b14f-4ed4-a401-c94da21d0fe9)
+
+In this image above the Use Case is triggered to be executed at line 33, calling the _execute_ method. That's the public one. But when we take a look at the Use Case implementation, it doesn't seem to be the same method:
+
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/037a03a1-493d-46a3-90a6-e0c35739fb1c)
+
+The method within the implementation is _applyInternalLogic_. It is not the one which is being called at the REST API Endpoint layer because it is only meant to be called internally, at the Use Case executor, which is fully managed by the _cae-framework_. 
+
+It is in this proxy area between the _execute_ and the _applyInternalLogic_ that the automatic logs are generated and the input objects are validated. Soon enough caching features will be added at this level too. Another feature which is currently enabled is the exception handling, which operates in the following manner:
+
+1. Intercepts an exception being thrown
+2. Is this exception expected to happen?
+2.1. yes
+2.2. no
 
 ### 🔜 Future features
 
