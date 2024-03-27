@@ -186,4 +186,27 @@ Just like the Use Case types, the Port types come in four:
 
 Once a class inherits one of these types, it will come with an execution method. It will always receive the UseCaseExecutionCorrelation parameter, and depending on its base type, a generic typed input. Just like the Use Case types contract.
 
+The implementation of this Port is the Adapter: a concrete class that extends the Port abstract class.
+
+It usually is located at another entirely separated Java project. This one we've been using as the example is like a library. Then we create another library to keep the Adapters. The example of using a REST API Endpoint to dispatch the Use Case functionality was a different project which used the libraries with the Use Case implementation and its respective Adapters.
+
+Let's take a look at how this other project for the Adapters is structured:
+
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/e774ad84-9844-476c-9731-f82618de5ac2)
+
+The axis of both projects are the domain and its use cases:
+
+- Customers (customer & customer-adapters)
+- Use cases about Customers (deactive customer, increment number of transactions, retrieve customer by id, ...)
+
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/3dbea6b3-9ec1-439e-b81b-1e2cca2abdbf)
+
+Inside the pom.xml of the Adapters project it is possible to find the Core project as dependency:
+
+![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/450e8fd7-0802-4ce2-97d1-f76199687ceb)
+
+This way the Adapters project can reference the Ports it has to adapt for the real dependencies. 
+
+
+
 [THIS README IS A WORK IN PROGRESS. IF YOU ARE HERE, PLEASE, WAIT FOR THE REST OF ITS DOCUMENTATION]
