@@ -268,10 +268,6 @@ The only constraint is the external piece of code being the same programming lan
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/3f10c726-b1a6-4278-838d-6483badf2b52)
 
-  And because of that constraint, every Assembler will look like that, until we evolve to the optionality of it:
-
-![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/38002ecc-9d32-489d-869b-d0fcfd69206b)
-
 #### ⏳ Aggregated logs
 - ...
 
