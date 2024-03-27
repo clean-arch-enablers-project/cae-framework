@@ -309,15 +309,18 @@ If you are developing a REST API with Springboot, for example, you could use you
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/3f10c726-b1a6-4278-838d-6483badf2b52)
 
 #### ⏳ Aggregated logs
-- ...
+- The automatic log generations will be able to include Input and Output data into the message by parameterization. Fields that hold sensitive data will be susceptible to being marked as such, so the processor will mask them.
 
 #### ⏳ Caching Use Case & Port executions
-- ...
+- Each Use Case and their respective Ports have the Proxy Area for getting executed. It will be possible to parameterize them to cache responses. The modes will be local and remote. When remote mode is selected, an implementation of the caching interface must be provided.
 
 #### ⏳ Documentation right out of the box
-- ...
+- With the Use Case metadata mapped, it will be possible to extract automatic documentation from the source code during the build lifecycle, tipically during the CI/CD pipeline execution, for instance. It will take the Use Case IO and the commands within the _applyInternalLogic_ to define an end-to-end documentation of what is going on. It will export it as a file within the _target_ folder.
 
 #### ⏳ More Input validations
-- ...
+- Currently the only validations we have are the @ValidInnerPropertiesInputField, @NotNullInputField, @NotEmptyInputField and @NotBlankInputField, the last 2 being exclusive for String typed fields. The goal is to increase the options, validation lists, numbers, etc.
 
-[THIS README IS A WORK IN PROGRESS. IF YOU ARE HERE, PLEASE, WAIT FOR THE REST OF ITS DOCUMENTATION]
+<br>
+<br>
+
+Want a full layer example? Check that out: [some-core-layer](https://github.com/lucioalmeidastockio/some-core-layer)
