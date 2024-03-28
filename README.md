@@ -63,7 +63,13 @@ It will always be the same:
 - The Use Case implementation (classes within the _implementation_ package)
 - The Use Case factory (class within the _factories_ package)
 
-It all starts at the Use Case Contract level:
+All of that structure — _packages, classes, methods, including other layers that will be mentioned down below_ — can be automatically generated with 1 command via the [cae-cli](https://github.com/clean-arch-enablers-project/cae-cli). For example, if you were to create a new use case, via our CLI you would run the following command:
+
+> cae new {use case type} {use case name}
+
+And all of its components would be generated, you focusing mainly on the rules of your specific use case.
+
+However, in such structure it all starts at the Use Case contract level:
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/c0ca2394-556c-467c-a13b-292ba2375f10)
 
