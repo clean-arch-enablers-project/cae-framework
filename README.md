@@ -149,7 +149,7 @@ If any further details are needed, just entering the lower level surely would be
 
 Now, how do the implementations interact with their respective dependencies? For instance, how the _RetrieveCustomersUseCaseImplementation_ retrieved the data from the persistence layer?
 
-### 💡 The _Adapters_ Concept
+### 💡 The _Ports&Adapters_ Concept
 
 ![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/704209bd-f0d3-4360-9722-d63508074a36)
 
