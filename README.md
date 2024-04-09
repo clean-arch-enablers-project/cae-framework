@@ -1,4 +1,4 @@
-# cae-framework
+# ☕ cae-framework
 Welcome to the _CleanArchEnablers_ framework repository! The _cae-framework_ is open-source and meant to make the experience of developing software with clean architecture easier. Feel free to explore the source code and its documentation.
 <br><br>
 
