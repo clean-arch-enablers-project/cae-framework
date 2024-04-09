@@ -294,7 +294,7 @@ Another feature, which is currently enabled at the Proxy Area, is the exception 
 
 The Trier component does the work of a try-catch with some specifics. In case something goes unexpectedly wrong during the execution of Use Cases and Ports, it will throw respectively:
 
-<br>🛑 UseCaseExecutionException
+🛑 UseCaseExecutionException
 <br>🛑 PortExecutionException
 
 Both exceptions above are types that extend MappedException.
