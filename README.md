@@ -293,7 +293,6 @@ It is in this _Proxy Area_ between the _execute_ and the _applyInternalLogic_ th
 Another feature, which is currently enabled at the Proxy Area, is the exception handling. It uses a component from the CAE ecosystem called _Trier_.
 
 The Trier component does the work of a try-catch with some specifics. In case something goes unexpectedly wrong during the execution of Use Cases and Ports, it will throw respectively:
-
 <br>🛑 UseCaseExecutionException
 <br>🛑 PortExecutionException
 
