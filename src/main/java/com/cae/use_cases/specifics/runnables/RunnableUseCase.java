@@ -34,8 +34,8 @@ public abstract class RunnableUseCase extends UseCase {
      */
     public void execute(UseCaseExecutionCorrelation correlation){
         Trier.of(() -> UseCaseProcessorFactory.of(this, correlation, this.logger).processUseCase())
-                .prepareForUnexpectedExceptionsUsing(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
-                .andExecuteTheAction();
+                .setHandlerForUnexpectedException(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
+                .finishAndExecuteAction();
     }
 
     /**

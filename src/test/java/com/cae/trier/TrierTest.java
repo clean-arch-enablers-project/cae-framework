@@ -18,8 +18,8 @@ class TrierTest {
     @Test
     void shouldRunFunctionActionWithoutProblems(){
         var result = Trier.of(this::functionAction, "some input")
-                .prepareForUnexpectedExceptionsUsing(unexpectedException -> this.exceptionToHandleTheUnexpected)
-                .andExecuteTheAction();
+                .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
+                .finishAndExecuteAction();
         Assertions.assertNotNull(result);
         Assertions.assertEquals("Function action worked! You used 'some input' as input", result);
     }
@@ -27,15 +27,15 @@ class TrierTest {
     @Test
     void shouldRunConsumerActionWithoutProblems(){
         var trierBuilder = Trier.of(this::consumerAction, "some input")
-                .prepareForUnexpectedExceptionsUsing(unexpectedException -> this.exceptionToHandleTheUnexpected);
-        Assertions.assertDoesNotThrow(trierBuilder::andExecuteTheAction);
+                .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected);
+        Assertions.assertDoesNotThrow(trierBuilder::finishAndExecuteAction);
     }
 
     @Test
     void shouldRunSupplierActionWithoutProblems(){
         var result = Trier.of(this::supplierAction)
-                .prepareForUnexpectedExceptionsUsing(unexpectedException -> this.exceptionToHandleTheUnexpected)
-                .andExecuteTheAction();
+                .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
+                .finishAndExecuteAction();
         Assertions.assertNotNull(result);
         Assertions.assertEquals("Supplier action worked!", result);
     }
@@ -43,16 +43,16 @@ class TrierTest {
     @Test
     void shouldRunRunnableActionWithoutProblems(){
         var trierBuilder = Trier.of(this::runnableAction)
-                .prepareForUnexpectedExceptionsUsing(unexpectedException -> this.exceptionToHandleTheUnexpected);
-        Assertions.assertDoesNotThrow(trierBuilder::andExecuteTheAction);
+                .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected);
+        Assertions.assertDoesNotThrow(trierBuilder::finishAndExecuteAction);
     }
 
     @Test
     void shouldHandleUnexpectedProblematicFunctionAction(){
         try{
             Trier.of(this::unexpectedProblematicFunctionAction, "some input")
-                    .prepareForUnexpectedExceptionsUsing(unexpectedException -> this.exceptionToHandleTheUnexpected)
-                    .andExecuteTheAction();
+                    .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
+                    .finishAndExecuteAction();
         } catch (Exception caughtException){
             Assertions.assertTrue(caughtException instanceof MappedException);
             Assertions.assertEquals(caughtException, this.exceptionToHandleTheUnexpected);
@@ -63,9 +63,9 @@ class TrierTest {
     @Test
     void shouldHandleUnexpectedProblematicConsumerAction(){
         var trierBuilder = Trier.of(this::unexpectedProblematicConsumerAction, "some input")
-                .prepareForUnexpectedExceptionsUsing(unexpectedException -> this.exceptionToHandleTheUnexpected);
+                .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected);
         try{
-            trierBuilder.andExecuteTheAction();
+            trierBuilder.finishAndExecuteAction();
         } catch (Exception caughtException){
             Assertions.assertTrue(caughtException instanceof MappedException);
             Assertions.assertEquals(caughtException, this.exceptionToHandleTheUnexpected);
@@ -77,8 +77,8 @@ class TrierTest {
     void shouldHandleUnexpectedProblematicSupplierAction(){
         try {
             Trier.of(this::unexpectedProblematicSupplierAction)
-                    .prepareForUnexpectedExceptionsUsing(unexpectedException -> this.exceptionToHandleTheUnexpected)
-                    .andExecuteTheAction();
+                    .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
+                    .finishAndExecuteAction();
         } catch (Exception caughtException){
             Assertions.assertTrue(caughtException instanceof MappedException);
             Assertions.assertEquals(caughtException, this.exceptionToHandleTheUnexpected);
@@ -89,9 +89,9 @@ class TrierTest {
     @Test
     void shouldHandleUnexpectedProblematicRunnableAction(){
         var trierBuilder = Trier.of(this::unexpectedProblematicRunnableAction)
-                .prepareForUnexpectedExceptionsUsing(unexpectedException -> this.exceptionToHandleTheUnexpected);
+                .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected);
         try{
-            trierBuilder.andExecuteTheAction();
+            trierBuilder.finishAndExecuteAction();
         } catch (Exception caughtException){
             Assertions.assertTrue(caughtException instanceof MappedException);
             Assertions.assertEquals(caughtException, this.exceptionToHandleTheUnexpected);
@@ -103,8 +103,8 @@ class TrierTest {
     void shouldHandleExpectedProblematicFunctionAction(){
         try{
             Trier.of(this::expectedProblematicFunctionAction, "some input")
-                    .prepareForUnexpectedExceptionsUsing(unexpectedException -> this.exceptionToHandleTheUnexpected)
-                    .andExecuteTheAction();
+                    .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
+                    .finishAndExecuteAction();
         } catch (Exception caughtException){
             Assertions.assertTrue(caughtException instanceof MappedException);
             Assertions.assertNotEquals(caughtException, this.exceptionToHandleTheUnexpected);
@@ -116,8 +116,8 @@ class TrierTest {
     void shouldHandleExpectedProblematicConsumerAction(){
         try{
             Trier.of(this::expectedProblematicConsumerAction, "some input")
-                    .prepareForUnexpectedExceptionsUsing(unexpectedException -> this.exceptionToHandleTheUnexpected)
-                    .andExecuteTheAction();
+                    .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
+                    .finishAndExecuteAction();
         } catch (Exception caughtException){
             Assertions.assertTrue(caughtException instanceof MappedException);
             Assertions.assertNotEquals(caughtException, this.exceptionToHandleTheUnexpected);
@@ -129,8 +129,8 @@ class TrierTest {
     void shouldHandleExpectedProblematicSupplierAction(){
         try{
             Trier.of(this::expectedProblematicSupplierAction)
-                    .prepareForUnexpectedExceptionsUsing(unexpectedException -> this.exceptionToHandleTheUnexpected)
-                    .andExecuteTheAction();
+                    .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
+                    .finishAndExecuteAction();
         } catch (Exception caughtException){
             Assertions.assertTrue(caughtException instanceof MappedException);
             Assertions.assertNotEquals(caughtException, this.exceptionToHandleTheUnexpected);
@@ -142,8 +142,8 @@ class TrierTest {
     void shouldHandleExpectedProblematicRunnableAction(){
         try{
             Trier.of(this::expectedProblematicRunnableAction)
-                    .prepareForUnexpectedExceptionsUsing(unexpectedException -> this.exceptionToHandleTheUnexpected)
-                    .andExecuteTheAction();
+                    .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
+                    .finishAndExecuteAction();
         } catch (Exception caughtException){
             Assertions.assertTrue(caughtException instanceof MappedException);
             Assertions.assertNotEquals(caughtException, this.exceptionToHandleTheUnexpected);

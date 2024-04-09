@@ -20,8 +20,8 @@ public abstract class SupplierPort <O> extends Port {
      */
     public O executePort(UseCaseExecutionCorrelation correlation){
         return Trier.of(this::executeLogic, correlation)
-                .prepareForUnexpectedExceptionsUsing(unexpectedException -> new PortExecutionException(unexpectedException, this.getName()))
-                .andExecuteTheAction();
+                .setHandlerForUnexpectedException(unexpectedException -> new PortExecutionException(unexpectedException, this.getName()))
+                .finishAndExecuteAction();
     }
 
     /**

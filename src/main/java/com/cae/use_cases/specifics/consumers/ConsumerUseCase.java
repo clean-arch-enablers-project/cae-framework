@@ -37,8 +37,8 @@ public abstract class ConsumerUseCase <I extends UseCaseInput> extends UseCase {
     public void execute(I input, UseCaseExecutionCorrelation correlation){
         input.validateProperties();
         Trier.of(() ->  UseCaseProcessorFactory.of(this, correlation, this.logger).processUseCaseUsing(input))
-                .prepareForUnexpectedExceptionsUsing(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
-                .andExecuteTheAction();
+                .setHandlerForUnexpectedException(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
+                .finishAndExecuteAction();
     }
 
     /**

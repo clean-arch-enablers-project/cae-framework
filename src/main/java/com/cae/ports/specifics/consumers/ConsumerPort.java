@@ -23,8 +23,8 @@ public abstract class ConsumerPort <I> extends Port {
     }
 
     private void handle(Trier.TrierBuilder<Void, Void> trierBuilder){
-        trierBuilder .prepareForUnexpectedExceptionsUsing(unexpectedException -> new PortExecutionException(unexpectedException, this.getName()))
-                .andExecuteTheAction();
+        trierBuilder .setHandlerForUnexpectedException(unexpectedException -> new PortExecutionException(unexpectedException, this.getName()))
+                .finishAndExecuteAction();
     }
 
     /**

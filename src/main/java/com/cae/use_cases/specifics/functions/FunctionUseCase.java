@@ -39,8 +39,8 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
     public O execute(I input, UseCaseExecutionCorrelation correlation){
         input.validateProperties();
         return Trier.of(() ->  UseCaseProcessorFactory.of(this, correlation, this.logger).processUseCaseUsing(input))
-                    .prepareForUnexpectedExceptionsUsing(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
-                .andExecuteTheAction();
+                    .setHandlerForUnexpectedException(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
+                .finishAndExecuteAction();
     }
 
     /**

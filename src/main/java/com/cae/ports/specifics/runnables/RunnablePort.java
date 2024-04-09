@@ -17,8 +17,8 @@ public abstract class RunnablePort extends Port {
      */
     public void executePort(UseCaseExecutionCorrelation correlation){
         Trier.of(this::executeLogic, correlation)
-                .prepareForUnexpectedExceptionsUsing(unexpectedException -> new PortExecutionException(unexpectedException, this.getName()))
-                .andExecuteTheAction();
+                .setHandlerForUnexpectedException(unexpectedException -> new PortExecutionException(unexpectedException, this.getName()))
+                .finishAndExecuteAction();
     }
 
     /**

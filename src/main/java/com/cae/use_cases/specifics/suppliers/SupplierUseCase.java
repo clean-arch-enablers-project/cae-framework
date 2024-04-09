@@ -36,8 +36,8 @@ public abstract class SupplierUseCase <O> extends UseCase {
      */
     public O execute(UseCaseExecutionCorrelation correlation){
         return Trier.of(() -> UseCaseProcessorFactory.of(this, correlation, this.logger).processUseCase())
-                .prepareForUnexpectedExceptionsUsing(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
-                .andExecuteTheAction();
+                .setHandlerForUnexpectedException(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
+                .finishAndExecuteAction();
     }
 
     /**

@@ -24,8 +24,8 @@ public abstract class FunctionPort <I, O> extends Port {
     }
 
     private O handle(Trier.TrierBuilder<Void, O> trierBuilder){
-        return trierBuilder .prepareForUnexpectedExceptionsUsing(unexpectedException -> new PortExecutionException(unexpectedException, this.getName()))
-                .andExecuteTheAction();
+        return trierBuilder .setHandlerForUnexpectedException(unexpectedException -> new PortExecutionException(unexpectedException, this.getName()))
+                .finishAndExecuteAction();
     }
 
     /**
