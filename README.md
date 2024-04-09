@@ -272,7 +272,7 @@ That's it. Once an Assembler is built, any piece of external code can use the Us
 
 The only constraint is the external piece of code being the same programming language or one that has interoperability with Java, such as Kotlin.
 
-### 💡 The _Proxy Area_ and _Mapped Exceptions_ Concepts
+### 💡 The _Proxy Area_ Concept
 Every inheritor of any Use Case or Port component will have at least two main methods to be interacted with:
 
 - A public method for getting the execution triggered
