@@ -290,14 +290,14 @@ The method within the implementation is _applyInternalLogic_. It is not the one 
 
 It is in this _Proxy Area_ between the _execute_ and the _applyInternalLogic_ that the automatic logs are generated and the input objects are validated. Soon enough caching features will be added at this level too. 
 
-Another feature, which is currently enabled at the Proxy Area, is the exception handling. It uses a component from the _cae-framework_ called _Trier_.
+Another feature, which is currently enabled at the Proxy Area, is the exception handling. It uses a component from the CAE ecosystem called _Trier_.
 
-The Trier component does the work of a try-catch with some specifics, in case something goes unexpectedly wrong during the execution of Use Cases and Ports, they will throw respectively:
+The Trier component does the work of a try-catch with some specifics. In case something goes unexpectedly wrong during the execution of Use Cases and Ports, it will throw respectively:
 
 🛑 UseCaseExecutionException
 🛑 PortExecutionException
 
-Both of them are types that extend MappedException.
+Both exceptions above are types that extend MappedException.
 
 More details on the Trier component, go to its own readme [here](https://github.com/clean-arch-enablers-project/cae-utils-trier). To see more about Mapped Exceptions, go [here](https://github.com/clean-arch-enablers-project/cae-utils-mapped-exceptions).
 
