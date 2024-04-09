@@ -308,10 +308,6 @@ More details on the Trier component, go to its own readme [here](https://github.
 
   Though that's the current scenario, it is on the roadmap to make that feature optional, so if you don't want to pass an instance, the automatic logging won't be triggered.
 
-  That's an example of a class implementing the Logger interface:
-
-![image](https://github.com/clean-arch-enablers-project/cae-framework/assets/60593328/3f10c726-b1a6-4278-838d-6483badf2b52)
-
 #### ⏳ Aggregated logs
 - The automatic log generations will be able to include Input and Output data into the message by parameterization. Fields that hold sensitive data will be susceptible to being marked as such, so the processor will mask them.
 
