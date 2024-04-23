@@ -20,6 +20,7 @@ public abstract class ConsumerPort <I> extends Port {
      */
     public void executePortOn(I input, UseCaseExecutionCorrelation correlation){
         this.handle(Trier.of(() -> this.executeLogic(input, correlation)));
+        this.handleIOLogs(input, null, correlation);
     }
 
     private void handle(Trier.TrierBuilder<Void, Void> trierBuilder){

@@ -52,7 +52,7 @@ public class UseCaseRegisterer {
     }
     private void externalizeUseCase(UseCaseMetadata useCaseMetadata) {
         try {
-            this.fileWriter.write("| Name: " + useCaseMetadata.getName() + " | Description: " + useCaseMetadata.getDescription() + " | Protected: " + useCaseMetadata.isProtected());
+            this.fileWriter.write("| Name: " + useCaseMetadata.getName() + " | Protected: " + useCaseMetadata.isProtected());
             this.fileWriter.newLine();
         } catch (Exception e) {
             throw new ExternalizeUseCaseException(e);

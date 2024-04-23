@@ -5,19 +5,11 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Optional;
-
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LoggerForTesting implements Logger {
 
-    private static LoggerForTesting singletonInstance;
-
-    public static Logger getSingletonInstance(){
-        if (Optional.ofNullable(singletonInstance).isEmpty())
-            singletonInstance = new LoggerForTesting();
-        return singletonInstance;
-    }
+    public static final LoggerForTesting SINGLETON = new LoggerForTesting();
 
     @Override
     public void logInfo(String info) {

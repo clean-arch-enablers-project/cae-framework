@@ -25,36 +25,32 @@ public class UseCaseMetadata {
 
     private final String name;
     private final Boolean isProtected;
-    private final String description;
 
     /**
      * Instantiates the use case metadata with the protected status set to true,
      * which means it will be considered that the use case is not set to open access.
      * @param useCaseType the use case class
-     * @param description the use case description
      * @return the use case metadata instance
      * @param <U> the use case type
      */
-    public static  <U extends UseCase> UseCaseMetadata ofProtectedUseCase(Class<U> useCaseType, String description){
-        return new UseCaseMetadata(useCaseType, description, true);
+    public static  <U extends UseCase> UseCaseMetadata ofProtectedUseCase(Class<U> useCaseType){
+        return new UseCaseMetadata(useCaseType, true);
     }
 
     /**
      * Instantiates the use case metadata with the protected status set to false,
      * which means it will be considered that the use case is set to open access.
      * @param useCaseType the use case class
-     * @param description the use case description
      * @return the use case metadata instance
      * @param <U> the use case type
      */
-    public static <U extends UseCase> UseCaseMetadata ofOpenAccessUseCase(Class<U> useCaseType, String description){
-        return new UseCaseMetadata(useCaseType, description, false);
+    public static <U extends UseCase> UseCaseMetadata ofOpenAccessUseCase(Class<U> useCaseType){
+        return new UseCaseMetadata(useCaseType, false);
     }
 
-    private <U extends UseCase> UseCaseMetadata(Class<U> useCaseType, String description, Boolean isProtected) {
+    private <U extends UseCase> UseCaseMetadata(Class<U> useCaseType, Boolean isProtected) {
         this.name = getNameOutta(useCaseType);
         this.isProtected = isProtected;
-        this.description = description;
     }
 
     private <U extends UseCase> String getNameOutta(Class<U> useCaseType) {
@@ -78,7 +74,4 @@ public class UseCaseMetadata {
         return isProtected;
     }
 
-    public String getDescription(){
-        return this.description;
-    }
 }

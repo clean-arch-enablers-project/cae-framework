@@ -1,5 +1,10 @@
 package com.cae.ports;
 
+import com.cae.loggers.IOLoggingHandler;
+import com.cae.loggers.LoggerProvider;
+import com.cae.mapped_exceptions.specifics.InternalMappedException;
+import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
+
 /**
  * Ports are meant to be the bridge between your core components
  * and the outside world. Ports come in a couple flavours: functions,
@@ -24,6 +29,25 @@ public abstract class Port {
 
     public String getName(){
         return this.name;
+    }
+
+    protected void handleIOLogs(Object input, Object output, UseCaseExecutionCorrelation correlation){
+        if (Boolean.TRUE.equals(LoggerProvider.SINGLETON.getPortsLoggingIO())){
+            var logRow = this.generateLogRowFor(input, output, correlation);
+            LoggerProvider.SINGLETON
+                    .getProvidedInstance()
+                    .orElseThrow(() -> new InternalMappedException("No logger instance provided.", "Please provide an instance via the LoggerProvider"))
+                    .logInfo(logRow);
+        }
+    }
+
+    private String generateLogRowFor(Object input, Object output, UseCaseExecutionCorrelation correlation) {
+        return this.name +
+                " I/O data for correlation of \"" +
+                correlation.getId().toString() +
+                "\" — " +
+                (input == null ? "" : IOLoggingHandler.generateTextForLoggingInput(input, "PORT")) +
+                (output == null ? "" : IOLoggingHandler.generateTextForLoggingOutput(output, "PORT"));
     }
 
 }

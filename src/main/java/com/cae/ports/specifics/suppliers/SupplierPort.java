@@ -19,9 +19,11 @@ public abstract class SupplierPort <O> extends Port {
      * @return the output expected for the port
      */
     public O executePort(UseCaseExecutionCorrelation correlation){
-        return Trier.of(this::executeLogic, correlation)
+        var output = Trier.of(this::executeLogic, correlation)
                 .setHandlerForUnexpectedException(unexpectedException -> new PortExecutionException(unexpectedException, this.getName()))
                 .finishAndExecuteAction();
+        this.handleIOLogs(null, output, correlation);
+        return output;
     }
 
     /**

@@ -1,11 +1,12 @@
 package com.cae.use_cases.specifics.functions;
 
+import com.cae.loggers.LoggerProvider;
 import com.cae.mapped_exceptions.MappedException;
 import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
 import com.cae.use_cases.exceptions.UseCaseExecutionException;
 import com.cae.use_cases.io.UseCaseInput;
-import com.cae.use_cases.metadata.UseCaseMetadata;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -16,6 +17,14 @@ import utils.LoggerForTesting;
 class FunctionUseCaseTest {
 
     private final UseCaseExecutionCorrelation correlation = UseCaseExecutionCorrelation.ofNew();
+
+    @BeforeAll
+    static void setUp(){
+        LoggerProvider.SINGLETON
+                .setProvidedInstance(LoggerForTesting.SINGLETON)
+                .setUseCasesLoggingIO(true)
+                .setPortsLoggingIO(true);
+    }
 
     @Test
     void shouldCallTheValidatePropertiesMethodFromInput(){
@@ -53,9 +62,6 @@ class FunctionUseCaseTest {
     }
 
     private static class SomeNormalFunctionUseCaseImplementation extends FunctionUseCase<TheFunctionUseCaseImplementationInput, String> {
-        protected SomeNormalFunctionUseCaseImplementation() {
-            super(UseCaseMetadata.ofOpenAccessUseCase(SomeNormalFunctionUseCaseImplementation.class, "Just for testing"), LoggerForTesting.getSingletonInstance());
-        }
         @Override
         protected String applyInternalLogic(TheFunctionUseCaseImplementationInput input, UseCaseExecutionCorrelation correlation) {
             return ("Just executed my internal logic");
@@ -63,9 +69,6 @@ class FunctionUseCaseTest {
     }
 
     private static class SomeUnexpectedProblematicFunctionUseCaseImplementation extends FunctionUseCase<TheFunctionUseCaseImplementationInput, String>{
-        protected SomeUnexpectedProblematicFunctionUseCaseImplementation() {
-            super(UseCaseMetadata.ofOpenAccessUseCase(SomeUnexpectedProblematicFunctionUseCaseImplementation.class, "Just for testing"), LoggerForTesting.getSingletonInstance());
-        }
         @Override
         protected String applyInternalLogic(TheFunctionUseCaseImplementationInput input, UseCaseExecutionCorrelation correlation) {
             throw new RuntimeException("some unexpected internal error");
@@ -73,9 +76,6 @@ class FunctionUseCaseTest {
     }
 
     private static class SomeExpectedProblematicFunctionUseCaseImplementation extends FunctionUseCase<TheFunctionUseCaseImplementationInput, String>{
-        protected SomeExpectedProblematicFunctionUseCaseImplementation() {
-            super(UseCaseMetadata.ofOpenAccessUseCase(SomeExpectedProblematicFunctionUseCaseImplementation.class, "Just for testing"), LoggerForTesting.getSingletonInstance());
-        }
         @Override
         protected String applyInternalLogic(TheFunctionUseCaseImplementationInput input, UseCaseExecutionCorrelation correlation) {
             throw new SomeExpectedShitThatMightHappen();

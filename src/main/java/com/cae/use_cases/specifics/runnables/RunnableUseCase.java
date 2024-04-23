@@ -13,8 +13,22 @@ import com.cae.use_cases.metadata.UseCaseMetadata;
  */
 public abstract class RunnableUseCase extends UseCase {
 
+    /**
+     *  @deprecated
+     */
+    @Deprecated(since = "24/04/2024")
     protected RunnableUseCase(UseCaseMetadata useCaseMetadata, Logger logger) {
         super(useCaseMetadata, logger);
+    }
+    /**
+     *  @deprecated
+     */
+    @Deprecated(since = "24/04/2024")
+    protected RunnableUseCase(Logger logger) {
+        super(logger);
+    }
+    protected RunnableUseCase() {
+        super();
     }
 
     /**
@@ -33,7 +47,7 @@ public abstract class RunnableUseCase extends UseCase {
      * @param correlation the unique identifier of the use case execution
      */
     public void execute(UseCaseExecutionCorrelation correlation){
-        Trier.of(() -> UseCaseProcessorFactory.of(this, correlation, this.logger).processUseCase())
+        Trier.of(() -> UseCaseProcessorFactory.of(this, correlation, this.getLogger()).processUseCase())
                 .setHandlerForUnexpectedException(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
                 .finishAndExecuteAction();
     }
@@ -42,6 +56,6 @@ public abstract class RunnableUseCase extends UseCase {
      * Internal method supposed to execute the core logic of the use case
      * @param useCaseExecutionCorrelation the unique identifier of the use case execution
      */
-    protected abstract void applyInternalLogic(UseCaseExecutionCorrelation useCaseExecutionCorrelation);;
+    protected abstract void applyInternalLogic(UseCaseExecutionCorrelation useCaseExecutionCorrelation);
 
 }

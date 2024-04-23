@@ -1,10 +1,11 @@
 package com.cae.use_cases.specifics.suppliers;
 
+import com.cae.loggers.LoggerProvider;
 import com.cae.mapped_exceptions.MappedException;
 import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
 import com.cae.use_cases.exceptions.UseCaseExecutionException;
-import com.cae.use_cases.metadata.UseCaseMetadata;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,6 +15,13 @@ import utils.LoggerForTesting;
 class SupplierUseCaseTest {
 
     private final UseCaseExecutionCorrelation correlation = UseCaseExecutionCorrelation.ofNew();
+
+    @BeforeAll
+    static void setUp(){
+        LoggerProvider.SINGLETON
+                .setProvidedInstance(LoggerForTesting.SINGLETON)
+                .setUseCasesLoggingIO(true);
+    }
 
     @Test
     void shouldCallTheValidatePropertiesMethodFromInput(){
@@ -42,9 +50,6 @@ class SupplierUseCaseTest {
     }
 
     private static class SomeNormalSupplierUseCaseImplementation extends SupplierUseCase<String> {
-        protected SomeNormalSupplierUseCaseImplementation() {
-            super(UseCaseMetadata.ofOpenAccessUseCase(SomeNormalSupplierUseCaseImplementation.class, "Just for testing"), LoggerForTesting.getSingletonInstance());
-        }
         @Override
         protected String applyInternalLogic(UseCaseExecutionCorrelation correlation) {
             return ("Just executed my internal logic");
@@ -52,9 +57,6 @@ class SupplierUseCaseTest {
     }
 
     private static class SomeUnexpectedProblematicSupplierUseCaseImplementation extends SupplierUseCase<String>{
-        protected SomeUnexpectedProblematicSupplierUseCaseImplementation() {
-            super(UseCaseMetadata.ofOpenAccessUseCase(SomeUnexpectedProblematicSupplierUseCaseImplementation.class, "Just for testing"), LoggerForTesting.getSingletonInstance());
-        }
         @Override
         protected String applyInternalLogic(UseCaseExecutionCorrelation correlation) {
             throw new RuntimeException("some unexpected internal error");
@@ -62,9 +64,6 @@ class SupplierUseCaseTest {
     }
 
     private static class SomeExpectedProblematicSupplierUseCaseImplementation extends SupplierUseCase<String>{
-        protected SomeExpectedProblematicSupplierUseCaseImplementation() {
-            super(UseCaseMetadata.ofOpenAccessUseCase(SomeExpectedProblematicSupplierUseCaseImplementation.class, "Just for testing"), LoggerForTesting.getSingletonInstance());
-        }
         @Override
         protected String applyInternalLogic(UseCaseExecutionCorrelation correlation) {
             throw new SomeExpectedShitThatMightHappen();

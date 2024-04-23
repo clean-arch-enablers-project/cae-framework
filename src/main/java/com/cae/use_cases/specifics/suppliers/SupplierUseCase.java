@@ -14,8 +14,23 @@ import com.cae.use_cases.metadata.UseCaseMetadata;
  */
 public abstract class SupplierUseCase <O> extends UseCase {
 
+    /**
+     *  @deprecated
+     */
+    @Deprecated(since = "24/04/2024")
     protected SupplierUseCase(UseCaseMetadata useCaseMetadata, Logger logger) {
         super(useCaseMetadata, logger);
+    }
+
+    /**
+     *  @deprecated
+     */
+    @Deprecated(since = "24/04/2024")
+    protected SupplierUseCase(Logger logger) {
+        super(logger);
+    }
+    protected SupplierUseCase() {
+        super();
     }
 
     /**
@@ -35,7 +50,7 @@ public abstract class SupplierUseCase <O> extends UseCase {
      * @return the use case execution output
      */
     public O execute(UseCaseExecutionCorrelation correlation){
-        return Trier.of(() -> UseCaseProcessorFactory.of(this, correlation, this.logger).processUseCase())
+        return Trier.of(() -> UseCaseProcessorFactory.of(this, correlation, this.getLogger()).processUseCase())
                 .setHandlerForUnexpectedException(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
                 .finishAndExecuteAction();
     }

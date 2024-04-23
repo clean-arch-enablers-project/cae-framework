@@ -51,9 +51,6 @@ class UseCaseRegistererTest {
         Mockito.when(this.useCase1Metadata.getName()).thenReturn("use case 1");
         Mockito.when(this.useCase2Metadata.getName()).thenReturn("use case 2");
         Mockito.when(this.useCase3Metadata.getName()).thenReturn("use case 3");
-        Mockito.when(this.useCase1Metadata.getDescription()).thenReturn("use case 1 description");
-        Mockito.when(this.useCase2Metadata.getDescription()).thenReturn("use case 2 description");
-        Mockito.when(this.useCase3Metadata.getDescription()).thenReturn("use case 3 description");
         Assertions.assertDoesNotThrow(() -> UseCaseRegisterer.runOnUseCasesMetadata(List.of(this.useCase1Metadata, this.useCase2Metadata, this.useCase3Metadata)));
         this.checkIfFileWasCreated();
     }

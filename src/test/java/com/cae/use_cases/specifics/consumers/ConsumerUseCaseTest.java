@@ -4,13 +4,11 @@ import com.cae.mapped_exceptions.MappedException;
 import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
 import com.cae.use_cases.exceptions.UseCaseExecutionException;
 import com.cae.use_cases.io.UseCaseInput;
-import com.cae.use_cases.metadata.UseCaseMetadata;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import utils.LoggerForTesting;
 
 @ExtendWith(MockitoExtension.class)
 class ConsumerUseCaseTest {
@@ -51,19 +49,13 @@ class ConsumerUseCaseTest {
     }
 
     private static class SomeConsumerUseCaseImplementation extends ConsumerUseCase<TheConsumerUseCaseImplementationInput>{
-        protected SomeConsumerUseCaseImplementation() {
-            super(UseCaseMetadata.ofOpenAccessUseCase(SomeConsumerUseCaseImplementation.class, "Just for testing"), LoggerForTesting.getSingletonInstance());
-        }
         @Override
         protected void applyInternalLogic(TheConsumerUseCaseImplementationInput input, UseCaseExecutionCorrelation correlation) {
-            this.logger.logInfo("Just initialized my internal logic");
+            this.getLogger().logInfo("Just initialized my internal logic");
         }
     }
 
     private static class SomeUnexpectedProblematicConsumerUseCaseImplementation extends ConsumerUseCase<TheConsumerUseCaseImplementationInput>{
-        protected SomeUnexpectedProblematicConsumerUseCaseImplementation() {
-            super(UseCaseMetadata.ofOpenAccessUseCase(SomeConsumerUseCaseImplementation.class, "Just for testing"), LoggerForTesting.getSingletonInstance());
-        }
         @Override
         protected void applyInternalLogic(TheConsumerUseCaseImplementationInput input, UseCaseExecutionCorrelation correlation) {
             throw new RuntimeException("some unexpected internal error");
@@ -71,9 +63,6 @@ class ConsumerUseCaseTest {
     }
 
     private static class SomeExpectedProblematicConsumerUseCaseImplementation extends ConsumerUseCase<TheConsumerUseCaseImplementationInput>{
-        protected SomeExpectedProblematicConsumerUseCaseImplementation() {
-            super(UseCaseMetadata.ofOpenAccessUseCase(SomeConsumerUseCaseImplementation.class, "Just for testing"), LoggerForTesting.getSingletonInstance());
-        }
         @Override
         protected void applyInternalLogic(TheConsumerUseCaseImplementationInput input, UseCaseExecutionCorrelation correlation) {
             throw new SomeExpectedShitThatMightHappen();
