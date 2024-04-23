@@ -57,7 +57,7 @@ public abstract class UseCaseProcessor<U extends UseCase> {
     }
 
     protected <I extends UseCaseInput, O> void generateIOLog(I input, O output){
-        if (Boolean.TRUE.equals(LoggerProvider.SINGLETON.getLogIO())){
+        if (Boolean.TRUE.equals(LoggerProvider.SINGLETON.getUseCasesLoggingIO())){
             Optional.ofNullable(input).ifPresent(this::handleInputLogging);
             Optional.ofNullable(output).ifPresent(this::handleOutputLogging);
         }

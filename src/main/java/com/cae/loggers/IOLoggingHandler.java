@@ -8,7 +8,7 @@ public class IOLoggingHandler {
         return " [" +
                 prefix +
                 " INPUT]: \"" +
-                (LoggerProvider.SINGLETON.getMode().equals(LoggerProvider.IOLogMode.CAE_NATIVE) ? IOLoggingHandler.handleNativeExtractionOf(input) : input.toString()) +
+                (LoggerProvider.SINGLETON.getIOLoggingMode().equals(LoggerProvider.IOLoggingMode.CAE_NATIVE) ? IOLoggingHandler.handleNativeExtractionOf(input) : input.toString()) +
                 "\";";
     }
 
@@ -16,7 +16,7 @@ public class IOLoggingHandler {
         return " [" +
                 prefix +
                 " OUTPUT]: \"" +
-                (LoggerProvider.SINGLETON.getMode().equals(LoggerProvider.IOLogMode.CAE_NATIVE) ? IOLoggingHandler.handleNativeExtractionOf(output) : output.toString()) +
+                (LoggerProvider.SINGLETON.getIOLoggingMode().equals(LoggerProvider.IOLoggingMode.CAE_NATIVE) ? IOLoggingHandler.handleNativeExtractionOf(output) : output.toString()) +
                 "\";";
     }
 

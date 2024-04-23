@@ -22,7 +22,8 @@ class FunctionUseCaseTest {
     static void setUp(){
         LoggerProvider.SINGLETON
                 .setProvidedInstance(LoggerForTesting.SINGLETON)
-                .setLogIO(LoggerProvider.IOLogMode.TO_STRING);
+                .setUseCasesLoggingIO(true)
+                .setPortsLoggingIO(true);
     }
 
     @Test
