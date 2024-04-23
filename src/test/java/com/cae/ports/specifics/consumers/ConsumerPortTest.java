@@ -1,5 +1,6 @@
 package com.cae.ports.specifics.consumers;
 
+import com.cae.loggers.LoggerProvider;
 import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +31,7 @@ class ConsumerPortTest {
         var portImplementation = new SomeConsumerPortImplementation();
         var stringInput = "input";
         portImplementation.executePortOn(stringInput, this.correlation);
-        Mockito.verify(this.correlation, Mockito.times(1)).getId();
+        Mockito.verify(this.correlation, Mockito.times(LoggerProvider.SINGLETON.getPortsLoggingIO()? 2 : 1)).getId();
         var containsInputInTheListAsExpected = portImplementation.someStrings.stream().anyMatch(string -> string.equals(stringInput));
         var containsCorrelationIdInTheListAsExpected = portImplementation.someStrings.stream().anyMatch(string -> string.equals(this.correlation.getId().toString()));
         Assertions.assertTrue(containsInputInTheListAsExpected);

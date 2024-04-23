@@ -1,5 +1,6 @@
 package com.cae.ports.specifics.functions;
 
+import com.cae.loggers.LoggerProvider;
 import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,6 +21,7 @@ class FunctionPortTest {
 
     @BeforeEach
     void setUp(){
+        LoggerProvider.SINGLETON.setPortsLoggingIO(true);
         Mockito.when(this.correlation.getId()).thenReturn(this.id);
     }
 
@@ -29,7 +31,7 @@ class FunctionPortTest {
         var stringInput = "input";
         var portResult = portImplementation.executePortOn(stringInput, this.correlation);
         Assertions.assertFalse(portResult);
-        Mockito.verify(this.correlation, Mockito.times(1)).getId();
+        Mockito.verify(this.correlation, Mockito.times(LoggerProvider.SINGLETON.getPortsLoggingIO()? 2 : 1)).getId();
     }
 
     private static class SomeFunctionPortImplementation extends FunctionPort<String, Boolean>{

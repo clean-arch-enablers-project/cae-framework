@@ -20,7 +20,9 @@ public abstract class FunctionPort <I, O> extends Port {
      * @return the expected output of the port
      */
     public O executePortOn(I input, UseCaseExecutionCorrelation correlation){
-        return this.handle(Trier.of(() -> this.executeLogic(input, correlation)));
+        var output = this.handle(Trier.of(() -> this.executeLogic(input, correlation)));
+        this.handleIOLogs(input, output, correlation);
+        return output;
     }
 
     private O handle(Trier.TrierBuilder<Void, O> trierBuilder){

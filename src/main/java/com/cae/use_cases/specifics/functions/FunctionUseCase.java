@@ -16,8 +16,22 @@ import com.cae.use_cases.metadata.UseCaseMetadata;
  */
 public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCase {
 
+    /**
+     *  @deprecated
+     */
+    @Deprecated(since = "24/04/2024")
     protected FunctionUseCase(UseCaseMetadata useCaseMetadata, Logger logger) {
         super(useCaseMetadata, logger);
+    }
+    /**
+     *  @deprecated
+     */
+    @Deprecated(since = "24/04/2024")
+    protected FunctionUseCase(Logger logger) {
+        super(logger);
+    }
+    protected FunctionUseCase() {
+        super();
     }
 
     /**
@@ -38,7 +52,7 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
      */
     public O execute(I input, UseCaseExecutionCorrelation correlation){
         input.validateProperties();
-        return Trier.of(() ->  UseCaseProcessorFactory.of(this, correlation, this.logger).processUseCaseUsing(input))
+        return Trier.of(() ->  UseCaseProcessorFactory.of(this, correlation, this.getLogger()).processUseCaseUsing(input))
                     .setHandlerForUnexpectedException(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
                 .finishAndExecuteAction();
     }

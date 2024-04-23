@@ -19,24 +19,20 @@ class UseCaseMetadataTest {
 
     @Test
     void shouldInstantiateCorrectlyWhenCallingTheProtectedUseCaseConstructor(){
-        var useCaseDescription = "This is some use case implementation just for testing the metadata component";
-        var useCaseMetadata = UseCaseMetadata.ofProtectedUseCase(SomeUseCaseImplementation.class, useCaseDescription);
+        var useCaseMetadata = UseCaseMetadata.ofProtectedUseCase(SomeUseCaseImplementation.class);
         var expectedUseCaseNameRetrievedFromItsMetadata = "some_implementation";
         var expectedUseCaseProtectionStatusRetrievedFromItsMetadata = true;
         Assertions.assertEquals(expectedUseCaseProtectionStatusRetrievedFromItsMetadata, useCaseMetadata.isProtected());
         Assertions.assertEquals(expectedUseCaseNameRetrievedFromItsMetadata, useCaseMetadata.getName());
-        Assertions.assertEquals(useCaseDescription, useCaseMetadata.getDescription());
     }
 
     @Test
     void shouldInstantiateCorrectlyWhenCallingTheOpenAccessUseCaseConstructor(){
-        var useCaseDescription = "This is some use case implementation just for testing the metadata component";
-        var useCaseMetadata = UseCaseMetadata.ofOpenAccessUseCase(SomeUseCaseImplementation.class, useCaseDescription);
+        var useCaseMetadata = UseCaseMetadata.ofOpenAccessUseCase(SomeUseCaseImplementation.class);
         var expectedUseCaseNameRetrievedFromItsMetadata = "some_implementation";
         var expectedUseCaseProtectionStatusRetrievedFromItsMetadata = false;
         Assertions.assertEquals(expectedUseCaseProtectionStatusRetrievedFromItsMetadata, useCaseMetadata.isProtected());
         Assertions.assertEquals(expectedUseCaseNameRetrievedFromItsMetadata, useCaseMetadata.getName());
-        Assertions.assertEquals(useCaseDescription, useCaseMetadata.getDescription());
     }
 
 }
