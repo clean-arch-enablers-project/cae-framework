@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class GetterExtractor {
 
     public static List<Method> executeOn(Object levelZero){
-        var methods = levelZero.getClass().getMethods();
+        var methods = levelZero.getClass().getDeclaredMethods();
         return Arrays.stream(methods)
                 .filter(method -> method.getName().startsWith("get") && !method.getName().equals("getClass"))
                 .collect(Collectors.toList());
