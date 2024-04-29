@@ -9,7 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import utils.LoggerAdapterForTesting;
+import utils.simulations.adapters.loggers.LoggerAdapterForTesting;
 
 import java.util.UUID;
 

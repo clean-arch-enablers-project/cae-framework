@@ -1,9 +1,10 @@
-package utils;
+package utils.simulations.assemblers.loggers;
 
 import com.cae.loggers.IOLoggingMode;
 import com.cae.loggers.LoggerProvider;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import utils.simulations.adapters.loggers.LoggerAdapterForTesting;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LoggerBootstrapForTesting {
