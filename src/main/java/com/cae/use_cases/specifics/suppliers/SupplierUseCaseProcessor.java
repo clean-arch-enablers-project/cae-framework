@@ -13,7 +13,7 @@ public class SupplierUseCaseProcessor<O> extends UseCaseProcessor<SupplierUseCas
     public O processUseCase(){
         O output = null;
         try {
-            output = this.useCase.applyInternalLogic(this.useCaseExecutionCorrelation);
+            output = this.useCase.applyInternalLogic(this.correlation);
             this.logExecution(null, output, null);
             return output;
         } catch (Exception anyException){

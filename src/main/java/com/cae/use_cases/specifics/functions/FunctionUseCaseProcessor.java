@@ -14,7 +14,7 @@ public class FunctionUseCaseProcessor<I extends UseCaseInput, O> extends UseCase
     public O processUseCaseUsing(I input){
         O output = null;
         try {
-            output = this.useCase.applyInternalLogic(input, this.useCaseExecutionCorrelation);
+            output = this.useCase.applyInternalLogic(input, this.correlation);
             this.logExecution(input, output, null);
             return output;
         } catch (Exception anyException){

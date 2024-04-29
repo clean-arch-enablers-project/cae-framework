@@ -12,7 +12,7 @@ public class RunnableUseCaseProcessor extends UseCaseProcessor<RunnableUseCase> 
 
     public void processUseCase() {
         try {
-            this.useCase.applyInternalLogic(this.useCaseExecutionCorrelation);
+            this.useCase.applyInternalLogic(this.correlation);
             this.logExecution(null, null, null);
         } catch (Exception exception){
             this.logExecution(null, null, exception);

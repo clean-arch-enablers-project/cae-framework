@@ -13,7 +13,7 @@ public class ConsumerUseCaseProcessor<I extends UseCaseInput> extends UseCasePro
 
     public void processUseCaseUsing(I input){
         try {
-            this.useCase.applyInternalLogic(input, this.useCaseExecutionCorrelation);
+            this.useCase.applyInternalLogic(input, this.correlation);
             this.logExecution(input, null, null);
         } catch (Exception anyException){
             this.logExecution(input, null, anyException);

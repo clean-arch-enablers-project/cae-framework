@@ -13,6 +13,8 @@ public class LoggerBootstrapForTesting {
                 .setProvidedInstance(LoggerAdapterForTesting.SINGLETON)
                 .setUseCasesLoggingIO(true)
                 .setPortsLoggingIO(true)
+                .structuredFormat(false)
+                .async(false)
                 .setIOLoggingMode(IOLoggingMode.TO_STRING);
     }
 
