@@ -2,10 +2,12 @@ package com.cae.ports.specifics.runnables;
 
 import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import utils.LoggerBootstrapForTesting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,6 +15,11 @@ import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class RunnablePortTest {
+
+    @BeforeEach
+    void setup(){
+        LoggerBootstrapForTesting.startupDefaultSettings();
+    }
 
     @Test
     void shouldExecuteThePortImplementationLogicAsExpected(){

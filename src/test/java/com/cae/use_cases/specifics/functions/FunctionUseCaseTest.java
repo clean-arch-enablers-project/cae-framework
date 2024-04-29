@@ -1,5 +1,6 @@
 package com.cae.use_cases.specifics.functions;
 
+import com.cae.loggers.IOLoggingMode;
 import com.cae.loggers.LoggerProvider;
 import com.cae.mapped_exceptions.MappedException;
 import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
@@ -7,23 +8,22 @@ import com.cae.use_cases.exceptions.UseCaseExecutionException;
 import com.cae.use_cases.io.UseCaseInput;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import utils.LoggerForTesting;
+import utils.LoggerAdapterForTesting;
+import utils.LoggerBootstrapForTesting;
 
 @ExtendWith(MockitoExtension.class)
 class FunctionUseCaseTest {
 
     private final UseCaseExecutionCorrelation correlation = UseCaseExecutionCorrelation.ofNew();
 
-    @BeforeAll
-    static void setUp(){
-        LoggerProvider.SINGLETON
-                .setProvidedInstance(LoggerForTesting.SINGLETON)
-                .setUseCasesLoggingIO(true)
-                .setPortsLoggingIO(true);
+    @BeforeEach
+    void setup(){
+        LoggerBootstrapForTesting.startupDefaultSettings();
     }
 
     @Test

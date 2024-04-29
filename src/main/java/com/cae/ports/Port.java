@@ -5,6 +5,8 @@ import com.cae.loggers.LoggerProvider;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
 
+import java.util.concurrent.CompletableFuture;
+
 /**
  * Ports are meant to be the bridge between your core components
  * and the outside world. Ports come in a couple flavours: functions,
@@ -32,13 +34,17 @@ public abstract class Port {
     }
 
     protected void handleIOLogs(Object input, Object output, UseCaseExecutionCorrelation correlation){
-        if (Boolean.TRUE.equals(LoggerProvider.SINGLETON.getPortsLoggingIO())){
-            var logRow = this.generateLogRowFor(input, output, correlation);
-            LoggerProvider.SINGLETON
-                    .getProvidedInstance()
-                    .orElseThrow(() -> new InternalMappedException("No logger instance provided.", "Please provide an instance via the LoggerProvider"))
-                    .logInfo(logRow);
-        }
+        var completableFuture = CompletableFuture.runAsync(() -> {
+            if (Boolean.TRUE.equals(LoggerProvider.SINGLETON.getPortsLoggingIO())){
+                var logRow = this.generateLogRowFor(input, output, correlation);
+                LoggerProvider.SINGLETON
+                        .getProvidedInstance()
+                        .orElseThrow(() -> new InternalMappedException("No logger instance provided.", "Please provide an instance via the LoggerProvider"))
+                        .logInfo(logRow);
+            }
+        });
+        if (!LoggerProvider.SINGLETON.getAsync())
+            completableFuture.join();
     }
 
     private String generateLogRowFor(Object input, Object output, UseCaseExecutionCorrelation correlation) {

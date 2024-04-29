@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import utils.LoggerBootstrapForTesting;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ class ConsumerPortTest {
     @BeforeEach
     void setUp(){
         Mockito.when(this.correlation.getId()).thenReturn(this.id);
+        LoggerBootstrapForTesting.startupDefaultSettings();
     }
 
     @Test

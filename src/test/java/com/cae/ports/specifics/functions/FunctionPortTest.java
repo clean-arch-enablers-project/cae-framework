@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import utils.LoggerAdapterForTesting;
 
 import java.util.UUID;
 
@@ -21,7 +22,9 @@ class FunctionPortTest {
 
     @BeforeEach
     void setUp(){
-        LoggerProvider.SINGLETON.setPortsLoggingIO(true);
+        LoggerProvider.SINGLETON
+                .setPortsLoggingIO(true)
+                .setProvidedInstance(LoggerAdapterForTesting.SINGLETON);
         Mockito.when(this.correlation.getId()).thenReturn(this.id);
     }
 

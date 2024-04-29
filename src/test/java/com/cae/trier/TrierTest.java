@@ -3,9 +3,11 @@ package com.cae.trier;
 import com.cae.mapped_exceptions.MappedException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import utils.LoggerBootstrapForTesting;
 
 @ExtendWith(MockitoExtension.class)
 @Slf4j
@@ -14,6 +16,11 @@ class TrierTest {
     private final RuntimeException unexpectedInternalException = new RuntimeException("oh no!");
     private final MappedException expectedInternalException = new MappedException("right... I was kinda counting on this happening");
     private final MappedException exceptionToHandleTheUnexpected = new MappedException("MappedException to the rescue!");
+
+    @BeforeEach
+    void setup(){
+        LoggerBootstrapForTesting.startupDefaultSettings();
+    }
 
     @Test
     void shouldRunFunctionActionWithoutProblems(){

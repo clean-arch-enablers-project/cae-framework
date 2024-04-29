@@ -11,7 +11,8 @@ public class LoggerProvider {
     private Logger providedInstance;
     private Boolean useCasesLoggingIO = false;
     private Boolean portsLoggingIO = false;
-    private static final IOLoggingMode IO_LOGGING_MODE = IOLoggingMode.TO_STRING;
+    private IOLoggingMode ioLoggingMode = IOLoggingMode.TO_STRING;
+    private Boolean async = false;
 
     public Optional<Logger> getProvidedInstance(){
         return Optional.ofNullable(this.providedInstance);
@@ -25,8 +26,12 @@ public class LoggerProvider {
         return this.portsLoggingIO;
     }
 
+    public Boolean getAsync(){
+        return this.async;
+    }
+
     public IOLoggingMode getIOLoggingMode(){
-        return IO_LOGGING_MODE;
+        return this.ioLoggingMode;
     }
 
     public LoggerProvider setProvidedInstance(Logger providedInstance){
@@ -44,9 +49,14 @@ public class LoggerProvider {
         return this;
     }
 
-    public enum IOLoggingMode {
-        CAE_NATIVE,
-        TO_STRING
+    public LoggerProvider setIOLoggingMode(IOLoggingMode ioLoggingMode){
+        this.ioLoggingMode = ioLoggingMode;
+        return this;
+    }
+
+    public LoggerProvider async(boolean async){
+        this.async = async;
+        return this;
     }
 
 }
