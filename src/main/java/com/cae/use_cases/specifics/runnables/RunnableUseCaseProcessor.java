@@ -12,13 +12,10 @@ public class RunnableUseCaseProcessor extends UseCaseProcessor<RunnableUseCase> 
 
     public void processUseCase() {
         try {
-            this.generateLogExecutionStart();
             this.useCase.applyInternalLogic(this.useCaseExecutionCorrelation);
-            this.generateLogExecutionEnd();
-            this.logWhatsGeneratedForSuccessfulScenarios();
+            this.generateLogForSuccessfulExecution(null, null);
         } catch (Exception exception){
-            this.handle(exception);
-            this.logWhatsGeneratedForErrorScenarios();
+            this.generateLogForUnsuccessfulExecution(exception, null, null);
             throw exception;
         }
     }

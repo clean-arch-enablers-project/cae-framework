@@ -3,13 +3,20 @@ package com.cae.use_cases.exceptions;
 import com.cae.use_cases.UseCase;
 import com.cae.use_cases.metadata.UseCaseMetadata;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import utils.LoggerBootstrapForTesting;
 
 @ExtendWith(MockitoExtension.class)
 class UseCaseExecutionExceptionTest {
+
+    @BeforeEach
+    void setup(){
+        LoggerBootstrapForTesting.startupDefaultSettings();
+    }
 
     @Test
     void shouldInstantiateExceptionAsExpected(){

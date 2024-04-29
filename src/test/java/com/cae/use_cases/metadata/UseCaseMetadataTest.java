@@ -3,9 +3,11 @@ package com.cae.use_cases.metadata;
 import com.cae.loggers.Logger;
 import com.cae.use_cases.UseCase;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import utils.LoggerBootstrapForTesting;
 
 @ExtendWith(MockitoExtension.class)
 class UseCaseMetadataTest {
@@ -15,6 +17,11 @@ class UseCaseMetadataTest {
         protected SomeUseCaseImplementation(UseCaseMetadata useCaseMetadata, Logger logger) {
             super(useCaseMetadata, logger);
         }
+    }
+
+    @BeforeEach
+    void setup(){
+        LoggerBootstrapForTesting.startupDefaultSettings();
     }
 
     @Test

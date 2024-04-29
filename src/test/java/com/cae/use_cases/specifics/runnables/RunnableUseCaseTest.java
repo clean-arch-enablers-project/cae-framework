@@ -4,14 +4,21 @@ import com.cae.mapped_exceptions.MappedException;
 import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
 import com.cae.use_cases.exceptions.UseCaseExecutionException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import utils.LoggerBootstrapForTesting;
 
 @ExtendWith(MockitoExtension.class)
 class RunnableUseCaseTest {
 
     private final UseCaseExecutionCorrelation correlation = UseCaseExecutionCorrelation.ofNew();
+
+    @BeforeEach
+    void setup(){
+        LoggerBootstrapForTesting.startupDefaultSettings();
+    }
 
     @Test
     void shouldRunWithoutProblemsTheUseCase(){

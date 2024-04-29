@@ -10,54 +10,61 @@ import com.cae.use_cases.io.UseCaseInput;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 public abstract class UseCaseProcessor<U extends UseCase> {
 
-    protected UseCaseProcessor(U useCase, UseCaseExecutionCorrelation useCaseExecutionCorrelation, Logger logger){
+    protected final U useCase;
+    protected final UseCaseExecutionCorrelation useCaseExecutionCorrelation;
+    protected final Logger logger;
+    private final StringBuilder stringBuilder;
+    private final LocalDateTime startingMoment;
+
+    protected UseCaseProcessor(U useCase, UseCaseExecutionCorrelation useCaseExecutionCorrelation, Logger logger) {
         this.useCase = useCase;
         this.useCaseExecutionCorrelation = useCaseExecutionCorrelation;
         this.logger = logger;
-    }
-    protected final Logger logger;
-    protected final U useCase;
-    protected final UseCaseExecutionCorrelation useCaseExecutionCorrelation;
-    private final StringBuilder stringBuilder = new StringBuilder();
-    private LocalDateTime startingMoment;
-
-    protected void generateLogExecutionStart(){
+        this.stringBuilder = new StringBuilder();
         this.startingMoment = LocalDateTime.now();
-        var messageToDisplay = "Use case \""
-                + (this.useCase.getUseCaseMetadata().getName())
-                + "\" execution with correlation ID of \""
-                + this.useCaseExecutionCorrelation.getId().toString()
-                + "\" ";
-        this.stringBuilder.append(messageToDisplay);
     }
 
-    protected void generateLogExecutionEnd(){
-        var messageToDisplay = "finished successfully. It took about "
-                + Duration.between(this.startingMoment, LocalDateTime.now()).toMillis()
-                + " milliseconds.";
-        this.stringBuilder.append(messageToDisplay);
+    protected void generateLogForSuccessfulExecution(
+            UseCaseInput input,
+            Object output){
+        var completableFuture = CompletableFuture.runAsync(() -> {
+            this.stringBuilder
+                    .append(this.generateFirstHalfOfLogString())
+                    .append(this.generateLastHalfOfSuccessfulLogString());
+            this.generateIOLogString(input, output);
+            this.logWhatsGenerated(true);
+        });
+        if (!LoggerProvider.SINGLETON.getAsync())
+            completableFuture.join();
     }
 
-    protected void handle(Exception anyException){
-        var messageToDisplay = "threw an exception. \""
-                + (anyException.getClass().getSimpleName().concat(": ").concat(anyException.getMessage()))
-                + ("\".");
-        this.stringBuilder.append(messageToDisplay);
+    protected void generateLogForUnsuccessfulExecution(
+            Exception anyException,
+            UseCaseInput input,
+            Object output){
+        var completableFuture = CompletableFuture.runAsync(() -> {
+            this.stringBuilder
+                    .append(this.generateFirstHalfOfLogString())
+                    .append(this.generateLastHalfOfUnsuccessfulLogString(anyException));
+            this.generateIOLogString(input, output);
+            this.logWhatsGenerated(false);
+        });
+        if (!LoggerProvider.SINGLETON.getAsync())
+            completableFuture.join();
     }
 
-    protected void logWhatsGeneratedForSuccessfulScenarios() {
-        this.logger.logInfo(this.stringBuilder.toString());
+    private void logWhatsGenerated(boolean success) {
+        Consumer<String> methodToCall = (success? this.logger::logInfo : this.logger::logError);
+        methodToCall.accept(this.stringBuilder.toString());
     }
 
-    protected void logWhatsGeneratedForErrorScenarios(){
-        this.logger.logError(this.stringBuilder.toString());
-    }
-
-    protected <I extends UseCaseInput, O> void generateIOLog(I input, O output){
-        if (Boolean.TRUE.equals(LoggerProvider.SINGLETON.getUseCasesLoggingIO())){
+    protected <I extends UseCaseInput, O> void generateIOLogString(I input, O output){
+        if (LoggerProvider.SINGLETON.getProvidedInstance().isPresent() && Boolean.TRUE.equals(LoggerProvider.SINGLETON.getUseCasesLoggingIO())){
             Optional.ofNullable(input).ifPresent(this::handleInputLogging);
             Optional.ofNullable(output).ifPresent(this::handleOutputLogging);
         }
@@ -69,6 +76,25 @@ public abstract class UseCaseProcessor<U extends UseCase> {
 
     private <O> void handleOutputLogging(O output) {
         this.stringBuilder.append(IOLoggingHandler.generateTextForLoggingOutput(output, "USE CASE"));
+    }
+
+    private String generateFirstHalfOfLogString(){
+        return "Use case \""
+                + (this.useCase.getUseCaseMetadata().getName())
+                + "\" execution with correlation ID of \""
+                + this.useCaseExecutionCorrelation.getId().toString();
+    }
+
+    private String generateLastHalfOfSuccessfulLogString(){
+        return "\" finished successfully. It took about "
+                + Duration.between(this.startingMoment, LocalDateTime.now()).toMillis()
+                + " milliseconds.";
+    }
+
+    private String generateLastHalfOfUnsuccessfulLogString(Exception anyException){
+        return "\" threw an exception. \""
+                + (anyException.getClass().getSimpleName().concat(": ").concat(anyException.getMessage()))
+                + ("\".");
     }
 
 }

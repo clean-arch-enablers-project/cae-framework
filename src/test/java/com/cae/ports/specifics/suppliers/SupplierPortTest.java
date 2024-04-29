@@ -3,22 +3,28 @@ package com.cae.ports.specifics.suppliers;
 import com.cae.loggers.LoggerProvider;
 import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import utils.LoggerForTesting;
+import utils.LoggerAdapterForTesting;
+import utils.LoggerBootstrapForTesting;
 
 import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
 class SupplierPortTest {
 
+    @BeforeEach
+    void setup(){
+        LoggerBootstrapForTesting.startupDefaultSettings();
+    }
 
     @Test
     void shouldExecuteThePortImplementationLogicAsExpected(){
         LoggerProvider.SINGLETON
-                .setProvidedInstance(LoggerForTesting.SINGLETON)
+                .setProvidedInstance(LoggerAdapterForTesting.SINGLETON)
                 .setPortsLoggingIO(true);
         var correlation = Mockito.mock(UseCaseExecutionCorrelation.class);
         var id = UUID.randomUUID();

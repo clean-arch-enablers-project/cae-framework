@@ -7,22 +7,22 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class LoggerForTesting implements Logger {
+public class LoggerAdapterForTesting implements Logger {
 
-    public static final LoggerForTesting SINGLETON = new LoggerForTesting();
+    public static final LoggerAdapterForTesting SINGLETON = new LoggerAdapterForTesting();
 
     @Override
     public void logInfo(String info) {
-        log.info(info);
+        System.out.println(info);
     }
 
     @Override
     public void logError(String error) {
-        log.error(error);
+        System.out.println(error);
     }
 
     @Override
     public void logDebug(String info) {
-        log.debug(info);
+        System.out.println(info);
     }
 }

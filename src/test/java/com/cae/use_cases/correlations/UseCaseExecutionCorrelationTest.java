@@ -2,9 +2,11 @@ package com.cae.use_cases.correlations;
 
 import com.cae.use_cases.correlations.exceptions.CorrelationIdValueFormatException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import utils.LoggerBootstrapForTesting;
 
 import java.util.UUID;
 
@@ -12,6 +14,11 @@ import java.util.UUID;
 class UseCaseExecutionCorrelationTest {
 
     private final UUID randomUUID = UUID.randomUUID();
+
+    @BeforeEach
+    void setup(){
+        LoggerBootstrapForTesting.startupDefaultSettings();
+    }
 
     @Test
     void shouldInstantiateCorrectlyByTheStringConstructorMethod(){

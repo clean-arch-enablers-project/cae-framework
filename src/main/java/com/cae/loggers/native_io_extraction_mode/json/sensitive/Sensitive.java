@@ -1,14 +1,15 @@
-package com.cae.use_cases.io.annotations;
+package com.cae.loggers.native_io_extraction_mode.json.sensitive;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-/**
- * For use case input properties that must not be included in logs
- */
+@Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
 public @interface Sensitive {
+
+    int unmaskedAmount() default 0;
+    boolean unmaskFromLeft() default true;
+
 }

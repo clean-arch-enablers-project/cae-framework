@@ -1,26 +1,23 @@
 package com.cae.use_cases.specifics.suppliers;
 
-import com.cae.loggers.LoggerProvider;
 import com.cae.mapped_exceptions.MappedException;
 import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
 import com.cae.use_cases.exceptions.UseCaseExecutionException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import utils.LoggerForTesting;
+import utils.LoggerBootstrapForTesting;
 
 @ExtendWith(MockitoExtension.class)
 class SupplierUseCaseTest {
 
     private final UseCaseExecutionCorrelation correlation = UseCaseExecutionCorrelation.ofNew();
 
-    @BeforeAll
-    static void setUp(){
-        LoggerProvider.SINGLETON
-                .setProvidedInstance(LoggerForTesting.SINGLETON)
-                .setUseCasesLoggingIO(true);
+    @BeforeEach
+    void setup(){
+        LoggerBootstrapForTesting.startupDefaultSettings();
     }
 
     @Test
