@@ -15,10 +15,10 @@ public class FunctionUseCaseProcessor<I extends UseCaseInput, O> extends UseCase
         O output = null;
         try {
             output = this.useCase.applyInternalLogic(input, this.useCaseExecutionCorrelation);
-            this.generateLogForSuccessfulExecution(input, output);
+            this.logExecution(input, output, null);
             return output;
         } catch (Exception anyException){
-            this.generateLogForUnsuccessfulExecution(anyException, input, output);
+            this.logExecution(input, output, anyException);
             throw anyException;
         }
     }

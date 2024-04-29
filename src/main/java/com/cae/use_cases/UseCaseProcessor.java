@@ -4,6 +4,9 @@ package com.cae.use_cases;
 import com.cae.loggers.IOLoggingHandler;
 import com.cae.loggers.Logger;
 import com.cae.loggers.LoggerProvider;
+import com.cae.loggers.formats.IO;
+import com.cae.loggers.formats.UseCaseLogStructuredFormat;
+import com.cae.loggers.native_io_extraction_mode.NativeExtractionMode;
 import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
 import com.cae.use_cases.io.UseCaseInput;
 
@@ -29,38 +32,48 @@ public abstract class UseCaseProcessor<U extends UseCase> {
         this.startingMoment = LocalDateTime.now();
     }
 
+    public void logExecution(UseCaseInput input, Object output, Exception exception){
+        this.synchronousExecutionIfNeeded(CompletableFuture.runAsync(() -> {
+            if (Boolean.TRUE.equals(LoggerProvider.SINGLETON.getStructuredFormat()))
+                this.generateLogInStructuredFormat(input, output, exception);
+            else
+                this.generateLogInSimpleFormat(input, output, exception);
+            this.logWhatsGenerated(exception == null);
+        }));
+    }
+
+    private void synchronousExecutionIfNeeded(CompletableFuture<Void> future) {
+        if (Boolean.FALSE.equals(LoggerProvider.SINGLETON.getAsync()))
+            future.join();
+    }
+
+    private void generateLogInSimpleFormat(
+            UseCaseInput input,
+            Object output,
+            Exception exception){
+        if (exception == null)
+            this.generateLogForSuccessfulExecution(input, output);
+        else
+            this.generateLogForUnsuccessfulExecution(exception, input, output);
+    }
+
     protected void generateLogForSuccessfulExecution(
             UseCaseInput input,
             Object output){
-        var completableFuture = CompletableFuture.runAsync(() -> {
-            this.stringBuilder
-                    .append(this.generateFirstHalfOfLogString())
-                    .append(this.generateLastHalfOfSuccessfulLogString());
-            this.generateIOLogString(input, output);
-            this.logWhatsGenerated(true);
-        });
-        if (!LoggerProvider.SINGLETON.getAsync())
-            completableFuture.join();
+        this.stringBuilder
+                .append(this.generateFirstHalfOfLogString())
+                .append(this.generateLastHalfOfSuccessfulLogString());
+        this.generateIOLogString(input, output);
     }
 
     protected void generateLogForUnsuccessfulExecution(
             Exception anyException,
             UseCaseInput input,
             Object output){
-        var completableFuture = CompletableFuture.runAsync(() -> {
-            this.stringBuilder
-                    .append(this.generateFirstHalfOfLogString())
-                    .append(this.generateLastHalfOfUnsuccessfulLogString(anyException));
-            this.generateIOLogString(input, output);
-            this.logWhatsGenerated(false);
-        });
-        if (!LoggerProvider.SINGLETON.getAsync())
-            completableFuture.join();
-    }
-
-    private void logWhatsGenerated(boolean success) {
-        Consumer<String> methodToCall = (success? this.logger::logInfo : this.logger::logError);
-        methodToCall.accept(this.stringBuilder.toString());
+        this.stringBuilder
+                .append(this.generateFirstHalfOfLogString())
+                .append(this.generateLastHalfOfUnsuccessfulLogString(anyException));
+        this.generateIOLogString(input, output);
     }
 
     protected <I extends UseCaseInput, O> void generateIOLogString(I input, O output){
@@ -95,6 +108,33 @@ public abstract class UseCaseProcessor<U extends UseCase> {
         return "\" threw an exception. \""
                 + (anyException.getClass().getSimpleName().concat(": ").concat(anyException.getMessage()))
                 + ("\".");
+    }
+
+    private void generateLogInStructuredFormat(
+            UseCaseInput input,
+            Object output,
+            Exception exception) {
+        var io = Boolean.FALSE.equals(LoggerProvider.SINGLETON.getUseCasesLoggingIO())? null : IO.builder()
+                .input(input)
+                .output(output)
+                .build();
+        var executionData = UseCaseLogStructuredFormat.UseCaseExecutionLogFormat.builder()
+                .useCase(this.useCase.getUseCaseMetadata().getName())
+                .correlationId(this.useCaseExecutionCorrelation.toString())
+                .latency(Duration.between(this.startingMoment, LocalDateTime.now()).toMillis())
+                .successful(exception == null)
+                .exception(exception == null? null : exception.toString())
+                .io(io)
+                .build();
+        var structuredFormat = UseCaseLogStructuredFormat.builder()
+                .useCaseExecution(executionData)
+                .build();
+        this.stringBuilder.append(NativeExtractionMode.executeOn(structuredFormat));
+    }
+
+    private void logWhatsGenerated(boolean success) {
+        Consumer<String> methodToCall = (success? this.logger::logInfo : this.logger::logError);
+        methodToCall.accept(this.stringBuilder.toString());
     }
 
 }

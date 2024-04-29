@@ -56,6 +56,8 @@ public class SimpleJsonBuilder {
     }
 
     public static String buildFor(Object value){
+        if (value == null)
+            return "null";
         if (Boolean.TRUE.equals(ValueTypeScanner.isSimpleValue(value)))
             return String.valueOf(value);
         var builder = value instanceof Collection? SimpleJsonBuilder.ofCollection(value) : SimpleJsonBuilder.ofCommonObject(value);
@@ -142,7 +144,9 @@ public class SimpleJsonBuilder {
         var field = FieldRetriever.getField(keyName, this.levelZero);
         var isSensitive = field.isAnnotationPresent(Sensitive.class);
         var value = GetterInvoker.execute(getter, this.levelZero);
-        if (Boolean.TRUE.equals(ValueTypeScanner.isSimpleValue(value)))
+        if (value == null)
+            this.stringBuilder.append("\"null\"");
+        else if (Boolean.TRUE.equals(ValueTypeScanner.isSimpleValue(value)))
             this.stringBuilder.append("\"")
                     .append(Boolean.TRUE.equals(isSensitive)? SensitiveValueHandler.handle(value, field) : value)
                     .append("\"");

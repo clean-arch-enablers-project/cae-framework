@@ -14,10 +14,10 @@ public class SupplierUseCaseProcessor<O> extends UseCaseProcessor<SupplierUseCas
         O output = null;
         try {
             output = this.useCase.applyInternalLogic(this.useCaseExecutionCorrelation);
-            this.generateLogForSuccessfulExecution(null, output);
+            this.logExecution(null, output, null);
             return output;
         } catch (Exception anyException){
-            this.generateLogForUnsuccessfulExecution(anyException, null, output);
+            this.logExecution(null, output, anyException);
             throw anyException;
         }
     }

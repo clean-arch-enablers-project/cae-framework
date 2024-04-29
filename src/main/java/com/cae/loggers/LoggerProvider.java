@@ -1,7 +1,10 @@
 package com.cae.loggers;
 
+import lombok.Getter;
+
 import java.util.Optional;
 
+@Getter
 public class LoggerProvider {
 
     private LoggerProvider(){}
@@ -11,23 +14,12 @@ public class LoggerProvider {
     private Logger providedInstance;
     private Boolean useCasesLoggingIO = false;
     private Boolean portsLoggingIO = false;
-    private IOLoggingMode ioLoggingMode = IOLoggingMode.TO_STRING;
-    private Boolean async = false;
+    private IOLoggingMode ioLoggingMode = IOLoggingMode.CAE_NATIVE;
+    private Boolean async = true;
+    private Boolean structuredFormat = false;
 
     public Optional<Logger> getProvidedInstance(){
         return Optional.ofNullable(this.providedInstance);
-    }
-
-    public Boolean getUseCasesLoggingIO(){
-        return this.useCasesLoggingIO;
-    }
-
-    public Boolean getPortsLoggingIO(){
-        return this.portsLoggingIO;
-    }
-
-    public Boolean getAsync(){
-        return this.async;
     }
 
     public IOLoggingMode getIOLoggingMode(){
@@ -51,6 +43,11 @@ public class LoggerProvider {
 
     public LoggerProvider setIOLoggingMode(IOLoggingMode ioLoggingMode){
         this.ioLoggingMode = ioLoggingMode;
+        return this;
+    }
+
+    public LoggerProvider structuredFormat(boolean structuredFormat){
+        this.structuredFormat = structuredFormat;
         return this;
     }
 
