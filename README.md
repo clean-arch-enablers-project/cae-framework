@@ -303,22 +303,7 @@ More details on the Trier component, go to its own readme [here](https://github.
 
 ### 🔜 Future features
 
-#### ⏳ Optionality for logging right out of the box
-- Currently every declared Use Case has to receive an instance of the Logger interface via constructor. It means you'll have to create a class that implements the internal Logger interface and pass its instance via each Use Case constructor you create. That's because of the feature of generating logs right out of the box just by executing Use Case instances. The logging logic is internal to the framework, but for not making client projects coupled to a specific Logger tool, we created an abstraction layer and let you choose which Logger tool will be used, the tradeoff being you having to pass it via constructor everytime.
-
-  Though that's the current scenario, it is on the roadmap to make that feature optional, so if you don't want to pass an instance, the automatic logging won't be triggered.
-
-#### ⏳ Aggregated logs
-- The automatic log generations will be able to include Input and Output data into the message by parameterization. Fields that hold sensitive data will be susceptible to being marked as such, so the processor will mask them.
-
-#### ⏳ Caching Use Case & Port executions
-- Each Use Case and their respective Ports have the Proxy Area for getting executed. It will be possible to parameterize them to cache responses. The modes will be local and remote. When remote IOLogMode is selected, an implementation of the caching interface must be provided.
-
-#### ⏳ Documentation right out of the box
-- With the Use Case metadata mapped, it will be possible to extract automatic documentation from the source code during the build lifecycle, tipically during the CI/CD pipeline execution, for instance. It will take the Use Case IO and the commands within the _applyInternalLogic_ to define an end-to-end documentation of what is going on. It will export it as a file within the _target_ folder.
-
-#### ⏳ More Input validations
-- Currently the only validations we have are the @ValidInnerPropertiesInputField, @NotNullInputField, @NotEmptyInputField and @NotBlankInputField, the last 2 being exclusive for String typed fields. The goal is to increase the options, validation lists, numbers, etc.
+Check what's coming next by taking a look at the cae-framework repository issues section. To understand the roadmap, access the repository project section!
 
 <br>
 <br>
