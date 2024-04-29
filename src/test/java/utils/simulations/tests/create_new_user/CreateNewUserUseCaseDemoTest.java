@@ -18,7 +18,7 @@ class CreateNewUserUseCaseDemoTest {
 
     @BeforeAll
     static void setup(){
-        LoggerBootstrapForTesting.startupDefaultSettings();
+        LoggerBootstrapForTesting.startupSyncAllTrueSettingsAndNative();
     }
 
     @Test

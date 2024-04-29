@@ -19,4 +19,14 @@ public class LoggerBootstrapForTesting {
                 .setIOLoggingMode(IOLoggingMode.TO_STRING);
     }
 
+    public static void startupSyncAllTrueSettingsAndNative(){
+        LoggerProvider.SINGLETON
+                .setProvidedInstance(LoggerAdapterForTesting.SINGLETON)
+                .setUseCasesLoggingIO(true)
+                .setPortsLoggingIO(true)
+                .structuredFormat(true)
+                .async(false)
+                .setIOLoggingMode(IOLoggingMode.CAE_NATIVE);
+    }
+
 }
