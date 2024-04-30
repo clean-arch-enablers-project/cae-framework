@@ -8,8 +8,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import utils.LoggerAdapterForTesting;
-import utils.LoggerBootstrapForTesting;
+import utils.simulations.adapters.loggers.LoggerAdapterForTesting;
+import utils.simulations.assemblers.loggers.LoggerBootstrapForTesting;
 
 import java.util.UUID;
 

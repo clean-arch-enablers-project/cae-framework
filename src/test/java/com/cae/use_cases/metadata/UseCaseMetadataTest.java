@@ -7,7 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import utils.LoggerBootstrapForTesting;
+import utils.simulations.assemblers.loggers.LoggerBootstrapForTesting;
 
 @ExtendWith(MockitoExtension.class)
 class UseCaseMetadataTest {
@@ -26,7 +26,7 @@ class UseCaseMetadataTest {
 
     @Test
     void shouldInstantiateCorrectlyWhenCallingTheProtectedUseCaseConstructor(){
-        var useCaseMetadata = UseCaseMetadata.ofProtectedUseCase(SomeUseCaseImplementation.class);
+        var useCaseMetadata = UseCaseMetadata.ofProtectedUseCase(SomeUseCaseImplementation.class, new String[]{"write", "save"});
         var expectedUseCaseNameRetrievedFromItsMetadata = "some_implementation";
         var expectedUseCaseProtectionStatusRetrievedFromItsMetadata = true;
         Assertions.assertEquals(expectedUseCaseProtectionStatusRetrievedFromItsMetadata, useCaseMetadata.isProtected());

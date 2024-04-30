@@ -47,6 +47,7 @@ public abstract class RunnableUseCase extends UseCase {
      * @param correlation the unique identifier of the use case execution
      */
     public void execute(UseCaseExecutionCorrelation correlation){
+        this.handleAuthorization(correlation);
         Trier.of(() -> UseCaseProcessorFactory.of(this, correlation, this.getLogger()).processUseCase())
                 .setHandlerForUnexpectedException(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
                 .finishAndExecuteAction();

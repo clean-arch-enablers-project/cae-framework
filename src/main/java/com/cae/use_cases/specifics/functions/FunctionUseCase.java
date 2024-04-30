@@ -51,6 +51,7 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
      * @return the output of the use case
      */
     public O execute(I input, UseCaseExecutionCorrelation correlation){
+        this.handleAuthorization(correlation);
         input.validateProperties();
         return Trier.of(() ->  UseCaseProcessorFactory.of(this, correlation, this.getLogger()).processUseCaseUsing(input))
                     .setHandlerForUnexpectedException(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))

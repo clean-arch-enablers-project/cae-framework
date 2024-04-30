@@ -1,8 +1,11 @@
 package com.cae.use_cases.correlations;
 
 
+import com.cae.use_cases.correlations.actors.Actor;
 import com.cae.use_cases.correlations.exceptions.CorrelationIdValueFormatException;
+import lombok.Getter;
 
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -11,6 +14,7 @@ import java.util.UUID;
  * is supposed to have a unique identifier, in order to make it easier
  * to track the status of any execution in logs or so.
  */
+@Getter
 public class UseCaseExecutionCorrelation {
 
     /**
@@ -19,12 +23,20 @@ public class UseCaseExecutionCorrelation {
      */
     private final UUID id;
 
+    private final Actor actor;
+
     /**
      * Default constructor
      * @param id receives an instance of UUID to set it directly as the ID
      */
     public UseCaseExecutionCorrelation(UUID id) {
         this.id = id;
+        this.actor = null;
+    }
+
+    public UseCaseExecutionCorrelation(UUID id, Actor actor){
+        this.id = id;
+        this.actor = actor;
     }
 
     /**
@@ -41,6 +53,15 @@ public class UseCaseExecutionCorrelation {
         }
     }
 
+    public static UseCaseExecutionCorrelation of(String stringValue, Actor actor){
+        try {
+            var uuid = UUID.fromString(stringValue);
+            return new UseCaseExecutionCorrelation(uuid, actor);
+        } catch (Exception exception){
+            throw new CorrelationIdValueFormatException(stringValue);
+        }
+    }
+
     /**
      * Constructor for auto-generating an ID value when it is fit
      * @return the Correlation instance
@@ -49,8 +70,12 @@ public class UseCaseExecutionCorrelation {
         return new UseCaseExecutionCorrelation(UUID.randomUUID());
     }
 
-    public UUID getId(){
-        return this.id;
+    public static UseCaseExecutionCorrelation ofNew(Actor actor) {
+        return new UseCaseExecutionCorrelation(UUID.randomUUID(), actor);
+    }
+
+    public Optional<Actor> getActor(){
+        return Optional.ofNullable(this.actor);
     }
 
     /**

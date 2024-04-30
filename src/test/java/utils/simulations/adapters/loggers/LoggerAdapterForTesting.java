@@ -1,4 +1,4 @@
-package utils;
+package utils.simulations.adapters.loggers;
 
 import com.cae.loggers.Logger;
 import lombok.AccessLevel;
