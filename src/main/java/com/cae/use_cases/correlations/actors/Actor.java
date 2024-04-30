@@ -1,3 +1,8 @@
 package com.cae.use_cases.correlations.actors;
 
-public interface Actor { }
+import java.util.List;
+
+public interface Actor {
+
+    List<String> getScopes();
+}

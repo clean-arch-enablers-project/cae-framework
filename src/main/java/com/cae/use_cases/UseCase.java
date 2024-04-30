@@ -4,7 +4,7 @@ import com.cae.loggers.Logger;
 import com.cae.loggers.LoggerProvider;
 import com.cae.mapped_exceptions.MappedException;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
-import com.cae.use_cases.authorization.UseCaseExecutionAuthorizerProvider;
+import com.cae.use_cases.authorization.UseCaseExecutionAuthorizer;
 import com.cae.use_cases.authorization.annotations.ProtectedUseCase;
 import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
 import com.cae.use_cases.exceptions.NotAllowedMappedException;
@@ -78,11 +78,9 @@ public abstract class UseCase {
 
     protected void handleAuthorization(UseCaseExecutionCorrelation useCaseExecutionCorrelation){
         if (Boolean.TRUE.equals(this.useCaseMetadata.isProtected())){
-            var authorizerInstance = UseCaseExecutionAuthorizerProvider.SINGLETON.getProvidedInstance()
-                    .orElseThrow(() -> new InternalMappedException("No authorizer instance provided", "For executing protected use cases, you must provide an instance of UseCaseExecutionAuthorizer via the UseCaseExecutionAuthorizerProvider. Fix it and try again."));
             var actor = useCaseExecutionCorrelation.getActor()
                     .orElseThrow(() -> new InternalMappedException("No actor instance provided", "For executing protected use cases, you must provide an instance of Actor via the UseCaseExecutionCorrelation object. Fix it and try again."));
-            if (!authorizerInstance.allows(actor, this.useCaseMetadata.getScope())) {
+            if (!UseCaseExecutionAuthorizer.allows(actor, this.useCaseMetadata.getScope())) {
                 throw new NotAllowedMappedException(this);
             }
         }

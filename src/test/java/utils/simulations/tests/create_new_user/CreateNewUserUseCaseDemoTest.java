@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import utils.simulations.adapters.authorizers.ActorImplementation;
-import utils.simulations.assemblers.authorizers.AuthorizerBoostrap;
 import utils.simulations.assemblers.loggers.LoggerBootstrapForTesting;
 import utils.simulations.assemblers.use_cases.create_new_user.CreateNewUserUseCaseAssembler;
 import utils.simulations.core.use_cases.create_new_user.CreateNewUserUseCase;
@@ -23,7 +22,6 @@ class CreateNewUserUseCaseDemoTest {
     @BeforeAll
     static void setup(){
         LoggerBootstrapForTesting.startupSyncAllTrueSettingsAndNative();
-        AuthorizerBoostrap.startupBootstrappingSettings();
     }
 
     @Test
