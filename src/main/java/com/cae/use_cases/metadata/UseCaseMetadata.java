@@ -1,6 +1,7 @@
 package com.cae.use_cases.metadata;
 
 import com.cae.use_cases.UseCase;
+import lombok.Getter;
 
 /**
  * The metadata of use cases such as name, description and protection status.
@@ -21,10 +22,12 @@ import com.cae.use_cases.UseCase;
  * instance, it could be used to expose an overview about the
  * available use cases of the application for governance means.
  */
+@Getter
 public class UseCaseMetadata {
 
     private final String name;
     private final Boolean isProtected;
+    private final String[] scope;
 
     /**
      * Instantiates the use case metadata with the protected status set to true,
@@ -33,8 +36,8 @@ public class UseCaseMetadata {
      * @return the use case metadata instance
      * @param <U> the use case type
      */
-    public static  <U extends UseCase> UseCaseMetadata ofProtectedUseCase(Class<U> useCaseType){
-        return new UseCaseMetadata(useCaseType, true);
+    public static  <U extends UseCase> UseCaseMetadata ofProtectedUseCase(Class<U> useCaseType, String[] scope){
+        return new UseCaseMetadata(useCaseType, true, scope);
     }
 
     /**
@@ -45,12 +48,13 @@ public class UseCaseMetadata {
      * @param <U> the use case type
      */
     public static <U extends UseCase> UseCaseMetadata ofOpenAccessUseCase(Class<U> useCaseType){
-        return new UseCaseMetadata(useCaseType, false);
+        return new UseCaseMetadata(useCaseType, false, null);
     }
 
-    private <U extends UseCase> UseCaseMetadata(Class<U> useCaseType, Boolean isProtected) {
+    private <U extends UseCase> UseCaseMetadata(Class<U> useCaseType, Boolean isProtected, String[] scope) {
         this.name = getNameOutta(useCaseType);
         this.isProtected = isProtected;
+        this.scope = scope;
     }
 
     private <U extends UseCase> String getNameOutta(Class<U> useCaseType) {
@@ -64,10 +68,6 @@ public class UseCaseMetadata {
             index ++;
         }
         return snakeCaseName.toString().replace("_use_case", "");
-    }
-
-    public String getName() {
-        return name;
     }
 
     public Boolean isProtected() {

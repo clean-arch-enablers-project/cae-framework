@@ -50,6 +50,7 @@ public abstract class SupplierUseCase <O> extends UseCase {
      * @return the use case execution output
      */
     public O execute(UseCaseExecutionCorrelation correlation){
+        this.handleAuthorization(correlation);
         return Trier.of(() -> UseCaseProcessorFactory.of(this, correlation, this.getLogger()).processUseCase())
                 .setHandlerForUnexpectedException(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
                 .finishAndExecuteAction();

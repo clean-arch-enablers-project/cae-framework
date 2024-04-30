@@ -26,7 +26,7 @@ class UseCaseMetadataTest {
 
     @Test
     void shouldInstantiateCorrectlyWhenCallingTheProtectedUseCaseConstructor(){
-        var useCaseMetadata = UseCaseMetadata.ofProtectedUseCase(SomeUseCaseImplementation.class);
+        var useCaseMetadata = UseCaseMetadata.ofProtectedUseCase(SomeUseCaseImplementation.class, new String[]{"write", "save"});
         var expectedUseCaseNameRetrievedFromItsMetadata = "some_implementation";
         var expectedUseCaseProtectionStatusRetrievedFromItsMetadata = true;
         Assertions.assertEquals(expectedUseCaseProtectionStatusRetrievedFromItsMetadata, useCaseMetadata.isProtected());

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import utils.simulations.assemblers.authorizers.AuthorizerBoostrap;
 import utils.simulations.assemblers.loggers.LoggerBootstrapForTesting;
 import utils.simulations.assemblers.use_cases.retrieve_all_user_types.RetrieveAllUserTypesUseCaseAssembler;
 import utils.simulations.core.use_cases.retrieve_all_user_types.RetrieveAllUserTypesUseCase;
@@ -18,6 +19,7 @@ class RetrieveAllUserTypesUseCaseDemoTest {
     @BeforeAll
     static void setup(){
         LoggerBootstrapForTesting.startupSyncAllTrueSettingsAndNative();
+        AuthorizerBoostrap.startupBootstrappingSettings();
     }
 
     @Test

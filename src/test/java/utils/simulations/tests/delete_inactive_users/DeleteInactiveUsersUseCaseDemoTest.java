@@ -6,9 +6,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import utils.simulations.adapters.authorizers.ActorImplementation;
+import utils.simulations.assemblers.authorizers.AuthorizerBoostrap;
 import utils.simulations.assemblers.loggers.LoggerBootstrapForTesting;
 import utils.simulations.assemblers.use_cases.delete_inactive_users.DeleteInactiveUsersUseCaseAssembler;
 import utils.simulations.core.use_cases.delete_inactive_users.DeleteInactiveUsersUseCase;
+
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class DeleteInactiveUsersUseCaseDemoTest {
@@ -18,11 +22,15 @@ class DeleteInactiveUsersUseCaseDemoTest {
     @BeforeAll
     static void setup(){
         LoggerBootstrapForTesting.startupSyncAllTrueSettingsAndNative();
+        AuthorizerBoostrap.startupBootstrappingSettings();
     }
 
     @Test
     void runRunnableUseCase() {
-        Assertions.assertDoesNotThrow(() -> USE_CASE.execute(UseCaseExecutionCorrelation.ofNew()));
+        var actor = ActorImplementation.builder()
+            .scopes(List.of("delete:user"))
+            .build();
+        Assertions.assertDoesNotThrow(() -> USE_CASE.execute(UseCaseExecutionCorrelation.ofNew(actor)));
     }
 
 }

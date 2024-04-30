@@ -1,10 +1,10 @@
 package com.cae.use_cases.authorization;
 
-import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
+import com.cae.use_cases.correlations.actors.Actor;
 
-public abstract class UseCaseExecutionAuthorizer {
+public interface UseCaseExecutionAuthorizer {
 
-    protected abstract boolean isAllowed(UseCaseExecutionCorrelation useCaseExecutionCorrelation);
+    boolean allows(Actor actor, String[] requiredScopes);
 
 
 

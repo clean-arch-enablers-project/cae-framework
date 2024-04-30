@@ -49,6 +49,7 @@ public abstract class ConsumerUseCase <I extends UseCaseInput> extends UseCase {
      * @param input the input of the use case
      */
     public void execute(I input, UseCaseExecutionCorrelation correlation){
+        this.handleAuthorization(correlation);
         input.validateProperties();
         Trier.of(() ->  UseCaseProcessorFactory.of(this, correlation, this.getLogger()).processUseCaseUsing(input))
                 .setHandlerForUnexpectedException(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
