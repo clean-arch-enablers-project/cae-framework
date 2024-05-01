@@ -1,4 +1,6 @@
 # ☕ cae-framework
+DISCLAIMER: this README is not up to date, as we haven't reach the version 1.0.0 and new features are constantly getting built. Even that being the case, what's written in this README still is a good guide for getting started, it is just that not all features are described here. That being said:
+
 Welcome to the _CleanArchEnablers_ framework repository! The _cae-framework_ is open-source and meant to make the experience of developing software with clean architecture easier. Feel free to explore the source code and its documentation.
 <br><br>
 
