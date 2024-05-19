@@ -18,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
@@ -93,12 +94,15 @@ public class SimpleJsonBuilder {
 
     private void handleCommonObject() {
         var allGetters = GetterExtractor.executeOn(levelZero);
-        var counter = 1;
+        var counter = new GetterCounter();
         for (var getter : allGetters){
             var keyName = this.generateKeyBasedOn(getter);
-            this.generateValueBasedOn(getter, keyName);
-            if (counter < allGetters.size()) this.generateSeparator();
-            counter ++;
+            FieldRetriever.getField(keyName, this.levelZero).ifPresent(field -> {
+                this.appendKeyToMapping(keyName);
+                this.appendValueBasedOn(getter, field);
+                if (counter.getCount() < allGetters.size()) this.appendSeparator();
+            });
+            counter.increment();
         }
     }
 
@@ -125,23 +129,24 @@ public class SimpleJsonBuilder {
         this.stringBuilder.append(value);
     }
 
-    private void generateSeparator(){
+    private void appendSeparator(){
         this.stringBuilder.append(", ");
     }
 
     private String generateKeyBasedOn(Method getter){
         var fieldName = getter.getName()
                 .replace("get", "");
-        fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1);
-        this.stringBuilder.append("\"")
-                .append(fieldName)
-                .append("\"")
-                .append(": ");
-        return fieldName;
+        return fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1);
     }
 
-    private void generateValueBasedOn(Method getter, String keyName) {
-        var field = FieldRetriever.getField(keyName, this.levelZero);
+    public void appendKeyToMapping(String key){
+        this.stringBuilder.append("\"")
+                .append(key)
+                .append("\"")
+                .append(": ");
+    }
+
+    private void appendValueBasedOn(Method getter, Field field) {
         var isSensitive = field.isAnnotationPresent(Sensitive.class);
         var value = GetterInvoker.execute(getter, this.levelZero);
         if (value == null)
@@ -152,6 +157,16 @@ public class SimpleJsonBuilder {
                     .append("\"");
         else
             this.stringBuilder.append(Boolean.TRUE.equals(isSensitive)? "\"***************\"" : SimpleJsonBuilder.buildFor(value));
+    }
+
+    @Getter
+    static class GetterCounter{
+        private Integer count = 1;
+
+        public void increment(){
+            this.count = count + 1;
+        }
+
     }
 
 }
