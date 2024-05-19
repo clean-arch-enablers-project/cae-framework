@@ -26,6 +26,8 @@ import java.util.Collection;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class SimpleJsonBuilder {
 
+    public static final int STARTING_POINT_FOR_COUNTER = 1;
+
     private static SimpleJsonBuilder ofCollection(Object levelZero){
         return new SimpleJsonBuilder(
                 true,
@@ -98,9 +100,9 @@ public class SimpleJsonBuilder {
         for (var getter : allGetters){
             var keyName = this.generateKeyBasedOn(getter);
             FieldRetriever.getField(keyName, this.levelZero).ifPresent(field -> {
+                if (counter.getCount() > STARTING_POINT_FOR_COUNTER) this.appendSeparator();
                 this.appendKeyToMapping(keyName);
                 this.appendValueBasedOn(getter, field);
-                if (counter.getCount() < allGetters.size()) this.appendSeparator();
             });
             counter.increment();
         }
@@ -161,7 +163,7 @@ public class SimpleJsonBuilder {
 
     @Getter
     static class GetterCounter{
-        private Integer count = 1;
+        private Integer count = STARTING_POINT_FOR_COUNTER;
 
         public void increment(){
             this.count = count + 1;
