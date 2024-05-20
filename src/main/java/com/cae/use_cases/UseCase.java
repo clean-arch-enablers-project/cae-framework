@@ -34,16 +34,19 @@ public abstract class UseCase {
     protected UseCase(UseCaseMetadata useCaseMetadata, Logger logger) {
         this.useCaseMetadata = useCaseMetadata;
         this.logger = logger;
+        UseCaseRegistry.SINGLETON.add(this);
     }
 
     protected UseCase(Logger logger) {
         this.useCaseMetadata = UseCase.extractSomeMetadataFrom(this.getClass());
         this.logger = logger;
+        UseCaseRegistry.SINGLETON.add(this);
     }
 
     protected UseCase() {
         this.useCaseMetadata = UseCase.extractSomeMetadataFrom(this.getClass());
         this.logger = null;
+        UseCaseRegistry.SINGLETON.add(this);
     }
 
     private static UseCaseMetadata extractSomeMetadataFrom(Class<? extends UseCase> thisType) {
