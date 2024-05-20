@@ -8,7 +8,7 @@
     <url>https://github.com/clean-arch-enablers-project/cae-framework/blob/main/README.md</url>
     <groupId>com.clean-arch-enablers</groupId>
     <artifactId>cae-framework</artifactId>
-    <version>0.7.4</version>
+    <version>0.8.0</version>
     <packaging>jar</packaging>
     <licenses>
         <license>
@@ -68,6 +68,17 @@
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>4.8.0</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.clean-arch-enablers</groupId>
+            <artifactId>env-vars</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.clean-arch-enablers</groupId>
+            <artifactId>http-client</artifactId>
+            <version>0.0.2</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
     <build>
