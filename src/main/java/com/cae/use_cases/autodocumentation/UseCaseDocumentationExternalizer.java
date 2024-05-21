@@ -8,7 +8,6 @@ import com.cae.use_cases.auto_initializer.UseCaseAutoInitializer;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -20,30 +19,32 @@ import java.util.stream.Collectors;
  */
 public class UseCaseDocumentationExternalizer {
 
-    public static final UseCaseDocumentationExternalizer SINGLETON = new UseCaseDocumentationExternalizer();
-
     private final BufferedWriter fileWriter;
 
-    private UseCaseDocumentationExternalizer(){
+    private UseCaseDocumentationExternalizer(String domainName){
         try {
-            this.fileWriter = new BufferedWriter(new FileWriter("target/use_cases.json"));
+            this.fileWriter = new BufferedWriter(new FileWriter("target/" + domainName.toLowerCase() + "-documentation.json"));
         } catch (IOException e) {
             throw new ExternalizeUseCaseException(e);
         }
     }
 
-    public static void externalize(String useCasesPackageForAssemblersLayer) throws IOException, ClassNotFoundException {
+    public static void externalize(String useCasesPackageForAssemblersLayer, String domainName) throws IOException, ClassNotFoundException {
         UseCaseAutoInitializer.initializeByAssemblerLayer(useCasesPackageForAssemblersLayer);
-        var registerer = UseCaseDocumentationExternalizer.SINGLETON;
-        var fullDocumentation = UseCaseRegistry.SINGLETON.getRegisteredUseCases()
+        var registerer = new UseCaseDocumentationExternalizer(domainName);
+        var useCasesDocumented = UseCaseRegistry.SINGLETON.getRegisteredUseCases()
                 .stream()
                 .map(UseCaseDocumentationGenerator::generateFor)
                 .collect(Collectors.toList());
+        var fullDocumentation = DomainDocumentation.builder()
+                .domain(domainName)
+                .useCases(useCasesDocumented)
+                .build();
         registerer.startExternalization(fullDocumentation);
         registerer.endExternalization();
     }
 
-    private void startExternalization(List<UseCaseDocumentation> fullDocumentation) {
+    private void startExternalization(DomainDocumentation fullDocumentation) {
         try {
             this.fileWriter.write(SimpleJsonBuilder.buildFor(fullDocumentation));
             this.fileWriter.newLine();

@@ -21,12 +21,13 @@ class UseCaseExternalizerTest {
 
     @Test
     void shouldRunTheRegistererWithoutExplodingMyPC(){
-        Assertions.assertDoesNotThrow(() -> UseCaseDocumentationExternalizer.externalize(null));
-        this.checkIfFileWasCreated();
+        var domainName = "Services";
+        Assertions.assertDoesNotThrow(() -> UseCaseDocumentationExternalizer.externalize(null, "Services"));
+        this.checkIfFileWasCreated(domainName);
     }
 
-    void checkIfFileWasCreated(){
-        var file = new File("target/use_cases.json");
+    void checkIfFileWasCreated(String domainName){
+        var file = new File("target/"+domainName.toLowerCase()+"-documentation.json");
         Assertions.assertTrue(file.exists());
     }
 
