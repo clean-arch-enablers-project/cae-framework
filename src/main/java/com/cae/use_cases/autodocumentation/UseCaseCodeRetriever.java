@@ -14,12 +14,12 @@ import java.nio.file.Paths;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UseCaseCodeRetriever {
 
-    public static String retrieveCodeFor(UseCaseDocumentation documentation) {
+    public static String retrieveCodeFor(String useCaseImplementationLocation, String useCaseImplementationName) {
         var currentPath = System.getProperty("user.dir").replace("assemblers", "core");
         var location = currentPath +
                 File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator +
-                documentation.getUseCaseImplementationLocation().replace(".", File.separator) + File.separator +
-                documentation.getUseCaseImplementation() + ".java";
+                useCaseImplementationLocation.replace(".", File.separator) + File.separator +
+                useCaseImplementationName + ".java";
         var path = Paths.get(location);
         if (Files.exists(path)){
             return UseCaseCodeRetriever.getCodeFrom(path);
@@ -32,7 +32,11 @@ public class UseCaseCodeRetriever {
 
     private static String getCodeFrom(Path path) {
         try {
-            return Files.readString(path);
+            return Files.readString(path)
+                    .replace("\n", " ")
+                    .replace("\r", " ")
+                    .replace("\t", " ")
+                    .replace("\"", "\\\"");
         } catch (IOException e) {
             throw new InternalMappedException(
                     "Something went wrong while trying to retrieve use case code for GPT documentation",
