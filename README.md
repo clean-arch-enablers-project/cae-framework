@@ -5,8 +5,6 @@
 
 Welcome to the open source cae-framework repository! This component of the SDK is designed to enable the [Angularization](https://github.com/clean-arch-enablers-project#-the-angularization-concept) effect of client applications by following Clean Architecture principles.
 
-<br>
-
 ### ▶️ The artifact:
 
 ```xml
