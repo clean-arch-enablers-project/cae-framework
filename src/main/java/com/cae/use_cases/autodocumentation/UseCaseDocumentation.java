@@ -6,10 +6,7 @@ import com.cae.use_cases.specifics.consumers.ConsumerUseCase;
 import com.cae.use_cases.specifics.functions.FunctionUseCase;
 import com.cae.use_cases.specifics.runnables.RunnableUseCase;
 import com.cae.use_cases.specifics.suppliers.SupplierUseCase;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
@@ -20,6 +17,8 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Builder(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
+@NoArgsConstructor
 public class UseCaseDocumentation {
 
     public static UseCaseDocumentation of(UseCase useCase){
@@ -33,6 +32,7 @@ public class UseCaseDocumentation {
                 .ioContract(handleIOContractFrom(declarationClass))
                 .isProtected(handleProtectionStatus(implementationClass, declarationClass))
                 .scopes(handleScopes(implementationClass, declarationClass))
+                .useCaseSourceCode(UseCaseCodeRetriever.retrieveCodeFor(implementationClass.getPackageName(), implementationClass.getSimpleName()))
                 .build();
     }
 
@@ -70,6 +70,7 @@ public class UseCaseDocumentation {
     private String useCaseImplementationLocation;
     private List<IOContractDocumentation> ioContract;
     private String description;
+    private String useCaseSourceCode;
     private Boolean isProtected;
     private List<String> scopes;
 

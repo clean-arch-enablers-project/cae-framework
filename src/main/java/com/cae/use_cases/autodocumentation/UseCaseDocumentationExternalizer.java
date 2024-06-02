@@ -21,9 +21,9 @@ public class UseCaseDocumentationExternalizer {
 
     private final BufferedWriter fileWriter;
 
-    private UseCaseDocumentationExternalizer(String domainName){
+    private UseCaseDocumentationExternalizer(){
         try {
-            this.fileWriter = new BufferedWriter(new FileWriter("target/" + domainName.toLowerCase() + "-documentation.json"));
+            this.fileWriter = new BufferedWriter(new FileWriter("target/cae-docfile.json"));
         } catch (IOException e) {
             throw new ExternalizeUseCaseException(e);
         }
@@ -31,7 +31,7 @@ public class UseCaseDocumentationExternalizer {
 
     public static void externalize(String useCasesPackageForAssemblersLayer, String domainName) throws IOException, ClassNotFoundException {
         UseCaseAutoInitializer.initializeByAssemblerLayer(useCasesPackageForAssemblersLayer);
-        var registerer = new UseCaseDocumentationExternalizer(domainName);
+        var registerer = new UseCaseDocumentationExternalizer();
         var useCasesDocumented = UseCaseRegistry.SINGLETON.getRegisteredUseCases()
                 .stream()
                 .map(UseCaseDocumentationGenerator::generateFor)

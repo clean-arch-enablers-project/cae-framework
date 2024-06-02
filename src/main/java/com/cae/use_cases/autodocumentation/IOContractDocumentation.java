@@ -1,9 +1,6 @@
 package com.cae.use_cases.autodocumentation;
 
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -13,12 +10,15 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 @Builder(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
+@AllArgsConstructor
 public class IOContractDocumentation {
 
     public static IOContractDocumentation of(Type ioType){
         var typeAsClass = (Class<?>) ioType;
         return IOContractDocumentation.builder()
                 .className(typeAsClass.getSimpleName())
+                .input(typeAsClass.getSimpleName().contains("Input"))
                 .classFields(handleFieldsFrom(typeAsClass))
                 .build();
     }
@@ -30,6 +30,7 @@ public class IOContractDocumentation {
     }
 
     private String className;
+    private Boolean input;
     private List<IOFieldDocumentation> classFields;
 
 }

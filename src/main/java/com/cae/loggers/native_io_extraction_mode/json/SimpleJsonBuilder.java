@@ -103,8 +103,8 @@ public class SimpleJsonBuilder {
                 if (counter.getCount() > STARTING_POINT_FOR_COUNTER) this.appendSeparator();
                 this.appendKeyToMapping(keyName);
                 this.appendValueBasedOn(getter, field);
+                counter.increment();
             });
-            counter.increment();
         }
     }
 
@@ -152,7 +152,7 @@ public class SimpleJsonBuilder {
         var isSensitive = field.isAnnotationPresent(Sensitive.class);
         var value = GetterInvoker.execute(getter, this.levelZero);
         if (value == null)
-            this.stringBuilder.append("\"null\"");
+            this.stringBuilder.append("null");
         else if (Boolean.TRUE.equals(ValueTypeScanner.isSimpleValue(value)))
             this.stringBuilder.append("\"")
                     .append(Boolean.TRUE.equals(isSensitive)? SensitiveValueHandler.handle(value, field) : value)
