@@ -23,7 +23,7 @@ jobs:
        run: |
          echo BUILDING PROJECT
          mvn clean install
-     - name: Maven install
+     - name: Maven test
        run: |
          echo BUILDING PROJECT
-         mvn clean install
+         mvn test
