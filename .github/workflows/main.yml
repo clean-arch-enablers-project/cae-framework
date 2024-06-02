@@ -1,4 +1,4 @@
-name: LambdaCICD
+name: Build
 
 on:
   push:
