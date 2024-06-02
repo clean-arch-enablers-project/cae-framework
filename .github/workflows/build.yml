@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+      - feature/*
+      - refact/*
+      - fix/*
 
 env:
   MAVEN_OPTS: '-Dmaven.repo.local=/home/runner/work/./.m2/repository'
