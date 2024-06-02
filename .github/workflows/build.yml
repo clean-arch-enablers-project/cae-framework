@@ -1,0 +1,32 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - main
+      - feature/*
+      - refact/*
+      - fix/*
+
+env:
+  MAVEN_OPTS: '-Dmaven.repo.local=/home/runner/work/./.m2/repository'
+
+jobs:
+  build-application:
+    runs-on: ubuntu-latest
+    steps:
+     - name: Checkout code
+       uses: actions/checkout@v4
+     - name: JDK 11
+       uses: actions/setup-java@v4
+       with:
+         java-version: '11'
+         distribution: 'adopt'
+     - name: Maven install
+       run: |
+         echo BUILDING PROJECT
+         mvn clean install
+     - name: Maven test
+       run: |
+         echo BUILDING PROJECT
+         mvn test
