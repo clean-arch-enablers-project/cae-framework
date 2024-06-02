@@ -1,4 +1,5 @@
-# ✔️ cae-framework (☕ Java edition)
+# ✔️ cae-framework
+☕ Java edition
 
 <br>
 
