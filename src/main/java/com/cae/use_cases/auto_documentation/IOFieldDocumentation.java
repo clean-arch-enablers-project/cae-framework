@@ -1,4 +1,4 @@
-package com.cae.use_cases.autodocumentation;
+package com.cae.use_cases.auto_documentation;
 
 import com.cae.loggers.native_io_extraction_mode.json.sensitive.Sensitive;
 import com.cae.use_cases.io.annotations.NotBlankInputField;

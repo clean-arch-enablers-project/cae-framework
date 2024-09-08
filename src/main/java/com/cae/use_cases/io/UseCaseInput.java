@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Optional;
 
 /**
@@ -53,7 +54,7 @@ public class UseCaseInput {
         return Arrays.stream(this.getClass().getMethods())
                 .filter(method -> method.getName().equalsIgnoreCase("get".concat(field.getName())))
                 .findFirst()
-                .orElseThrow(() -> new GetterMethodNotFoundException(field));
+                .orElseThrow(() -> new GetterMethodNotFoundException(this.getFullFieldName(field)));
     }
 
     private void handleNotBlankAnnotation(Field field, Method getterMethod) throws IllegalAccessException, InvocationTargetException {
@@ -61,11 +62,24 @@ public class UseCaseInput {
             Optional.ofNullable(getterMethod.invoke(this)).ifPresent(value -> {
                 if (value instanceof String){
                     if (((String) value).isBlank())
-                        throw new BlankFieldException(field.getName());
-                } else
-                    throw new NotBlankAnnotationOnWrongTypeException(field.getName());
+                        throw new BlankFieldException(this.getFullFieldName(field));
+                } else if (value instanceof  Collection){
+                    for (var item: (Collection<?>) value)
+                        this.validateCollectionItemAsNotBlank(item, field);
+                }
+                else
+                    throw new NotBlankAnnotationOnWrongTypeException(this.getFullFieldName(field));
             });
         }
+    }
+
+    private void validateCollectionItemAsNotBlank(Object item, Field field) {
+        if (item instanceof String){
+            if (((String) item).isBlank())
+                throw new BlankFieldException(this.getFullFieldName(field));
+        }
+        else
+            throw new NotBlankAnnotationOnWrongTypeException(this.getFullFieldName(field));
     }
 
     private void handleNotEmptyAnnotation(Field field, Method getterMethod) throws IllegalAccessException, InvocationTargetException {
@@ -73,9 +87,13 @@ public class UseCaseInput {
             Optional.ofNullable(getterMethod.invoke(this)).ifPresent(value -> {
                 if (value instanceof String){
                     if (((String) value).isEmpty())
-                        throw new EmptyFieldException(field.getName());
-                } else
-                    throw new NotEmptyAnnotationOnWrongTypeException(field.getName());
+                        throw new EmptyFieldException(this.getFullFieldName(field));
+                } else if (value instanceof Collection){
+                    if (((Collection<?>) value).isEmpty())
+                        throw new EmptyFieldException(this.getFullFieldName(field));
+                }
+                else
+                    throw new NotEmptyAnnotationOnWrongTypeException(this.getFullFieldName(field));
             });
         }
     }
@@ -85,10 +103,21 @@ public class UseCaseInput {
             Optional.ofNullable(getterMethod.invoke(this)).ifPresent(value -> {
                 if (value instanceof UseCaseInput)
                     ((UseCaseInput) value).validateProperties();
+                else if(value instanceof Collection){
+                    for (var item : (Collection<?>) value)
+                        this.handleCollectionItemValidation(item, field);
+                }
                 else
-                    throw new ValidInnerPropertiesAnnotationOnWrongTypeException(field.getName());
+                    throw new ValidInnerPropertiesAnnotationOnWrongTypeException(this.getFullFieldName(field));
             });
         }
+    }
+
+    private void handleCollectionItemValidation(Object item, Field field){
+        if (item instanceof UseCaseInput)
+            ((UseCaseInput) item).validateProperties();
+        else
+            throw new ValidInnerPropertiesAnnotationOnWrongTypeException(this.getFullFieldName(field));
     }
 
     private void handleNotNullAnnotation(Field field, Method getterMethod) throws IllegalAccessException, InvocationTargetException {
@@ -100,13 +129,17 @@ public class UseCaseInput {
 
     private void checkIfNotNull(Object value, Field field){
         if (Optional.ofNullable(value).isEmpty())
-            throw new NullFieldException(field.getName());
+            throw new NullFieldException(this.getFullFieldName(field));
     }
 
     public static class GetterMethodNotFoundException extends InternalMappedException {
-        public GetterMethodNotFoundException(Field field) {
-            super("Getter method not found for one of the fields.", "More details: the field '" + field.getName() + "' has no getter method defined for it. Please define one method for this purpose.");
+        public GetterMethodNotFoundException(String fullFieldName) {
+            super("Getter method not found for one of the fields.", "More details: the field '" + fullFieldName + "' has no getter method defined for it. Please define one method for this purpose.");
         }
+    }
+
+    public String getFullFieldName(Field field){
+        return this.getClass().getSimpleName() + ":" + field.getName();
     }
 
 }

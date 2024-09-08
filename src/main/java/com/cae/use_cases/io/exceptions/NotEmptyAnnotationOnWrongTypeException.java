@@ -4,6 +4,6 @@ import com.cae.mapped_exceptions.specifics.InternalMappedException;
 
 public class NotEmptyAnnotationOnWrongTypeException extends InternalMappedException {
     public NotEmptyAnnotationOnWrongTypeException(String name) {
-        super("The not-empty annotation should only be applied upon String fields.", "There is an issue about it at field '" + name + "'");
+        super("The not-empty annotation should only be applied upon String and Collection typed fields.", "There is an issue about it at field '" + name + "'");
     }
 }

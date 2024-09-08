@@ -8,7 +8,7 @@
     <url>https://github.com/clean-arch-enablers-project/cae-framework/blob/main/README.md</url>
     <groupId>com.clean-arch-enablers</groupId>
     <artifactId>cae-framework</artifactId>
-    <version>0.9.0</version>
+    <version>0.10.0</version>
     <packaging>jar</packaging>
     <licenses>
         <license>
@@ -126,7 +126,7 @@
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
-                        <phase>deploy</phase>
+                        <phase>verify</phase>
                         <goals>
                             <goal>sign</goal>
                         </goals>
