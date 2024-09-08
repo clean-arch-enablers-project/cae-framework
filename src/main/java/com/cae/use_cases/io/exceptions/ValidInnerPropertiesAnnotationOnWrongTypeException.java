@@ -5,7 +5,7 @@ import com.cae.mapped_exceptions.specifics.InternalMappedException;
 
 public class ValidInnerPropertiesAnnotationOnWrongTypeException extends InternalMappedException {
     public ValidInnerPropertiesAnnotationOnWrongTypeException(String name) {
-        super("The valid-inner-properties annotation should only be applied upon T (T -> T extends UseCaseInput) fields.", "There is an issue about it" +
+        super("The valid-inner-properties annotation should only be applied upon UseCaseInput and Collections of UseCaseInput typed fields.", "There is an issue about it" +
                 " at field '" + name + "'");
     }
 }

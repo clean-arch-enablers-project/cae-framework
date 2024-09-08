@@ -1,4 +1,4 @@
-package com.cae.use_cases.autodocumentation;
+package com.cae.use_cases.auto_documentation;
 
 import com.cae.env_vars.EnvVarRetriever;
 import com.cae.http_client.HttpRequestStarter;

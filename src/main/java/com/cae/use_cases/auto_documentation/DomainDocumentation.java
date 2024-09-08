@@ -1,4 +1,4 @@
-package com.cae.use_cases.autodocumentation;
+package com.cae.use_cases.auto_documentation;
 
 import lombok.*;
 
