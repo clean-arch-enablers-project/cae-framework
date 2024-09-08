@@ -1,5 +1,5 @@
 # ✔️ cae-framework
-☕ Java edition
+☕ Java & Kotlin edition
 
 <br>
 
