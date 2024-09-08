@@ -63,6 +63,7 @@ public class UseCaseAutoInitializer {
                 .findFirst()
                 .orElseThrow(() -> new InternalMappedException("Assembler '" + clazz.getSimpleName() + "' had no SINGLETON_ASSEMBLER field", "Assemblers must have the SINGLETON_ASSEMBLER field"));
         try {
+            singletonInstanceField.setAccessible(true);
             ((UseCaseAssembler<? extends UseCase>) singletonInstanceField.get(clazz)).getDefaultAssembledInstance();
         } catch (IllegalAccessException e) {
             throw new InternalMappedException("Something went wrong while trying to get the value of SINGLETON_ASSEMBLER field.", "Assembler class: " + clazz.getSimpleName());

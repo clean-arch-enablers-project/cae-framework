@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UseCaseDocumentationGenerator {
 
-    public static UseCaseDocumentation generateFor(UseCase useCase){
-        var documentation = UseCaseDocumentation.of(useCase);
+    public static UseCaseDocumentation generateFor(UseCase useCase, boolean kotlin){
+        var documentation = UseCaseDocumentation.of(useCase, kotlin);
 //        if (System.getenv(CAE_GPT_API_HOST) != null){
 //            var gptAnalysis = GPTDocumentation.SINGLETON.getGPTDescriptionAbout(GPTDocumentation.Input.of(documentation.getUseCaseSourceCode()));
 //            documentation.setDescription(gptAnalysis.getAnalysis().replace("\"", "\\\"")

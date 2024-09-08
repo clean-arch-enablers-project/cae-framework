@@ -21,7 +21,7 @@ import java.util.stream.Stream;
 @NoArgsConstructor
 public class UseCaseDocumentation {
 
-    public static UseCaseDocumentation of(UseCase useCase){
+    public static UseCaseDocumentation of(UseCase useCase, boolean kotlin){
         var implementationClass = useCase.getClass();
         var declarationClass = getDeclarationClassOf(implementationClass);
         return UseCaseDocumentation.builder()
@@ -32,7 +32,11 @@ public class UseCaseDocumentation {
                 .ioContract(handleIOContractFrom(declarationClass))
                 .isProtected(handleProtectionStatus(implementationClass, declarationClass))
                 .scopes(handleScopes(implementationClass, declarationClass))
-                .useCaseSourceCode(UseCaseCodeRetriever.retrieveCodeFor(implementationClass.getPackageName(), implementationClass.getSimpleName()))
+                .useCaseSourceCode(UseCaseCodeRetriever.retrieveCodeFor(
+                        implementationClass.getPackageName(),
+                        implementationClass.getSimpleName(),
+                        kotlin
+                ))
                 .build();
     }
 

@@ -14,12 +14,15 @@ import java.nio.file.Paths;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UseCaseCodeRetriever {
 
-    public static String retrieveCodeFor(String useCaseImplementationLocation, String useCaseImplementationName) {
+    public static String retrieveCodeFor(
+            String useCaseImplementationLocation,
+            String useCaseImplementationName,
+            boolean kotlin) {
         var currentPath = System.getProperty("user.dir").replace("assemblers", "core");
         var location = currentPath +
-                File.separator + "src" + File.separator + "main" + File.separator + "java" + File.separator +
+                File.separator + "src" + File.separator + "main" + File.separator + (kotlin? "kotlin" : "java") + File.separator +
                 useCaseImplementationLocation.replace(".", File.separator) + File.separator +
-                useCaseImplementationName + ".java";
+                useCaseImplementationName + (kotlin? ".kt" : ".java");
         var path = Paths.get(location);
         if (Files.exists(path)){
             return UseCaseCodeRetriever.getCodeFrom(path);

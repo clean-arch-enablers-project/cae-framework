@@ -23,18 +23,18 @@ public class UseCaseDocumentationExternalizer {
 
     private UseCaseDocumentationExternalizer(){
         try {
-            this.fileWriter = new BufferedWriter(new FileWriter("target/cae-docfile.json"));
+            this.fileWriter = new BufferedWriter(new FileWriter("cae-docfile.json"));
         } catch (IOException e) {
             throw new ExternalizeUseCaseException(e);
         }
     }
 
-    public static void externalize(String useCasesPackageForAssemblersLayer, String domainName) throws IOException, ClassNotFoundException {
+    public static void externalize(String useCasesPackageForAssemblersLayer, String domainName, Boolean kotlin) throws IOException, ClassNotFoundException {
         UseCaseAutoInitializer.initializeByAssemblerLayer(useCasesPackageForAssemblersLayer);
         var registerer = new UseCaseDocumentationExternalizer();
         var useCasesDocumented = UseCaseRegistry.SINGLETON.getRegisteredUseCases()
                 .stream()
-                .map(UseCaseDocumentationGenerator::generateFor)
+                .map(useCase -> UseCaseDocumentationGenerator.generateFor(useCase, kotlin))
                 .collect(Collectors.toList());
         var fullDocumentation = DomainDocumentation.builder()
                 .domain(domainName)
