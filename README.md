@@ -108,7 +108,7 @@ The ``LoggerProvider`` class centralizes logging configuration, allowing for fle
 ## 🧩 Putting it together
 The basic workflow for the development process is as follows:
 
-- **Make a CAE project**: Either create a brand new project via CLI or make an old project compatible with the CAE SDK by adding the ``cae-settings.json`` file.
+- **Make a CAE project**: Either create a brand new project via CLI or make an old project compatible with the CAE SDK by adding the ``cae-config.json`` file.
 - **Define a Use Case**: Extend one of the UseCase classes (``Function``, ``Consumer``, ``Supplier``, or ``Runnable``) to implement your core business logic.
 - **Implement Ports**: Connect your core logic to external systems by utilizing ``Function``, ``Consumer``, ``Supplier``, or ``Runnable`` ports.
 - **Set Metadata and Validation**: Leverage annotations to enforce input validation and authorization requirements effortlessly.
