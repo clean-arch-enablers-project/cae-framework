@@ -14,7 +14,7 @@ Welcome to the open source cae-framework repository! This component of the SDK i
   <version>${version}</version>
 </dependency>
 ```
-###### All available versions can be found here: [cae-framework on Maven](https://central.sonatype.com/artifact/com.clean-arch-enablers/cae-framework)
+###### All available versions can be found here: [cae-framework on Maven](https://central.sonatype.com/artifact/com.clean-arch-enablers/cae-framework) (_since it is in a snapshot state, it is recommended to always use the latest version._) 
 
 <br>
 
