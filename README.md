@@ -90,3 +90,17 @@ The basic workflow for the development process is as follows:
 - **Logging**: Take advantage of built-in logging transparent, traceable use case execution.
 - **Automatic Documentation**: Benefit from auto-generated documentation for all use case instances during the build process of your application.
 - **Execute**: Use the built-in processors to enjoy automatic handling of logging, validation, and error management during execution.
+
+<br>
+
+## 💡 Tutorials
+Soon tutorials will be published in the YouTube channel of the SDK: [Clean Arch Enablers SDK](https://www.youtube.com/@CleanArchEnablersSDK).
+
+<br>
+<br>
+<br>
+<br>
+
+<p align="center">
+  CAE — Clean Architecture made easy.
+</p>
