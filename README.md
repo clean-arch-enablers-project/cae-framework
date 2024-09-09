@@ -114,7 +114,6 @@ The basic workflow for the development process is as follows:
 - **Set Metadata and Validation**: Leverage annotations to enforce input validation and authorization requirements effortlessly.
 - **Logging**: Leverage built-in logging for transparent and traceable use case execution.
 - **Automatic Documentation**: Benefit from auto-generated documentation for all use case instances during the build process of your application.
-- **Execute**: Use the built-in processors to enjoy automatic handling of logging, validation, and error management during execution.
 
 <br>
 
