@@ -99,7 +99,7 @@ The basic workflow for the development process is as follows:
 <br>
 
 ## 💡 Tutorials
-Soon tutorials will be published in the YouTube channel of the SDK: [Clean Arch Enablers SDK](https://www.youtube.com/@CleanArchEnablersSDK).
+Tutorials will soon be available on the SDK's YouTube channel: [Clean Arch Enablers SDK](https://www.youtube.com/@CleanArchEnablersSDK).
 
 <br>
 <br>
