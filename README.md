@@ -92,7 +92,7 @@ The basic workflow for the development process is as follows:
 - **Define a Use Case**: Extend one of the UseCase classes (``Function``, ``Consumer``, ``Supplier``, or ``Runnable``) to implement your core business logic.
 - **Implement Ports**: Connect your core logic to external systems by utilizing ``Function``, ``Consumer``, ``Supplier``, or ``Runnable`` ports.
 - **Set Metadata and Validation**: Leverage annotations to enforce input validation and authorization requirements effortlessly.
-- **Logging**: Take advantage of built-in logging transparent, traceable use case execution.
+- **Logging**: Leverage built-in logging for transparent and traceable use case execution.
 - **Automatic Documentation**: Benefit from auto-generated documentation for all use case instances during the build process of your application.
 - **Execute**: Use the built-in processors to enjoy automatic handling of logging, validation, and error management during execution.
 
