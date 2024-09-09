@@ -67,8 +67,12 @@ Upcoming satellites:
 - ``⏳`` **Caching**: Improves performance by fetching results from caching systems, bypassing execution for repetitive use case instances.
 - ``⏳`` **Notification**: Sends automatic notifications when exceptions occur, with customizable alerts for specific scenarios.
 
+<br>
+
 ### 📄 Auto-Documentation
 ``✔️`` The CAE Framework includes automatic documentation generation. The ``UseCaseDocumentationExternalizer`` gathers metadata for all use cases during the build phase, producing a JSON file that can be used to track available use cases across the system.
+
+<br>
 
 ### 🔎 Auto-Logging
 ``✔️`` Logging in the CAE Framework is decoupled from the core logic by using the ``Logger`` interface. This allows developers to implement their preferred logging mechanism without coupling it to the framework.
