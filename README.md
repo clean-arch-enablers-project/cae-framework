@@ -90,7 +90,7 @@ Upcoming satellites:
 <br>
 
 ### 📄 Auto-Documentation
-``✔️`` The CAE Framework includes automatic documentation generation. The ``UseCaseDocumentationExternalizer`` gathers metadata for all use cases during the build phase, producing a JSON file that can be used to track available use cases across the system.
+``✔️`` The CAE Framework includes automatic documentation generation. The ``UseCaseDocumentationExternalizer`` gathers metadata for all use cases during the build phase, producing the ``cae-docfile.json`` file that can be used to track available use cases across the system.
 
 <br>
 
