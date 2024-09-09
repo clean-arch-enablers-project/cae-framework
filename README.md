@@ -26,7 +26,7 @@ State Symbol Key:
 
 <br>
 
-## Key Concepts
+## 📚 Key Concepts
 ### ⚙️ Use Cases
 The core of the CAE Framework revolves around use cases. Each use case is a distinct, self-contained unit of functionality, designed to be easily maintained, extended, and tested.
 
