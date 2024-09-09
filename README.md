@@ -68,6 +68,8 @@ Regardless of the physical structure, the layers typically serve the following p
 
 It is recommended to use the [CLI tool](https://github.com/clean-arch-enablers-project/cae-cli) as it ensures the correct structure is provided.
 
+<br>
+
 ## 🪄 Capabilities
 
 ### 🛰️ Satellites
