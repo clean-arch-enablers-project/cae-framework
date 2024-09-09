@@ -102,6 +102,18 @@ The basic workflow for the development process is as follows:
 Tutorials will soon be available on the SDK's YouTube channel: [Clean Arch Enablers SDK](https://www.youtube.com/@CleanArchEnablersSDK).
 
 <br>
+
+## 🌐 Other components of the SDK:
+
+- ``✔️`` [cae-cli](https://github.com/clean-arch-enablers-project/cae-cli)
+- ``✔️`` [cae-utils-mapped-exceptions](https://github.com/clean-arch-enablers-project/cae-utils-mapped-exceptions)
+- ``✔️`` [cae-utils-http-client](https://github.com/clean-arch-enablers-project/cae-utils-http-client)
+- ``✔️`` [cae-common-primary-adapters](https://github.com/clean-arch-enablers-project/cae-common-primary-adapters)
+- ``✔️`` [cae-utils-env-vars](https://github.com/clean-arch-enablers-project/cae-utils-env-vars)
+- ``✔️`` [cae-utils-trier](https://github.com/clean-arch-enablers-project/cae-utils-trier)
+- ``⏳`` [cae-service-catalog](https://github.com/clean-arch-enablers-project/cae-service-catalog)
+
+<br>
 <br>
 <br>
 <br>
