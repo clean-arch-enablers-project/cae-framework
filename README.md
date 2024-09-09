@@ -73,7 +73,7 @@ Upcoming satellites:
 ### 🔎 Auto-Logging
 ``✔️`` Logging in the CAE Framework is decoupled from the core logic by using the ``Logger`` interface. This allows developers to implement their preferred logging mechanism without coupling it to the framework.
 
-The LoggerProvider class centralizes logging configuration, allowing for flexible log handling, including:
+The ``LoggerProvider`` class centralizes logging configuration, allowing for flexible log handling, including:
 
 - ``✔️`` **Enable/Disable Input/Output Logging**: Configure whether input and output data should be included in the logs.
 - ``✔️`` **Synchronous/Asynchronous Logging**: Choose between non-blocking asynchronous logging or standard synchronous logging.
