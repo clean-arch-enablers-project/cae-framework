@@ -1,5 +1,6 @@
 package com.cae.use_cases.specifics.runnables;
 
+import com.cae.loggers.StackTraceLogger;
 import com.cae.trier.Trier;
 import com.cae.use_cases.UseCase;
 import com.cae.use_cases.auto_logger.AutoLoggingManager;
@@ -45,6 +46,7 @@ public abstract class RunnableUseCase extends UseCase {
             this.applyInternalLogic(context);
             loggingManager.logExecution(context, null, null, null);
         } catch (Exception anyException){
+            StackTraceLogger.SINGLETON.handleLoggingStackTrace(anyException, context, this.getUseCaseMetadata().getName());
             loggingManager.logExecution(context, null, null, anyException);
             throw anyException;
         }

@@ -1,5 +1,6 @@
 package com.cae.use_cases.specifics.suppliers;
 
+import com.cae.loggers.StackTraceLogger;
 import com.cae.trier.Trier;
 import com.cae.use_cases.UseCase;
 import com.cae.use_cases.auto_logger.AutoLoggingManager;
@@ -48,6 +49,7 @@ public abstract class SupplierUseCase <O> extends UseCase {
             loggingManager.logExecution(context, null, output, null);
             return output;
         } catch (Exception anyException){
+            StackTraceLogger.SINGLETON.handleLoggingStackTrace(anyException, context, this.getUseCaseMetadata().getName());
             loggingManager.logExecution(context, null, null, anyException);
             throw anyException;
         }

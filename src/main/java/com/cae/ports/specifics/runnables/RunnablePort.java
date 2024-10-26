@@ -1,5 +1,6 @@
 package com.cae.ports.specifics.runnables;
 
+import com.cae.loggers.StackTraceLogger;
 import com.cae.ports.Port;
 import com.cae.ports.auto_logging.PortInsightsManager;
 import com.cae.ports.exceptions.PortExecutionException;
@@ -23,6 +24,7 @@ public abstract class RunnablePort extends Port {
                 this.executeLogic(context);
                 insightsManager.keepInsightOf(context, null, null, null);
             } catch (Exception anyException){
+                StackTraceLogger.SINGLETON.handleLoggingStackTrace(anyException, context, this.name);
                 insightsManager.keepInsightOf(context, null, null, anyException);
                 throw anyException;
             }

@@ -1,5 +1,6 @@
 package com.cae.ports.specifics.functions;
 
+import com.cae.loggers.StackTraceLogger;
 import com.cae.ports.Port;
 import com.cae.ports.auto_logging.PortInsightsManager;
 import com.cae.ports.exceptions.PortExecutionException;
@@ -28,6 +29,7 @@ public abstract class FunctionPort <I, O> extends Port {
                 insightsManager.keepInsightOf(context, input, output, null);
                 return output;
             } catch (Exception anyException){
+                StackTraceLogger.SINGLETON.handleLoggingStackTrace(anyException, context, this.name);
                 insightsManager.keepInsightOf(context, input, null, anyException);
                 throw anyException;
             }

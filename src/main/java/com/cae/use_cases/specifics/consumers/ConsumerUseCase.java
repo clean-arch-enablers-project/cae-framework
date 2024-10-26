@@ -1,5 +1,6 @@
 package com.cae.use_cases.specifics.consumers;
 
+import com.cae.loggers.StackTraceLogger;
 import com.cae.trier.Trier;
 import com.cae.use_cases.UseCase;
 import com.cae.use_cases.auto_logger.AutoLoggingManager;
@@ -48,6 +49,7 @@ public abstract class ConsumerUseCase <I extends UseCaseInput> extends UseCase {
             this.applyInternalLogic(input, context);
             loggingManager.logExecution(context, input, null, null);
         } catch (Exception anyException){
+            StackTraceLogger.SINGLETON.handleLoggingStackTrace(anyException, context, this.getUseCaseMetadata().getName());
             loggingManager.logExecution(context, input, null, anyException);
             throw anyException;
         }

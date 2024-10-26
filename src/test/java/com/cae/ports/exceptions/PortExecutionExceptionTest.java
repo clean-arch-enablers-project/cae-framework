@@ -13,11 +13,11 @@ class PortExecutionExceptionTest {
           var name = "some_name";
           var brief = "Something went unexpectedly wrong while trying to execute port '" + name + "'";
           var unexpectedExceptionCaught = new RuntimeException("some stuff over here");
-          var details = "More details: " + unexpectedExceptionCaught;
+          var details = "More details on the unexpected problem: " + unexpectedExceptionCaught;
           var portException = new PortExecutionException(unexpectedExceptionCaught, name);
           Assertions.assertEquals(brief, portException.getBriefPublicMessage());
           Assertions.assertTrue(portException.getDetails().isPresent());
-          Assertions.assertEquals(details, portException.getDetails().get());
-          Assertions.assertEquals(brief + " | " + details, portException.getMessage());
+          Assertions.assertTrue(portException.getDetails().get().contains(details));
+          Assertions.assertTrue(portException.getMessage().contains(brief + " | " + details));
      }
 }

@@ -1,5 +1,6 @@
 package com.cae.use_cases.specifics.functions;
 
+import com.cae.loggers.StackTraceLogger;
 import com.cae.trier.Trier;
 import com.cae.use_cases.UseCase;
 import com.cae.use_cases.auto_logger.AutoLoggingManager;
@@ -51,6 +52,7 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
             loggingManager.logExecution(context, input, output, null);
             return output;
         } catch (Exception anyException){
+            StackTraceLogger.SINGLETON.handleLoggingStackTrace(anyException, context, this.getUseCaseMetadata().getName());
             loggingManager.logExecution(context, input, null, anyException);
             throw anyException;
         }

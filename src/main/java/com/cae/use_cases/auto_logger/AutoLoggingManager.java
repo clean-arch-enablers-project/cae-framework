@@ -16,9 +16,11 @@ import lombok.RequiredArgsConstructor;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class AutoLoggingManager<U extends UseCase> {
@@ -143,7 +145,7 @@ public class AutoLoggingManager<U extends UseCase> {
                 .successful(exception == null)
                 .exception(exception == null? null : exception.toString())
                 .io(io)
-                .portInsights(PortInsights.SINGLETON.getFor(context))
+                .portInsights(Optional.ofNullable(PortInsights.SINGLETON.getFor(context)).orElse(new ArrayList<>()).stream().map(insight -> insight.replace("\"", "\\\"")).collect(Collectors.toList()))
                 .build();
         var structuredFormat = UseCaseLogStructuredFormat.builder()
                 .useCaseExecution(executionData)

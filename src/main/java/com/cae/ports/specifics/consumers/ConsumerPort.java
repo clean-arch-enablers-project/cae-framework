@@ -1,6 +1,7 @@
 package com.cae.ports.specifics.consumers;
 
 
+import com.cae.loggers.StackTraceLogger;
 import com.cae.ports.Port;
 import com.cae.ports.auto_logging.PortInsightsManager;
 import com.cae.ports.exceptions.PortExecutionException;
@@ -26,6 +27,7 @@ public abstract class ConsumerPort <I> extends Port {
                 this.executeLogic(input, context);
                 insightsManager.keepInsightOf(context, input, null, null);
             } catch (Exception anyException){
+                StackTraceLogger.SINGLETON.handleLoggingStackTrace(anyException, context, this.name);
                 insightsManager.keepInsightOf(context, input, null, anyException);
                 throw anyException;
             }

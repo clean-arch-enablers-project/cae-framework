@@ -17,6 +17,8 @@ public class LoggerProvider {
     private IOLoggingMode ioLoggingMode = IOLoggingMode.CAE_NATIVE;
     private Boolean async = true;
     private Boolean structuredFormat = false;
+    private Boolean logStackTrace = false;
+    private Integer linesOfStackTrace = 5;
 
     public Optional<Logger> getProvidedInstance(){
         return Optional.ofNullable(this.providedInstance);
@@ -55,5 +57,16 @@ public class LoggerProvider {
         this.async = async;
         return this;
     }
+
+    public LoggerProvider setLoggingStackTrace(Boolean loggingStackTrace){
+        this.logStackTrace = loggingStackTrace;
+        return this;
+    }
+
+    public LoggerProvider setNumberOfLinesFromStackTrace(Integer numberOfLines){
+        this.linesOfStackTrace = numberOfLines;
+        return this;
+    }
+
 
 }
