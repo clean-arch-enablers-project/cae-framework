@@ -1,4 +1,4 @@
-package com.cae.use_cases.correlations.actors;
+package com.cae.use_cases.contexts.actors;
 
 import java.util.List;
 

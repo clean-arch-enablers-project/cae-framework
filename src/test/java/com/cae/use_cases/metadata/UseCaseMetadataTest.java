@@ -1,6 +1,5 @@
 package com.cae.use_cases.metadata;
 
-import com.cae.loggers.Logger;
 import com.cae.use_cases.UseCase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,12 +11,7 @@ import utils.simulations.assemblers.loggers.LoggerBootstrapForTesting;
 @ExtendWith(MockitoExtension.class)
 class UseCaseMetadataTest {
 
-    private static class SomeUseCaseImplementation extends UseCase {
-
-        protected SomeUseCaseImplementation(UseCaseMetadata useCaseMetadata, Logger logger) {
-            super(useCaseMetadata, logger);
-        }
-    }
+    private static class SomeUseCaseImplementation extends UseCase {}
 
     @BeforeEach
     void setup(){

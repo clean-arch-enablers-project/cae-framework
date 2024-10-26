@@ -1,8 +1,8 @@
-package com.cae.use_cases.correlations;
+package com.cae.use_cases.contexts;
 
 
-import com.cae.use_cases.correlations.actors.Actor;
-import com.cae.use_cases.correlations.exceptions.CorrelationIdValueFormatException;
+import com.cae.use_cases.contexts.actors.Actor;
+import com.cae.use_cases.contexts.exceptions.CorrelationIdValueFormatException;
 import lombok.Getter;
 
 import java.util.Optional;
@@ -15,27 +15,27 @@ import java.util.UUID;
  * to track the status of any execution in logs or so.
  */
 @Getter
-public class UseCaseExecutionCorrelation {
+public class ExecutionContext {
 
     /**
      * Its unique ID. UUIDs are pretty much impossible to conceive a
      * repeated value ever.
      */
-    private final UUID id;
+    private final UUID correlationId;
 
     private final Actor actor;
 
     /**
      * Default constructor
-     * @param id receives an instance of UUID to set it directly as the ID
+     * @param correlationId receives an instance of UUID to set it directly as the ID
      */
-    public UseCaseExecutionCorrelation(UUID id) {
-        this.id = id;
+    public ExecutionContext(UUID correlationId) {
+        this.correlationId = correlationId;
         this.actor = null;
     }
 
-    public UseCaseExecutionCorrelation(UUID id, Actor actor){
-        this.id = id;
+    public ExecutionContext(UUID correlationId, Actor actor){
+        this.correlationId = correlationId;
         this.actor = actor;
     }
 
@@ -44,19 +44,19 @@ public class UseCaseExecutionCorrelation {
      * @param stringValue string value that must be in UUID format
      * @return the Correlation instance
      */
-    public static UseCaseExecutionCorrelation of(String stringValue){
+    public static ExecutionContext of(String stringValue){
         try {
             var uuid = UUID.fromString(stringValue);
-            return new UseCaseExecutionCorrelation(uuid);
+            return new ExecutionContext(uuid);
         } catch (Exception exception){
             throw new CorrelationIdValueFormatException(stringValue);
         }
     }
 
-    public static UseCaseExecutionCorrelation of(String stringValue, Actor actor){
+    public static ExecutionContext of(String stringValue, Actor actor){
         try {
             var uuid = UUID.fromString(stringValue);
-            return new UseCaseExecutionCorrelation(uuid, actor);
+            return new ExecutionContext(uuid, actor);
         } catch (Exception exception){
             throw new CorrelationIdValueFormatException(stringValue);
         }
@@ -66,12 +66,12 @@ public class UseCaseExecutionCorrelation {
      * Constructor for auto-generating an ID value when it is fit
      * @return the Correlation instance
      */
-    public static UseCaseExecutionCorrelation ofNew(){
-        return new UseCaseExecutionCorrelation(UUID.randomUUID());
+    public static ExecutionContext ofNew(){
+        return new ExecutionContext(UUID.randomUUID());
     }
 
-    public static UseCaseExecutionCorrelation ofNew(Actor actor) {
-        return new UseCaseExecutionCorrelation(UUID.randomUUID(), actor);
+    public static ExecutionContext ofNew(Actor actor) {
+        return new ExecutionContext(UUID.randomUUID(), actor);
     }
 
     public Optional<Actor> getActor(){
@@ -83,7 +83,7 @@ public class UseCaseExecutionCorrelation {
      */
     @Override
     public String toString(){
-        return this.id.toString();
+        return this.correlationId.toString();
     }
 
 }

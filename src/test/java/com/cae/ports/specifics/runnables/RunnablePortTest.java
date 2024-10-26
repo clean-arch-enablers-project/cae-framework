@@ -1,6 +1,6 @@
 package com.cae.ports.specifics.runnables;
 
-import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
+import com.cae.use_cases.contexts.ExecutionContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,20 +23,20 @@ class RunnablePortTest {
 
     @Test
     void shouldExecuteThePortImplementationLogicAsExpected(){
-        var correlation = Mockito.mock(UseCaseExecutionCorrelation.class);
+        var correlation = Mockito.mock(ExecutionContext.class);
         var id = UUID.randomUUID();
-        Mockito.when(correlation.getId()).thenReturn(id);
+        Mockito.when(correlation.getCorrelationId()).thenReturn(id);
         var portImplementation = new SomeRunnablePortImplementation();
         portImplementation.executePort(correlation);
-        Mockito.verify(correlation, Mockito.times(1)).getId();
+        Mockito.verify(correlation, Mockito.times(3)).getCorrelationId();
         Assertions.assertTrue(portImplementation.someStrings.contains(id.toString()));
     }
 
     public static class SomeRunnablePortImplementation extends RunnablePort{
         public final List<String> someStrings = new ArrayList<>();
         @Override
-        protected void executeLogic(UseCaseExecutionCorrelation correlation) {
-            this.someStrings.add(correlation.getId().toString());
+        protected void executeLogic(ExecutionContext correlation) {
+            this.someStrings.add(correlation.getCorrelationId().toString());
         }
     }
 

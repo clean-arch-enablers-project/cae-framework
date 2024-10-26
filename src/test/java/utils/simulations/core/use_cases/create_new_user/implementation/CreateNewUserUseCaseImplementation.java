@@ -1,6 +1,6 @@
 package utils.simulations.core.use_cases.create_new_user.implementation;
 
-import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
+import com.cae.use_cases.contexts.ExecutionContext;
 import lombok.RequiredArgsConstructor;
 import utils.simulations.core.entities.CPFEntity;
 import utils.simulations.core.entities.UserEntity;
@@ -18,7 +18,7 @@ public class CreateNewUserUseCaseImplementation extends CreateNewUserUseCase {
     @Override
     protected CreateNewUserUseCaseOutput applyInternalLogic(
             CreateNewUserUseCaseInput input,
-            UseCaseExecutionCorrelation correlation) {
+            ExecutionContext context) {
         var cpf = CPFEntity.builder()
                 .value(input.getLegalId())
                 .build();
@@ -31,7 +31,7 @@ public class CreateNewUserUseCaseImplementation extends CreateNewUserUseCase {
                 .userType(UserTypeEnum.ofCode(input.getUserTypeCode()))
                 .build();
         newUser.activate();
-        var newUserId = this.storeNewUserPort.executePortOn(newUser, correlation);
+        var newUserId = this.storeNewUserPort.executePortOn(newUser, context);
         return CreateNewUserUseCaseOutput.builder()
                 .idNewUser(newUserId)
                 .build();

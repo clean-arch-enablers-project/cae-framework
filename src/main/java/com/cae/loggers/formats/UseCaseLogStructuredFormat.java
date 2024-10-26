@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Builder
@@ -21,6 +23,7 @@ public class UseCaseLogStructuredFormat {
         private Boolean successful;
         private Long latency;
         private String exception;
+        private List<String> portInsights;
     }
 
 }

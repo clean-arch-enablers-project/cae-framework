@@ -1,6 +1,6 @@
 package utils.simulations.tests.retrieve_all_user_types;
 
-import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
+import com.cae.use_cases.contexts.ExecutionContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ class RetrieveAllUserTypesUseCaseDemoTest {
 
     @Test
     void runSupplierUseCase(){
-        var useCaseOutput = USE_CASE.execute(UseCaseExecutionCorrelation.ofNew());
+        var useCaseOutput = USE_CASE.execute(ExecutionContext.ofNew());
         Assertions.assertNotNull(useCaseOutput);
     }
 

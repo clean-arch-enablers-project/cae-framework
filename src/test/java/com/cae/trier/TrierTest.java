@@ -61,7 +61,7 @@ class TrierTest {
                     .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
                     .finishAndExecuteAction();
         } catch (Exception caughtException){
-            Assertions.assertTrue(caughtException instanceof MappedException);
+            Assertions.assertInstanceOf(MappedException.class, caughtException);
             Assertions.assertEquals(caughtException, this.exceptionToHandleTheUnexpected);
             Assertions.assertNotEquals(this.unexpectedInternalException, caughtException);
         }
@@ -74,7 +74,7 @@ class TrierTest {
         try{
             trierBuilder.finishAndExecuteAction();
         } catch (Exception caughtException){
-            Assertions.assertTrue(caughtException instanceof MappedException);
+            Assertions.assertInstanceOf(MappedException.class, caughtException);
             Assertions.assertEquals(caughtException, this.exceptionToHandleTheUnexpected);
             Assertions.assertNotEquals(this.unexpectedInternalException, caughtException);
         }
@@ -87,7 +87,7 @@ class TrierTest {
                     .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
                     .finishAndExecuteAction();
         } catch (Exception caughtException){
-            Assertions.assertTrue(caughtException instanceof MappedException);
+            Assertions.assertInstanceOf(MappedException.class, caughtException);
             Assertions.assertEquals(caughtException, this.exceptionToHandleTheUnexpected);
             Assertions.assertNotEquals(this.unexpectedInternalException, caughtException);
         }
@@ -100,7 +100,7 @@ class TrierTest {
         try{
             trierBuilder.finishAndExecuteAction();
         } catch (Exception caughtException){
-            Assertions.assertTrue(caughtException instanceof MappedException);
+            Assertions.assertInstanceOf(MappedException.class, caughtException);
             Assertions.assertEquals(caughtException, this.exceptionToHandleTheUnexpected);
             Assertions.assertNotEquals(this.unexpectedInternalException, caughtException);
         }
@@ -113,7 +113,7 @@ class TrierTest {
                     .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
                     .finishAndExecuteAction();
         } catch (Exception caughtException){
-            Assertions.assertTrue(caughtException instanceof MappedException);
+            Assertions.assertInstanceOf(MappedException.class, caughtException);
             Assertions.assertNotEquals(caughtException, this.exceptionToHandleTheUnexpected);
             Assertions.assertEquals(this.expectedInternalException, caughtException);
         }
@@ -126,7 +126,7 @@ class TrierTest {
                     .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
                     .finishAndExecuteAction();
         } catch (Exception caughtException){
-            Assertions.assertTrue(caughtException instanceof MappedException);
+            Assertions.assertInstanceOf(MappedException.class, caughtException);
             Assertions.assertNotEquals(caughtException, this.exceptionToHandleTheUnexpected);
             Assertions.assertEquals(this.expectedInternalException, caughtException);
         }
@@ -139,7 +139,7 @@ class TrierTest {
                     .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
                     .finishAndExecuteAction();
         } catch (Exception caughtException){
-            Assertions.assertTrue(caughtException instanceof MappedException);
+            Assertions.assertInstanceOf(MappedException.class, caughtException);
             Assertions.assertNotEquals(caughtException, this.exceptionToHandleTheUnexpected);
             Assertions.assertEquals(this.expectedInternalException, caughtException);
         }
@@ -152,7 +152,7 @@ class TrierTest {
                     .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
                     .finishAndExecuteAction();
         } catch (Exception caughtException){
-            Assertions.assertTrue(caughtException instanceof MappedException);
+            Assertions.assertInstanceOf(MappedException.class, caughtException);
             Assertions.assertNotEquals(caughtException, this.exceptionToHandleTheUnexpected);
             Assertions.assertEquals(this.expectedInternalException, caughtException);
         }

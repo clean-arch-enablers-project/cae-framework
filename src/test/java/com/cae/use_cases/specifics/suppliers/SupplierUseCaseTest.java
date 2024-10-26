@@ -1,7 +1,7 @@
 package com.cae.use_cases.specifics.suppliers;
 
 import com.cae.mapped_exceptions.MappedException;
-import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
+import com.cae.use_cases.contexts.ExecutionContext;
 import com.cae.use_cases.exceptions.UseCaseExecutionException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +13,7 @@ import utils.simulations.assemblers.loggers.LoggerBootstrapForTesting;
 @ExtendWith(MockitoExtension.class)
 class SupplierUseCaseTest {
 
-    private final UseCaseExecutionCorrelation correlation = UseCaseExecutionCorrelation.ofNew();
+    private final ExecutionContext correlation = ExecutionContext.ofNew();
 
     @BeforeEach
     void setup(){
@@ -48,21 +48,21 @@ class SupplierUseCaseTest {
 
     private static class SomeNormalSupplierUseCaseImplementation extends SupplierUseCase<String> {
         @Override
-        protected String applyInternalLogic(UseCaseExecutionCorrelation correlation) {
+        protected String applyInternalLogic(ExecutionContext context) {
             return ("Just executed my internal logic");
         }
     }
 
     private static class SomeUnexpectedProblematicSupplierUseCaseImplementation extends SupplierUseCase<String>{
         @Override
-        protected String applyInternalLogic(UseCaseExecutionCorrelation correlation) {
+        protected String applyInternalLogic(ExecutionContext context) {
             throw new RuntimeException("some unexpected internal error");
         }
     }
 
     private static class SomeExpectedProblematicSupplierUseCaseImplementation extends SupplierUseCase<String>{
         @Override
-        protected String applyInternalLogic(UseCaseExecutionCorrelation correlation) {
+        protected String applyInternalLogic(ExecutionContext context) {
             throw new SomeExpectedShitThatMightHappen();
         }
     }

@@ -1,6 +1,6 @@
 package utils.simulations.adapters.authorizers;
 
-import com.cae.use_cases.correlations.actors.Actor;
+import com.cae.use_cases.contexts.actors.Actor;
 import lombok.Builder;
 import lombok.Getter;
 

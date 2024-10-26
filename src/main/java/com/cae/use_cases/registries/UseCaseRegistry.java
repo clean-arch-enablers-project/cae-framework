@@ -1,5 +1,6 @@
-package com.cae.use_cases;
+package com.cae.use_cases.registries;
 
+import com.cae.use_cases.UseCase;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 

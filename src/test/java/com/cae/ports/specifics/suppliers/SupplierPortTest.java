@@ -1,7 +1,7 @@
 package com.cae.ports.specifics.suppliers;
 
 import com.cae.loggers.LoggerProvider;
-import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
+import com.cae.use_cases.contexts.ExecutionContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,20 +26,20 @@ class SupplierPortTest {
         LoggerProvider.SINGLETON
                 .setProvidedInstance(LoggerAdapterForTesting.SINGLETON)
                 .setPortsLoggingIO(true);
-        var correlation = Mockito.mock(UseCaseExecutionCorrelation.class);
+        var correlation = Mockito.mock(ExecutionContext.class);
         var id = UUID.randomUUID();
-        Mockito.when(correlation.getId()).thenReturn(id);
+        Mockito.when(correlation.getCorrelationId()).thenReturn(id);
         var portImplementation = new SomeSupplierPortImplementation();
         var portImplementationResult = portImplementation.executePort(correlation);
-        Mockito.verify(correlation, Mockito.times(LoggerProvider.SINGLETON.getPortsLoggingIO()? 2 : 1)).getId();
+        Mockito.verify(correlation, Mockito.times(LoggerProvider.SINGLETON.getPortsLoggingIO()? 3 : 1)).getCorrelationId();
         Assertions.assertEquals(id.toString(), portImplementationResult);
     }
 
 
     public static class SomeSupplierPortImplementation extends SupplierPort<String>{
         @Override
-        protected String executeLogic(UseCaseExecutionCorrelation correlation) {
-            return correlation.getId().toString();
+        protected String executeLogic(ExecutionContext correlation) {
+            return correlation.getCorrelationId().toString();
         }
     }
 

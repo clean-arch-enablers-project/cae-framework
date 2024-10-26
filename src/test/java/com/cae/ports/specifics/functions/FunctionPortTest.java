@@ -1,7 +1,7 @@
 package com.cae.ports.specifics.functions;
 
 import com.cae.loggers.LoggerProvider;
-import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
+import com.cae.use_cases.contexts.ExecutionContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,7 +17,7 @@ import java.util.UUID;
 class FunctionPortTest {
 
     @Mock
-    private UseCaseExecutionCorrelation correlation;
+    private ExecutionContext correlation;
     private final UUID id = UUID.randomUUID();
 
     @BeforeEach
@@ -25,7 +25,7 @@ class FunctionPortTest {
         LoggerProvider.SINGLETON
                 .setPortsLoggingIO(true)
                 .setProvidedInstance(LoggerAdapterForTesting.SINGLETON);
-        Mockito.when(this.correlation.getId()).thenReturn(this.id);
+        Mockito.when(this.correlation.getCorrelationId()).thenReturn(this.id);
     }
 
     @Test
@@ -34,13 +34,13 @@ class FunctionPortTest {
         var stringInput = "input";
         var portResult = portImplementation.executePortOn(stringInput, this.correlation);
         Assertions.assertFalse(portResult);
-        Mockito.verify(this.correlation, Mockito.times(LoggerProvider.SINGLETON.getPortsLoggingIO()? 2 : 1)).getId();
+        Mockito.verify(this.correlation, Mockito.times(LoggerProvider.SINGLETON.getPortsLoggingIO()? 3 : 1)).getCorrelationId();
     }
 
     private static class SomeFunctionPortImplementation extends FunctionPort<String, Boolean>{
         @Override
-        protected Boolean executeLogic(String input, UseCaseExecutionCorrelation correlation) {
-            return input.isBlank() || correlation.getId().toString().isBlank();
+        protected Boolean executeLogic(String input, ExecutionContext correlation) {
+            return input.isBlank() || correlation.getCorrelationId().toString().isBlank();
         }
     }
 

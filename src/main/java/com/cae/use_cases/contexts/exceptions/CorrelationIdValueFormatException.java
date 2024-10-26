@@ -1,4 +1,4 @@
-package com.cae.use_cases.correlations.exceptions;
+package com.cae.use_cases.contexts.exceptions;
 
 public class CorrelationIdValueFormatException extends RuntimeException {
     public CorrelationIdValueFormatException(String stringValue) {

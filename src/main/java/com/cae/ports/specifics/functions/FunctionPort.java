@@ -1,9 +1,10 @@
 package com.cae.ports.specifics.functions;
 
 import com.cae.ports.Port;
+import com.cae.ports.auto_logging.PortInsightsManager;
 import com.cae.ports.exceptions.PortExecutionException;
 import com.cae.trier.Trier;
-import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
+import com.cae.use_cases.contexts.ExecutionContext;
 
 /**
  * Specific type of port: function ports are ports that both receive
@@ -16,18 +17,23 @@ public abstract class FunctionPort <I, O> extends Port {
     /**
      * Method accessible for triggering the port execution.
      * @param input its input
-     * @param correlation the correlation of the use case execution
+     * @param context the context of the use case execution
      * @return the expected output of the port
      */
-    public O executePortOn(I input, UseCaseExecutionCorrelation correlation){
-        var output = this.handle(Trier.of(() -> this.executeLogic(input, correlation)));
-        this.handleIOLogs(input, output, correlation);
-        return output;
-    }
-
-    private O handle(Trier.TrierBuilder<Void, O> trierBuilder){
-        return trierBuilder.setHandlerForUnexpectedException(unexpectedException -> new PortExecutionException(unexpectedException, this.getName()))
-                .finishAndExecuteAction();
+    public O executePortOn(I input, ExecutionContext context){
+        return Trier.of(() -> {
+            var insightsManager = PortInsightsManager.of(this.name);
+            try {
+                var output = this.executeLogic(input, context);
+                insightsManager.keepInsightOf(context, input, output, null);
+                return output;
+            } catch (Exception anyException){
+                insightsManager.keepInsightOf(context, input, null, anyException);
+                throw anyException;
+            }
+        })
+        .setHandlerForUnexpectedException(unexpectedException -> new PortExecutionException(unexpectedException, this.name))
+        .finishAndExecuteAction();
     }
 
     /**
@@ -40,6 +46,6 @@ public abstract class FunctionPort <I, O> extends Port {
      *                    the public methods
      * @return the expected output of the port
      */
-    protected abstract O executeLogic(I input, UseCaseExecutionCorrelation correlation);
+    protected abstract O executeLogic(I input, ExecutionContext correlation);
 
 }

@@ -1,4 +1,4 @@
-package com.cae.use_cases;
+package com.cae.use_cases.auto_logger;
 
 import com.cae.loggers.IOLoggingHandler;
 import com.cae.loggers.Logger;
@@ -6,7 +6,10 @@ import com.cae.loggers.LoggerProvider;
 import com.cae.loggers.formats.IO;
 import com.cae.loggers.formats.UseCaseLogStructuredFormat;
 import com.cae.loggers.native_io_extraction_mode.NativeExtractionMode;
-import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
+import com.cae.loggers.native_io_extraction_mode.json.SimpleJsonBuilder;
+import com.cae.ports.auto_logging.PortInsights;
+import com.cae.use_cases.UseCase;
+import com.cae.use_cases.contexts.ExecutionContext;
 import com.cae.use_cases.io.UseCaseInput;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -18,35 +21,36 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class UseCaseLoggingManagement<U extends UseCase> {
+public class AutoLoggingManager<U extends UseCase> {
 
     private final U useCase;
     private final StringBuilder stringBuilder;
     private final LocalDateTime startingMoment;
     private final Logger logger;
-    private final UseCaseExecutionCorrelation correlation;
+    private final ExecutionContext correlation;
 
-    public static <U extends UseCase> UseCaseLoggingManagement<U> of(
+    public static <U extends UseCase> AutoLoggingManager<U> of(
             U useCase,
-            Logger logger,
-            UseCaseExecutionCorrelation correlation){
-        return new UseCaseLoggingManagement<>(
+            ExecutionContext correlation){
+        return new AutoLoggingManager<>(
                 useCase,
                 new StringBuilder(),
                 LocalDateTime.now(),
-                logger,
+                useCase.getLogger(),
                 correlation);
     }
 
-    public void handleUseCaseExecutionLog(
+    public void logExecution(
+            ExecutionContext context,
             UseCaseInput input,
             Object output,
             Exception exception){
         this.synchronousExecutionIfNeeded(CompletableFuture.runAsync(() -> {
             if (Boolean.TRUE.equals(LoggerProvider.SINGLETON.getStructuredFormat()))
-                this.generateLogInStructuredFormat(input, output, exception);
+                this.generateLogInStructuredFormat(input, output, exception, context);
             else
-                this.generateLogInSimpleFormat(input, output, exception);
+                this.generateLogInSimpleFormat(input, output, exception, context);
+            PortInsights.SINGLETON.flush(context);
             this.logWhatsGenerated(exception == null);
         }));
     }
@@ -59,29 +63,34 @@ public class UseCaseLoggingManagement<U extends UseCase> {
     private void generateLogInSimpleFormat(
             UseCaseInput input,
             Object output,
-            Exception exception){
+            Exception exception,
+            ExecutionContext context){
         if (exception == null)
-            this.generateLogForSuccessfulExecution(input, output);
+            this.generateSimpleLogForSuccessfulExecution(input, output, context);
         else
-            this.generateLogForUnsuccessfulExecution(exception, input, output);
+            this.generateSimpleLogForUnsuccessfulExecution(exception, input, output, context);
     }
 
-    private void generateLogForSuccessfulExecution(
+    private void generateSimpleLogForSuccessfulExecution(
             UseCaseInput input,
-            Object output){
+            Object output,
+            ExecutionContext context){
         this.stringBuilder
                 .append(this.generateFirstHalfOfLogString())
-                .append(this.generateLastHalfOfSuccessfulLogString());
+                .append(this.generateLastHalfOfSuccessfulLogString())
+                .append(Optional.ofNullable(PortInsights.SINGLETON.getFor(context)).map(insights -> " | Port insights: " + insights).orElse(""));
         this.generateIOLogString(input, output);
     }
 
-    private void generateLogForUnsuccessfulExecution(
+    private void generateSimpleLogForUnsuccessfulExecution(
             Exception anyException,
             UseCaseInput input,
-            Object output){
+            Object output,
+            ExecutionContext context){
         this.stringBuilder
                 .append(this.generateFirstHalfOfLogString())
-                .append(this.generateLastHalfOfUnsuccessfulLogString(anyException));
+                .append(this.generateLastHalfOfUnsuccessfulLogString(anyException))
+                .append(Optional.ofNullable(PortInsights.SINGLETON.getFor(context)).map(insights -> " | Port insights: " + SimpleJsonBuilder.buildFor(insights)).orElse(""));
         this.generateIOLogString(input, output);
     }
 
@@ -104,7 +113,7 @@ public class UseCaseLoggingManagement<U extends UseCase> {
         return "Use case \""
                 + (this.useCase.getUseCaseMetadata().getName())
                 + "\" execution with correlation ID of \""
-                + this.correlation.getId().toString();
+                + this.correlation.getCorrelationId().toString();
     }
 
     private String generateLastHalfOfSuccessfulLogString(){
@@ -122,7 +131,7 @@ public class UseCaseLoggingManagement<U extends UseCase> {
     private void generateLogInStructuredFormat(
             UseCaseInput input,
             Object output,
-            Exception exception) {
+            Exception exception, ExecutionContext context) {
         var io = Boolean.FALSE.equals(LoggerProvider.SINGLETON.getUseCasesLoggingIO())? null : IO.builder()
                 .input(input)
                 .output(output)
@@ -134,6 +143,7 @@ public class UseCaseLoggingManagement<U extends UseCase> {
                 .successful(exception == null)
                 .exception(exception == null? null : exception.toString())
                 .io(io)
+                .portInsights(PortInsights.SINGLETON.getFor(context))
                 .build();
         var structuredFormat = UseCaseLogStructuredFormat.builder()
                 .useCaseExecution(executionData)

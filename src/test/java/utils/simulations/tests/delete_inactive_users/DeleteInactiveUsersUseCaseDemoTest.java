@@ -1,6 +1,6 @@
 package utils.simulations.tests.delete_inactive_users;
 
-import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
+import com.cae.use_cases.contexts.ExecutionContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class DeleteInactiveUsersUseCaseDemoTest {
         var actor = ActorImplementation.builder()
             .scopes(List.of("delete:user"))
             .build();
-        Assertions.assertDoesNotThrow(() -> USE_CASE.execute(UseCaseExecutionCorrelation.ofNew(actor)));
+        Assertions.assertDoesNotThrow(() -> USE_CASE.execute(ExecutionContext.ofNew(actor)));
     }
 
 }

@@ -1,6 +1,6 @@
 package utils.simulations.core.use_cases.update_user.implementation;
 
-import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
+import com.cae.use_cases.contexts.ExecutionContext;
 import lombok.RequiredArgsConstructor;
 import utils.simulations.core.use_cases.update_user.UpdateUserUseCase;
 import utils.simulations.core.use_cases.update_user.implementation.ports.FetchUserByIdPort;
@@ -14,7 +14,7 @@ public class UpdateUserUseCaseImplementation extends UpdateUserUseCase {
     private final SaveUpdatePort saveUpdatePort;
 
     @Override
-    protected void applyInternalLogic(UpdateUserUseCaseInput input, UseCaseExecutionCorrelation correlation) {
+    protected void applyInternalLogic(UpdateUserUseCaseInput input, ExecutionContext context) {
 
     }
 }

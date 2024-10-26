@@ -1,6 +1,6 @@
 package utils.simulations.adapters.use_cases.delete_inactive_users;
 
-import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
+import com.cae.use_cases.contexts.ExecutionContext;
 import lombok.RequiredArgsConstructor;
 import utils.simulations.core.entities.UserEntity;
 import utils.simulations.core.use_cases.delete_inactive_users.implementation.ports.FetchInactiveUsersPort;
@@ -11,7 +11,7 @@ import java.util.List;
 public class FetchInactiveUsersPortAdapter extends FetchInactiveUsersPort {
 
     @Override
-    protected List<UserEntity> executeLogic(UseCaseExecutionCorrelation correlation) {
+    protected List<UserEntity> executeLogic(ExecutionContext correlation) {
         //let's pretend it actually fetched them from database
         return List.of(
                 this.mockUser1(),

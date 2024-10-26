@@ -1,6 +1,6 @@
 package utils.simulations.tests.create_new_user;
 
-import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
+import com.cae.use_cases.contexts.ExecutionContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ class CreateNewUserUseCaseDemoTest {
                 .userTypeCode(1)
                 .username("xururu")
                 .build();
-        var useCaseOutput = USE_CASE.execute(useCaseInput, UseCaseExecutionCorrelation.ofNew(actor));
+        var useCaseOutput = USE_CASE.execute(useCaseInput, ExecutionContext.ofNew(actor));
         Assertions.assertNotNull(useCaseOutput);
     }
 

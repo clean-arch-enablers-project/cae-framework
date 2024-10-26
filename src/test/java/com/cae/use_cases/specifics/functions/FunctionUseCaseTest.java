@@ -1,7 +1,7 @@
 package com.cae.use_cases.specifics.functions;
 
 import com.cae.mapped_exceptions.MappedException;
-import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
+import com.cae.use_cases.contexts.ExecutionContext;
 import com.cae.use_cases.exceptions.UseCaseExecutionException;
 import com.cae.use_cases.io.UseCaseInput;
 import org.junit.jupiter.api.Assertions;
@@ -15,7 +15,7 @@ import utils.simulations.assemblers.loggers.LoggerBootstrapForTesting;
 @ExtendWith(MockitoExtension.class)
 class FunctionUseCaseTest {
 
-    private final UseCaseExecutionCorrelation correlation = UseCaseExecutionCorrelation.ofNew();
+    private final ExecutionContext correlation = ExecutionContext.ofNew();
 
     @BeforeEach
     void setup(){
@@ -59,21 +59,21 @@ class FunctionUseCaseTest {
 
     private static class SomeNormalFunctionUseCaseImplementation extends FunctionUseCase<TheFunctionUseCaseImplementationInput, String> {
         @Override
-        protected String applyInternalLogic(TheFunctionUseCaseImplementationInput input, UseCaseExecutionCorrelation correlation) {
+        protected String applyInternalLogic(TheFunctionUseCaseImplementationInput input, ExecutionContext context) {
             return ("Just executed my internal logic");
         }
     }
 
     private static class SomeUnexpectedProblematicFunctionUseCaseImplementation extends FunctionUseCase<TheFunctionUseCaseImplementationInput, String>{
         @Override
-        protected String applyInternalLogic(TheFunctionUseCaseImplementationInput input, UseCaseExecutionCorrelation correlation) {
+        protected String applyInternalLogic(TheFunctionUseCaseImplementationInput input, ExecutionContext context) {
             throw new RuntimeException("some unexpected internal error");
         }
     }
 
     private static class SomeExpectedProblematicFunctionUseCaseImplementation extends FunctionUseCase<TheFunctionUseCaseImplementationInput, String>{
         @Override
-        protected String applyInternalLogic(TheFunctionUseCaseImplementationInput input, UseCaseExecutionCorrelation correlation) {
+        protected String applyInternalLogic(TheFunctionUseCaseImplementationInput input, ExecutionContext context) {
             throw new SomeExpectedShitThatMightHappen();
         }
     }

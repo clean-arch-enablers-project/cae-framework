@@ -2,7 +2,7 @@ package com.cae.use_cases.auto_documentation;
 
 
 import com.cae.loggers.native_io_extraction_mode.json.SimpleJsonBuilder;
-import com.cae.use_cases.UseCaseRegistry;
+import com.cae.use_cases.registries.UseCaseRegistry;
 import com.cae.use_cases.auto_initializer.UseCaseAutoInitializer;
 
 import java.io.BufferedWriter;

@@ -1,12 +1,10 @@
 package com.cae.use_cases.specifics.suppliers;
 
-import com.cae.loggers.Logger;
 import com.cae.trier.Trier;
 import com.cae.use_cases.UseCase;
-import com.cae.use_cases.UseCaseProcessorFactory;
-import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
+import com.cae.use_cases.auto_logger.AutoLoggingManager;
+import com.cae.use_cases.contexts.ExecutionContext;
 import com.cae.use_cases.exceptions.UseCaseExecutionException;
-import com.cae.use_cases.metadata.UseCaseMetadata;
 
 /**
  * Specific type of UseCase which has no input but provides output
@@ -14,21 +12,6 @@ import com.cae.use_cases.metadata.UseCaseMetadata;
  */
 public abstract class SupplierUseCase <O> extends UseCase {
 
-    /**
-     *  @deprecated
-     */
-    @Deprecated(since = "24/04/2024")
-    protected SupplierUseCase(UseCaseMetadata useCaseMetadata, Logger logger) {
-        super(useCaseMetadata, logger);
-    }
-
-    /**
-     *  @deprecated
-     */
-    @Deprecated(since = "24/04/2024")
-    protected SupplierUseCase(Logger logger) {
-        super(logger);
-    }
     protected SupplierUseCase() {
         super();
     }
@@ -46,21 +29,35 @@ public abstract class SupplierUseCase <O> extends UseCase {
      * use case execution will be logged, weather it ends successfully or not.
      * However, you are still free to use your logger instance as you wish
      * inside your use case implementations.
-     * @param correlation unique identifier of the use case execution
+     * @param context unique identifier of the use case execution
      * @return the use case execution output
      */
-    public O execute(UseCaseExecutionCorrelation correlation){
-        this.handleAuthorization(correlation);
-        return Trier.of(() -> UseCaseProcessorFactory.of(this, correlation, this.getLogger()).processUseCase())
-                .setHandlerForUnexpectedException(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
-                .finishAndExecuteAction();
+    public O execute(ExecutionContext context){
+        return Trier.of(() -> {
+            this.handleAuthorization(context);
+            return this.finallyExecute(context);
+        })
+        .setHandlerForUnexpectedException(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
+        .finishAndExecuteAction();
+    }
+
+    private O finallyExecute(ExecutionContext context) {
+        var loggingManager = AutoLoggingManager.of(this, context);
+        try {
+            var output = this.applyInternalLogic(context);
+            loggingManager.logExecution(context, null, output, null);
+            return output;
+        } catch (Exception anyException){
+            loggingManager.logExecution(context, null, null, anyException);
+            throw anyException;
+        }
     }
 
     /**
      * Internal method supposed to execute the core logic of the use case
-     * @param useCaseExecutionCorrelation unique identifier of the use case execution
+     * @param context unique identifier of the use case execution
      * @return the use case execution output
      */
-    protected abstract O applyInternalLogic(UseCaseExecutionCorrelation useCaseExecutionCorrelation);
+    protected abstract O applyInternalLogic(ExecutionContext context);
 
 }

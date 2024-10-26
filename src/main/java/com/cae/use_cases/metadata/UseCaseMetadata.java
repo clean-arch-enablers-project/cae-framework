@@ -13,12 +13,12 @@ import lombok.Getter;
  * <p></p>
  * The protection status is meant to inform if the use case execution
  * access is open or protected. If protected, it is up to the external layer
- * dispatching the use case to implement the access validation
- * to decide weather the action will be allowed or not.
+ * dispatching the use case to provide the actor info, so the use case processor
+ * can run the access validation to decide weather the action will be allowed or not.
  * <p></p>
- * All of this metadata can be externalized to a txt file at
- * /target if the use case registerer is set to be used.
- * It is up to you to decide what to do with the txt file. For
+ * All of this metadata and more can be automatically externalized to a file
+ * called cae-docfile.json.
+ * It is up to you to decide what to do with the file. For
  * instance, it could be used to expose an overview about the
  * available use cases of the application for governance means.
  */

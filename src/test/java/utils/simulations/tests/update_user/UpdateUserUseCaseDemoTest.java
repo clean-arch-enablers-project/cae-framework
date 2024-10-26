@@ -1,6 +1,6 @@
 package utils.simulations.tests.update_user;
 
-import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
+import com.cae.use_cases.contexts.ExecutionContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -35,7 +35,7 @@ class UpdateUserUseCaseDemoTest {
                     .name("Julucin")
                     .typeCode(2)
                     .build();
-            var useCaseExecutionCorrelation = UseCaseExecutionCorrelation.ofNew(actor);
+            var useCaseExecutionCorrelation = ExecutionContext.ofNew(actor);
             USE_CASE.execute(useCaseInput, useCaseExecutionCorrelation);
         });
     }

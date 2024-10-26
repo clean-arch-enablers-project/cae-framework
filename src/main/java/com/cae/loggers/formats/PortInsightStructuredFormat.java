@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Builder
-public class PortLogStructuredFormat {
+public class PortInsightStructuredFormat {
 
     private PortExecutionLogFormat portExecution;
 
@@ -15,7 +15,6 @@ public class PortLogStructuredFormat {
     @Builder
     public static class PortExecutionLogFormat{
         private String adapterName;
-        private String correlationId;
         private IO io;
     }
 

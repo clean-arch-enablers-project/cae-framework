@@ -7,7 +7,7 @@ public class NotAllowedMappedException extends InputMappedException {
 
     public NotAllowedMappedException(UseCase useCase) {
         super(
-                "Actor not allowed to execute \"" + useCase.getUseCaseMetadata().getName() + "\""
+                "Actor not allowed to execute App:" + useCase.getClass().getSuperclass().getSimpleName()
         );
     }
 }

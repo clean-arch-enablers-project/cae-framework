@@ -30,8 +30,8 @@ class UseCaseExecutionExceptionTest {
         var expectedBriefPublicMessage =  "Something went unexpectedly wrong while executing use case of 'AwesomeUseCase'";
         Assertions.assertEquals(expectedBriefPublicMessage, useCaseExecutionException.getBriefPublicMessage());
         Assertions.assertTrue(useCaseExecutionException.getDetails().isPresent());
-        var expectedDetails = "More details: " + unexpectedException;
-        Assertions.assertEquals(expectedDetails, useCaseExecutionException.getDetails().get());
+        var expectedDetails = "More details on the unexpected problem: " + unexpectedException;
+        Assertions.assertTrue(useCaseExecutionException.getDetails().get().contains(expectedDetails));
     }
 
 }

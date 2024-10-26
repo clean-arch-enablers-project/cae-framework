@@ -1,6 +1,7 @@
 package com.cae.ports;
 
-import com.cae.use_cases.correlations.UseCaseExecutionCorrelation;
+import com.cae.ports.auto_logging.PortInsightsManager;
+import com.cae.use_cases.contexts.ExecutionContext;
 import lombok.Getter;
 
 /**
@@ -26,8 +27,5 @@ public abstract class Port {
         this.name = this.getClass().getSimpleName();
     }
 
-    protected void handleIOLogs(Object input, Object output, UseCaseExecutionCorrelation correlation) {
-        PortLoggingManagement.of(this.name).handlePortExecutionLog(input, output, correlation);
-    }
 
 }
