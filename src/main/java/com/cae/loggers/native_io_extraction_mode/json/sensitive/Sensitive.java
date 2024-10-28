@@ -11,5 +11,5 @@ public @interface Sensitive {
 
     int unmaskedAmount() default 0;
     boolean unmaskFromLeft() default true;
-
+    int defaultMaskedAmount() default 0;
 }
