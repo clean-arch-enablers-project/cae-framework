@@ -9,16 +9,19 @@ import java.lang.reflect.Field;
 public class SensitiveValueHandler {
 
     public static String handle(Object value, Field field){
-        var unmaskedAmount = field.getAnnotation(Sensitive.class).unmaskedAmount();
-        var fromLeft = field.getAnnotation(Sensitive.class).unmaskFromLeft();
-        var original = String.valueOf(value);
-        int maskedAmount = original.length() - unmaskedAmount;
-        var replacement = "*".repeat(maskedAmount);
-        if (fromLeft)
-            return original.substring(0, original.length() - maskedAmount) + replacement;
-        else
-            return replacement + original.substring(maskedAmount);
-
+        var defaultMaskedAmount = field.getAnnotation(Sensitive.class).defaultMaskedAmount();
+        if (defaultMaskedAmount > 0) return "*".repeat(defaultMaskedAmount);
+        else{
+            var unmaskedAmount = field.getAnnotation(Sensitive.class).unmaskedAmount();
+            var fromLeft = field.getAnnotation(Sensitive.class).unmaskFromLeft();
+            var original = String.valueOf(value);
+            int maskedAmount = original.length() - unmaskedAmount;
+            var replacement = "*".repeat(maskedAmount);
+            if (fromLeft)
+                return original.substring(0, original.length() - maskedAmount) + replacement;
+            else
+                return replacement + original.substring(maskedAmount);
+        }
     }
 
 }
