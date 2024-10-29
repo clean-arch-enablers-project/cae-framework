@@ -36,8 +36,97 @@ The core of the CAE Framework revolves around use cases. Each use case is a dist
 - ``✔️`` ``SupplierUseCase``: Returns output without any input.
 - ``✔️`` ``RunnableUseCase``: Neither receives input nor returns output.
 
-##### ꩜ Use Case Correlation
-The ``UseCaseExecutionCorrelation`` class generates a unique identifier (UUID) for each use case execution, facilitating enhanced tracking and logging. Additionally, it supports the optional inclusion of an ``Actor``, enabling role-based authorization for protected use case instances.
+##### ▶️ Use Case Execution
+A use case, when executed, can have some behaviors:
+
+- ``✔️`` Autolog
+- ``✔️`` Auto input validation
+- ``⏳`` Autocache
+- ``⏳`` Auto notification
+- ``✔️`` Scope based authorization
+- ``⏳`` Role based authorization
+
+##### Autolog
+Whenever an instance of use case gets executed, an automatic log will be generated. It can be in two modes:
+
+- structured
+- natural language
+
+The structured mode is a JSON payload with the log data, while the natural language mode is basically a simple text. However, both can display the same data; they just differ in their presentation styles.
+
+The contained info is:
+
+- The use case: the name of the use case which is being executed (the object's class name)
+- Execution correlation Id: an unique identifier per execution (can be parameterized or randomly generated)
+- Whether or not successful: if the flow didn't throw any exceptions
+- Exception thrown (in case of unsuccessful executions): what went wrong
+- Latency
+- Port insights: insights of what's going on during the execution of each of the use case's ports
+- IO data: what the use case execution received as input and what returned as output
+
+An example for the structured format:
+
+```json
+{
+    "useCaseExecution": {
+        "useCase": "auth_root_account_implementation",
+        "correlationId": "c6268eb5-2f2b-48e3-8138-f5636af216b4",
+        "successful": "true",
+        "exception": null,
+        "latency": "31",
+        "portInsights": [
+            "FindRootAccountByLoginIdPortAdapter's insights: no exception has been thrown",
+            "FindRootAccountSecretPortAdapter's insights: no exception has been thrown",
+            "SessionTokenGenerationPortAdapter's insights: no exception has been thrown"
+        ],
+        "io": {
+            "input": {
+                "loginId": "caertsc@capitolio.com",
+                "pass": "**********"
+            },
+            "output": {
+                "expiration": "3600",
+                "name": "Capitólio",
+                "id": "4",
+                "token": "eyJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjQiLCJhY3RvciI6IjQiLCJzY29wZXMiOiJST09UIiwiZXhwIjoxNzI5OTgyNDk4fQ.j068hm4oLFTFM2M5luS7UsB4YAEjYplkx1dAmubWVS8"
+            }
+        }
+    }
+}
+```
+
+As for the natural language style:
+
+```
+Use case "auth_root_account_implementation" execution with correlation ID of "509cbcbe-c6e8-4ffa-9ca6-62b1cd35e2e3" finished successfully. It took about 1165 milliseconds. | Port insights: [FindRootAccountByLoginIdPortAdapter's insights: no exception has been thrown, FindRootAccountSecretPortAdapter's insights: no exception has been thrown, SessionTokenGenerationPortAdapter's insights: no exception has been thrown] [USE CASE INPUT]: { "pass": "**********", "loginId": "caertsc@capitolio.com" }; [USE CASE OUTPUT]: { "expiration": "3600", "name": "Capitólio", "id": "4", "token": "eyJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjQiLCJhY3RvciI6IjQiLCJzY29wZXMiOiJST09UIiwiZXhwIjoxNzMwMjQ3NDExfQ.kYGx3I8KbwzzRk9znYb-r6_h58359QVQZTFwFB9ipl8" };
+```
+
+The IO data processing for inclusion into the log payload is done natively with a _to-json_ method. During its execution, the cae-native process takes into account the fields of the IO objects that are marked with the ```@Sensitive``` annotation. Depending on the parameterized configuration of this annotation, the autolog will:
+
+- Completely mask the field value
+- Partially mask the field value
+- Mask from right or from left
+- Just ignore the actual value and put a fixed length of "*" characters
+
+```java
+@Getter
+@Setter
+public class SomeExample extends UseCaseInput {
+
+    @Sensitive(unmaskFromLeft = false, unmaskedAmount = 3)
+    private Long somePartiallyMaskedFieldFromRightToLeft;
+
+    @Sensitive(unmaskedAmount = 5)
+    private String anotherPartiallyMaskedFieldFromLeftToRight;
+
+    @Sensitive(defaultMaskedAmount = 8)
+    private String willJustBeAMaskWith8OfLength;
+
+}
+
+```
+
+Any exceptions thrown during the execution of a Use Case will be intercepted by the Use Case itself. If the exception is a subtype of ```MappedException```, the Use Case instance will consider it a part of the designed flow, as it is a ```MappedException``` and let it go untouched. On the other hand, if it is not, the Use Case instance will see it as an unexpected exception and wrap it into a ```UseCaseExecutionException``` object.
 
 <br>
 
@@ -70,55 +159,7 @@ It is recommended to use the [CLI tool](https://github.com/clean-arch-enablers-p
 
 <br>
 
-## 🪄 Capabilities
-
-### 🛰️ Satellites
-Satellites are auxiliary components that "orbit" around the core use cases, adding features such as logging, caching, and monitoring without interfering with core logic. This promotes adherence to the Open/Closed principle of SOLID, allowing functionality to extend without modifying the core system.
-
-Each use case has its own processor, acting as a central hub (or proxy area) for integrating satellites. This design promotes a clean separation of concerns, allowing additional features to be easily plugged in. The current satellites include:
-
-- ``✔️`` **Input Validation**: Ensures that inputs comply with predefined rules and standards.
-- ``✔️`` **Exception Handling**: Differentiates between expected, mapped exceptions and unexpected errors, handling each appropriately.
-- ``✔️`` **Logging**: Automatic logging through Logger and UseCaseLoggingManagement for comprehensive tracking of operations.
-- ``✔️`` **Authorization**: Enforces access control based on user-defined scopes, maintaining security across use cases.
-
-Upcoming satellites:
-
-- ``⏳`` **Caching**: Improves performance by fetching results from caching systems, bypassing execution for repetitive use case instances.
-- ``⏳`` **Notification**: Sends automatic notifications when exceptions occur, with customizable alerts for specific scenarios.
-
-<br>
-
-### 📄 Auto-Documentation
-``✔️`` The CAE Framework includes automatic documentation generation. The ``UseCaseDocumentationExternalizer`` gathers metadata for all use cases during the build phase, producing the ``cae-docfile.json`` file that can be used to track available use cases across the system.
-
-<br>
-
-### 🔎 Auto-Logging
-``✔️`` Logging in the CAE Framework is decoupled from the core logic by using the ``Logger`` interface. This allows developers to implement their preferred logging mechanism without coupling it to the framework.
-
-The ``LoggerProvider`` class centralizes logging configuration, allowing for flexible log handling, including:
-
-- ``✔️`` **Enable/Disable Input/Output Logging**: Configure whether input and output data should be included in the logs.
-- ``✔️`` **Synchronous/Asynchronous Logging**: Choose between non-blocking asynchronous logging or standard synchronous logging.
-- ``✔️`` **Structured vs. Simple Log Formatting**: Select between structured JSON logs or simple natural language log entries.
-
-<br>
-
-## 🧩 Putting it together
-The basic workflow for the development process is as follows:
-
-- **Make a CAE project**: Either create a brand new project via CLI or make an old project compatible with the CAE SDK by adding the ``cae-settings.json`` file.
-- **Define a Use Case**: Extend one of the UseCase classes (``Function``, ``Consumer``, ``Supplier``, or ``Runnable``) to implement your core business logic.
-- **Implement Ports**: Connect your core logic to external systems by utilizing ``Function``, ``Consumer``, ``Supplier``, or ``Runnable`` ports.
-- **Set Metadata and Validation**: Leverage annotations to enforce input validation and authorization requirements effortlessly.
-- **Logging**: Leverage built-in logging for transparent and traceable use case execution.
-- **Automatic Documentation**: Benefit from auto-generated documentation for all use case instances during the build process of your application.
-
-<br>
-
-## 💡 Tutorials
-Tutorials will soon be available on the SDK's YouTube channel: [Clean Arch Enablers SDK](https://www.youtube.com/@CleanArchEnablersSDK).
+...
 
 <br>
 
