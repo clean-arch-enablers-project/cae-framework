@@ -36,7 +36,7 @@ The core of the CAE Framework revolves around use cases. Each use case is a dist
 - ``✔️`` ``SupplierUseCase``: Returns output without any input.
 - ``✔️`` ``RunnableUseCase``: Neither receives input nor returns output.
 
-##### ▶️ Use Case Execution
+#### ▶️ Use Case Execution
 A use case, when executed, can have some behaviors:
 
 - ``✔️`` Autolog
@@ -46,7 +46,7 @@ A use case, when executed, can have some behaviors:
 - ``✔️`` Scope based authorization
 - ``⏳`` Role based authorization
 
-##### Autolog
+##### 📄 Autolog
 Whenever an instance of use case gets executed, an automatic log will be generated. It can be in two modes:
 
 - structured
@@ -126,7 +126,7 @@ public class SomeExample extends UseCaseInput {
 
 ```
 
-Any exceptions thrown during the execution of a Use Case will be intercepted by the Use Case itself. If the exception is a subtype of ```MappedException```, the Use Case instance will consider it a part of the designed flow, as it is a ```MappedException``` and let it go untouched. On the other hand, if it is not, the Use Case instance will see it as an unexpected exception and wrap it into a ```UseCaseExecutionException``` object.
+Any exceptions thrown during the execution of a Use Case will be intercepted by the Use Case itself. If the exception is a subtype of ```MappedException```, the Use Case instance will consider it a part of the designed flow, as it is a ```MappedException```, and let it go untouched. On the other hand, if it is not, the Use Case instance will see it as an unexpected exception and wrap it into a ```UseCaseExecutionException``` object. Either way the autolog will include this event in the log data.
 
 <br>
 
