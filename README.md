@@ -128,6 +128,76 @@ public class SomeExample extends UseCaseInput {
 
 Any exceptions thrown during the execution of a Use Case will be intercepted by the Use Case itself. If the exception is a subtype of ```MappedException```, the Use Case instance will consider it a part of the designed flow, as it is a ```MappedException```, and let it go untouched. On the other hand, if it is not, the Use Case instance will see it as an unexpected exception and wrap it into a ```UseCaseExecutionException``` object. Either way the autolog will include this event in the log data.
 
+The framework itself doesn't have a dependency for an actual logger, it depends on the client application to provide an implementation of the ```Logger``` native interface:
+
+```java
+public interface Logger {
+
+    void logInfo(String info);
+    void logError(String error);
+    void logDebug(String info);
+
+}
+```
+
+An example of an actual implementation of the interface above, on the side of a client application:
+
+```java
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Slf4j
+public class LoggerAdapter implements Logger {
+
+    public static final Logger SINGLETON = new LoggerAdapter();
+
+    @Override
+    public void logInfo(String info) {
+        log.info(info);
+    }
+
+    @Override
+    public void logError(String error) {
+        log.error(error);
+    }
+
+    @Override
+    public void logDebug(String info) {
+        log.debug(info);
+    }
+
+}
+```
+
+Once an implementation of the ```Logger``` interface is created, to provide it to the framework, it goes like this:
+
+```java
+LoggerProvider.SINGLETON.setProvidedInstance(LoggerAdapter.SINGLETON);
+```
+
+The ```LoggerProvider``` is a native component of the cae-framework. The ```LoggerProvider::setProvideInstance``` will receive any implementation of the ```Logger``` interface.
+
+Expanding on the usage of the ```LoggerProvider``` API:
+
+- ```LoggerProvider::structuredFormat```: if set ```true```, the apresentation style of the log payload is the JSON mentioned in the beginning of this section. If ```false```, in a simple text format.
+- ```LoggerProvider::setUseCasesLoggingIO```: another ```boolean``` for setting whether or not the autolog will include the IO data of Use Case executions.
+- ```LoggerProvider::setPortsLoggingIO```: same as the previous one, but for ```Ports``` (we'll get there).
+- ```LoggerProvider::setLoggingStackTrace```: whether or not the autolog will include logs of StackTrace for exceptions thrown during Use Case executions.
+- ```LoggerProvider::setNumberOfLinesFromStackTrace```: if the previous one is set ```true```, it is possible to set the number of StackTrace lines will be included into the log.
+- ```LoggerProvider::setIOLoggingMode```: for including the IO data whether or not to use the CAE Native mode (which converts objects to JSON) or instead to rely on the objects' ```toString``` implementations.
+
+It will look like this:
+
+```java
+LoggerProvider.SINGLETON
+    .setProvidedInstance(LoggerAdapter.SINGLETON)
+    .setIOLoggingMode(IOLoggingMode.CAE_NATIVE)
+    .structuredFormat(false)
+    .setUseCasesLoggingIO(true)
+    .setPortsLoggingIO(false)
+    .setLoggingStackTrace(true)
+    .setNumberOfLinesFromStackTrace(2);
+```
+
+
 ##### ⤵ Auto input validation
 
 Two types of Use Case accept input: the ```FunctionUseCase``` and the ```ConsumerUseCase```. Since they do, it is desirable to have a way to establish required input fields as _not-null_, _not-blank_, _not-empty_, etc. The cae-framework supports all of these, natively:
