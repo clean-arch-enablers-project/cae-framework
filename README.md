@@ -252,7 +252,56 @@ Field 'AuthRootAccountUseCaseInput:loginId' can't have blank values.
 <br>
 
 ##### 🎯 Scope based authorization
-...
+Use Case types annotated with the ```@ProtectedUseCase``` will need to specify, within the annotation, the required scopes for being granted the access to execute the Use Case instance.
+
+```java
+@ProtectedUseCase(scope = "ROOT || MAINTAINER")
+public abstract class CreateUserAccountUseCase extends FunctionUseCase<
+        CreateUserAccountUseCaseInput,
+        CreateUserAccountUseCaseOutput> {}
+```
+
+For the Use Case above (```CreateUserAccountUseCase```), it is necessary to have either the _ROOT_ or the _MAINTAINER_ scope in order to execute it. The way the framework knows whether or not the responsible for the execution has the required scopes is via the ```Actor``` interface.
+
+```java
+public interface Actor {
+    List<String> getScopes();
+}
+```
+
+An example for an actual implementation of it, on the side of a client application:
+
+```java
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+public class ActorSessionManager implements Actor {
+
+    @Getter
+    private final String owner;
+    @Getter
+    private final String id;
+    private final String scopes;
+
+    public static Actor createOutta(String authorizationHeader){
+        var jwt = JWT.of(authorizationHeader.replace("Bearer ", ""));
+        var claims = jwt.getDecryptedJWT();
+        if (claims.getExpiration().before(new Date()))
+            throw new UnauthorizedException();
+        return new ActorSessionManager(
+                claims.getOwner(),
+                claims.getActor(),
+                claims.getScopes()
+        );
+    }
+
+    @Override
+    public List<String> getScopes() {
+        return List.of(this.scopes);
+    }
+```
+
+The example above extracts the expected ```scopes``` out of a JWT.
+
+Once a concrete implementation of the ```Actor``` interface is created, the way to provide its instances on each Use Case execution is via the ```ExecutionContext``` object.
 
 <br>
 
