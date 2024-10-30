@@ -182,7 +182,7 @@ Expanding on the usage of the ```LoggerProvider``` API:
 - ```LoggerProvider::setPortsLoggingIO```: same as the previous one, but for ```Ports``` (we'll get there).
 - ```LoggerProvider::setLoggingStackTrace```: whether or not the autolog will include logs of StackTrace for exceptions thrown during Use Case executions.
 - ```LoggerProvider::setNumberOfLinesFromStackTrace```: if the previous one is set ```true```, it is possible to set the number of StackTrace lines will be included into the log.
-- ```LoggerProvider::setIOLoggingMode```: for including the IO data whether or not to use the CAE Native mode (which converts objects to JSON) or instead to rely on the objects' ```toString``` implementations.
+- ```LoggerProvider::setIOLoggingMode```: whether to use the CAE Native mode (which converts objects to JSON) or to rely on the objects' ```toString``` implementations.
 
 It will look like this:
 
