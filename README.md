@@ -128,6 +128,56 @@ public class SomeExample extends UseCaseInput {
 
 Any exceptions thrown during the execution of a Use Case will be intercepted by the Use Case itself. If the exception is a subtype of ```MappedException```, the Use Case instance will consider it a part of the designed flow, as it is a ```MappedException```, and let it go untouched. On the other hand, if it is not, the Use Case instance will see it as an unexpected exception and wrap it into a ```UseCaseExecutionException``` object. Either way the autolog will include this event in the log data.
 
+##### ⤵ Auto input validation
+
+Two types of Use Case accept input: the ```FunctionUseCase``` and the ```ConsumerUseCase```. Since they do, it is desirable to have a way to establish required input fields as _not-null_, _not-blank_, _not-empty_, etc. The cae-framework supports all of these, natively:
+
+- ```@NotNullInputField```
+- ```@NotBlankInputField```
+- ```@NotEmptyInputField```
+- ```@ValidInnerPropertiesInputField```
+
+The input rule validation is established when any field of a ```UseCaseInput``` subtype is annotated with one or more of the above annotations.
+
+###### 📋 NotNullInputField
+For fields of any type that must not be null.
+
+###### 📋 NotBlankInputField
+For ```String``` fields which can't be blank (empty or all-space strings).
+
+###### 📋 NotEmptyInputField
+For ```String``` and ```Collection``` fields that cannot be empty.
+
+###### 📋 ValidInnerPropertiesInputField
+For custom types that, inside, have their own properties with their own validation rules, based on the annotations mentioned above.
+
+An example of ```UseCaseInput``` rule validation:
+
+```java
+@Getter
+@Setter
+public class AuthBotAccountUseCaseInput extends UseCaseInput {
+
+    @NotNullInputField
+    private Long rootAccountId;
+
+    @NotNullInputField
+    @NotBlankInputField
+    private String passId;
+
+    @NotNullInputField
+    @NotBlankInputField
+    private String passSecret;
+
+}
+```
+
+That way, whenever the ```AuthBotAccountUseCase``` instance gets executed and receives an ```AuthBotAccountUseCaseInput``` object as input, the Use Case will internally call the ```UseCaseInput::validateProperties``` API, which will ensure the rule validation is respected. If it is, the Use Case accepts the input and proceeds to process it. If it is not, the Use Case rejects and throws an exception specifying what went wrong:
+
+```
+Field 'AuthRootAccountUseCaseInput:loginId' can't have blank values.
+```
+
 <br>
 
 ### →┊← Ports
