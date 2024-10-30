@@ -197,6 +197,7 @@ LoggerProvider.SINGLETON
     .setNumberOfLinesFromStackTrace(2);
 ```
 
+<br>
 
 ##### ⤵ Auto input validation
 
