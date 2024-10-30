@@ -139,17 +139,21 @@ Two types of Use Case accept input: the ```FunctionUseCase``` and the ```Consume
 
 The input rule validation is established when any field of a ```UseCaseInput``` subtype is annotated with one or more of the above annotations.
 
-###### 📋 NotNullInputField
+<br>
+
+##### 📋 NotNullInputField
 For fields of any type that must not be null.
 
-###### 📋 NotBlankInputField
+##### 📋 NotBlankInputField
 For ```String``` fields which can't be blank (empty or all-space strings).
 
-###### 📋 NotEmptyInputField
+##### 📋 NotEmptyInputField
 For ```String``` and ```Collection``` fields that cannot be empty.
 
-###### 📋 ValidInnerPropertiesInputField
+##### 📋 ValidInnerPropertiesInputField
 For custom types that, inside, have their own properties with their own validation rules, based on the annotations mentioned above.
+
+<br>
 
 An example of ```UseCaseInput``` rule validation:
 
