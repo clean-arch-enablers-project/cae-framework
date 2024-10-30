@@ -306,7 +306,8 @@ Once a concrete implementation of the ```Actor``` interface is created, the way 
 The way to provide an instance of ```Actor``` to the ```ExecutionContext``` is as follows:
 
 ```java
-var executionContext = ExecutionContext.of(correlationId, ActorSessionManager.createOutta(authorization));
+var actor = ActorSessionManager.createOutta(authorization);
+var executionContext = ExecutionContext.of(correlationId, actor);
 var useCaseOutput = useCase.execute(useCaseInput, executionContext);
 ```
 
