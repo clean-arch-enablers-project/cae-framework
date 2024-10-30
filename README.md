@@ -203,26 +203,12 @@ LoggerProvider.SINGLETON
 
 Two types of Use Case accept input: the ```FunctionUseCase``` and the ```ConsumerUseCase```. Since they do, it is desirable to have a way to establish required input fields as _not-null_, _not-blank_, _not-empty_, etc. The cae-framework supports all of these, natively:
 
-- ```@NotNullInputField```
-- ```@NotBlankInputField```
-- ```@NotEmptyInputField```
-- ```@ValidInnerPropertiesInputField```
+- ```@NotNullInputField```: for fields of any type that must not be null.
+- ```@NotBlankInputField```: for ```String``` fields which can't be blank (empty or all-space strings).
+- ```@NotEmptyInputField```: for ```String``` and ```Collection``` fields that cannot be empty.
+- ```@ValidInnerPropertiesInputField```: for custom types that, inside, have their own properties with their own validation rules, based on the annotations mentioned above.
 
 The input validation rule is established when any field of a ```UseCaseInput``` subtype is annotated with one or more of the above annotations.
-
-They are designed as follows:
-
-##### 📋 NotNullInputField
-For fields of any type that must not be null.
-
-##### 📋 NotBlankInputField
-For ```String``` fields which can't be blank (empty or all-space strings).
-
-##### 📋 NotEmptyInputField
-For ```String``` and ```Collection``` fields that cannot be empty.
-
-##### 📋 ValidInnerPropertiesInputField
-For custom types that, inside, have their own properties with their own validation rules, based on the annotations mentioned above.
 
 <br>
 
