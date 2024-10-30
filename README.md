@@ -137,9 +137,9 @@ Two types of Use Case accept input: the ```FunctionUseCase``` and the ```Consume
 - ```@NotEmptyInputField```
 - ```@ValidInnerPropertiesInputField```
 
-The input rule validation is established when any field of a ```UseCaseInput``` subtype is annotated with one or more of the above annotations.
+The input validation rule is established when any field of a ```UseCaseInput``` subtype is annotated with one or more of the above annotations.
 
-<br>
+They are designed as follows:
 
 ##### 📋 NotNullInputField
 For fields of any type that must not be null.
@@ -155,7 +155,7 @@ For custom types that, inside, have their own properties with their own validati
 
 <br>
 
-An example of ```UseCaseInput``` rule validation:
+An example of ```UseCaseInput``` validation rule:
 
 ```java
 @Getter
