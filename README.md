@@ -241,39 +241,6 @@ Field 'AuthRootAccountUseCaseInput:loginId' can't have blank values.
 
 <br>
 
-### →┊← Ports
-Another key component of the framework is the concept of Ports. Ports act as the bridge between the core use case logic and external systems, such as databases or APIs. The CAE Framework supports four types of ports:
-
-- ``✔️`` ``FunctionPort``: Receives input and returns output.
-- ``✔️`` ``ConsumerPort``: Receives input but does not return output.
-- ``✔️`` ``SupplierPort``: Returns output without input.
-- ``✔️`` ``RunnablePort``: Executes without input or output.
-
-<br>
-
-### 🧅 Layers
-The cae-framework expects the client application to be structured in 3 layers:
-
-- **Core**
-- **Adapters**
-- **Assemblers**
-
-This division can be applied to both monolithic and multilayered architectures. In a monolithic architecture, all layers are contained within a single project, with each layer organized into distinct packages. In a multilayered architecture, each layer is implemented as a separate project.
-
-Regardless of the physical structure, the layers typically serve the following purposes:
-
-- **Core**: Contains entities, use case logic, and port definitions. This is the business logic of the application, independent of external systems.
-- **Adapters**: Handles interactions with the outside world, such as databases, APIs, or external services, ensuring the business logic remains isolated from implementation details.
-- **Assemblers**: Responsible for creating and wiring use case instances from the core layer, injecting the necessary port adapters from the adapters layer to ensure proper integration and functionality.
-
-It is recommended to use the [CLI tool](https://github.com/clean-arch-enablers-project/cae-cli) as it ensures the correct structure is provided.
-
-<br>
-
-...
-
-<br>
-
 ## 🌐 Other components of the SDK:
 
 - ``✔️`` [cae-cli](https://github.com/clean-arch-enablers-project/cae-cli)
