@@ -62,6 +62,7 @@ public abstract class DeleteInactiveLeadsUseCase extends RunnableUseCase {}
 
 Use Case types which accept input require the parameterized generic type of the input to be a subclass of ```UseCaseInput```, this way the Use Case can leverage the ```UseCaseInput``` API for input validation rules. For the output types nothing is required.
 
+<br>
 
 #### ▶️ Use Case Execution
 Every Use Case subtype will inherit the same API for getting executed:
