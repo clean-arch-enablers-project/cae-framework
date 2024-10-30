@@ -82,7 +82,7 @@ var correlationId = UUID.randomUUID().toString();
 var previouslyEstablished = ExecutionContext.of(correlationId)
 ```
 
-The random approach serves well when the workflow begins at that point, but in case the flow starts at the frontend app, for example, it is interesting for the frontend app to generate a correlationId in UUID and pass it down to the backend service where the Use Case is gonna be executed and programmatically pass it as the correlationId of the Execution Context the Use Case will consume. This way the how step-by-step can be monitored even throughout different applications of the stack.
+The random approach serves well when the workflow begins at that point, but in case the flow starts at the frontend app, for example, it is interesting for the frontend app to generate a correlationId in UUID and pass it down to the backend service where the Use Case is gonna be executed and programmatically pass it as the correlationId of the Execution Context the Use Case will consume. This way the step-by-step can be monitored even throughout different applications of the stack.
 
 
 When executed, a Use Case can have some side behaviors:
