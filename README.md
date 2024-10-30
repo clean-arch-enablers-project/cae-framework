@@ -42,7 +42,7 @@ A use case, when executed, can have some behaviors:
 - ``✔️`` Autolog
 - ``✔️`` Auto input validation
 - ``⏳`` Autocache
-- ``⏳`` Auto notification
+- ``⏳`` Autonotify
 - ``✔️`` Scope based authorization
 - ``⏳`` Role based authorization
 
