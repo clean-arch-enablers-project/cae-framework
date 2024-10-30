@@ -301,7 +301,14 @@ public class ActorSessionManager implements Actor {
 
 The example above extracts the expected ```scopes``` out of a JWT.
 
-Once a concrete implementation of the ```Actor``` interface is created, the way to provide its instances on each Use Case execution is via the ```ExecutionContext``` object.
+Once a concrete implementation of the ```Actor``` interface is created, the way to provide its instances on each Use Case execution is via the ```ExecutionContext``` object. For Use Case types which aren't annotated with ```@ProtectedUseCase```, the ```ExecutionContext``` instance provided in each execution isn't required to have an instance of the ```Actor``` interface, however, for protected Use Case types, if one is not provided, the execution will be rejected.
+
+The way to provide an instance of ```Actor``` to the ```ExecutionContext``` is as follows:
+
+```java
+var executionContext = ExecutionContext.of(correlationId, ActorSessionManager.createOutta(authorization));
+var useCaseOutput = useCase.execute(useCaseInput, executionContext);
+```
 
 <br>
 
