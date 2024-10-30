@@ -57,7 +57,7 @@ public abstract class GetUserAccountProfilesUseCase extends SupplierUseCase<GetU
 
 ```java
 //neither receives or returns anything; it only executes something
-public abstract class DeleteInactiveLeads extends RunnableUseCase {}
+public abstract class DeleteInactiveLeadsUseCase extends RunnableUseCase {}
 ```
 
 Use Case types which accept input require the parameterized generic type of the input to be a subclass of ```UseCaseInput```, this way the Use Case can leverage the ```UseCaseInput``` API for input validation rules. For the output types nothing is required.
