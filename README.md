@@ -160,23 +160,21 @@ An example of ```UseCaseInput``` validation rule:
 ```java
 @Getter
 @Setter
-public class AuthBotAccountUseCaseInput extends UseCaseInput {
-
-    @NotNullInputField
-    private Long rootAccountId;
+public class AuthRootAccountUseCaseInput extends UseCaseInput {
 
     @NotNullInputField
     @NotBlankInputField
-    private String passId;
+    private String loginId;
 
     @NotNullInputField
     @NotBlankInputField
-    private String passSecret;
+    @Sensitive
+    private String pass;
 
 }
 ```
 
-That way, whenever the ```AuthBotAccountUseCase``` instance gets executed and receives an ```AuthBotAccountUseCaseInput``` object as input, the Use Case will internally call the ```UseCaseInput::validateProperties``` API, which will ensure the validation rule is respected. If it is, the Use Case accepts the input and proceeds to process it. If it is not, the Use Case rejects and throws an exception specifying what went wrong:
+That way, whenever the ```AuthRootAccountUseCase``` instance gets executed and receives an ```AuthRootAccountUseCaseInput``` object as input, the Use Case will internally call the ```UseCaseInput::validateProperties``` API, which will ensure the validation rule is respected. If it is, the Use Case accepts the input and proceeds to process it. If it is not, the Use Case rejects and throws an exception specifying what went wrong:
 
 <br>
 
