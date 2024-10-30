@@ -241,6 +241,26 @@ Field 'AuthRootAccountUseCaseInput:loginId' can't have blank values.
 
 <br>
 
+##### 📦 Autocache
+...
+
+<br>
+
+##### 🔔 Autonotify
+...
+
+<br>
+
+##### 🎯 Scope based authorization
+...
+
+<br>
+
+##### ⛑️ Role based authorization
+...
+
+<br>
+
 ## 🌐 Other components of the SDK:
 
 - ``✔️`` [cae-cli](https://github.com/clean-arch-enablers-project/cae-cli)
