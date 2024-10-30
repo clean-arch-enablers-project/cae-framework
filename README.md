@@ -36,15 +36,62 @@ The core of the CAE Framework revolves around use cases. Each use case is a dist
 - ``✔️`` ``SupplierUseCase``: Returns output without any input.
 - ``✔️`` ``RunnableUseCase``: Neither receives input nor returns output.
 
+That's how you declare Use Cases:
+
+```java
+//will receive objects of type GetBotAccountsUseCaseInput and return ones of type GetBotAccountUseCaseOutput
+public abstract class GetBotAccountsUseCase extends FunctionUseCase<
+        GetBotAccountsUseCaseInput,
+        GetBotAccountsUseCaseOutput> {}
+```
+
+```java
+//will receive objects of type UpdateUserAccountProfileUseCaseInput and return nothing
+public abstract class UpdateUserAccountProfileUseCase extends ConsumerUseCase<UpdateUserAccountProfileUseCaseInput> {}
+```
+
+```java
+//wont receive anything as input, but will return an object of type GetUserAccountProfilesUseCaseOutput
+public abstract class GetUserAccountProfilesUseCase extends SupplierUseCase<GetUserAccountProfilesUseCaseOutput> {}
+```
+
+```java
+//neither receives or returns anything; it only executes something
+public abstract class DeleteInactiveLeads extends RunnableUseCase {}
+```
+
+Use Case types which accept input require the parameterized generic type of the input to be a subclass of ```UseCaseInput```, this way the Use Case can leverage the ```UseCaseInput``` API for input validation rules. For the output types nothing is required.
+
+
 #### ▶️ Use Case Execution
-A use case, when executed, can have some behaviors:
+Every Use Case subtype will inherit the same API for getting executed:
+
+```UseCase::execute```
+
+The difference between them all is only that some accept input and/or return output and others don't do either or at least one of the options. Regardless, everyone of them accepts the following parameter: an object of type ```ExecutionContext```. This object serves the purpose of identifying each request with a unique ID, so troubleshootings can rely on the execution context at the log level, for example. 
+
+The ```ExecutionContext``` object keeps an attribute called ```correlationId``` which is the UUID that identifies each execution, it can be generated randomly or provided programmatically:
+
+```java
+//generating random correlationId
+var random = ExecutionContext.ofNew();
+
+//providing a previous set correlationId
+var correlationId = UUID.randomUUID().toString();
+var previousEstablished = ExecutionContext.of(correlationId)
+```
+
+The random approach serves well when the workflow begins at that point, but in case the flow starts at the frontend app, for example, it is interesting for the frontend app to generate a correlationId in UUID and pass it down to the backend service where the Use Case is gonna be executed and programmatically pass it as the correlationId of the Execution Context the Use Case will consume. This way the how step-by-step can be monitored even throughout different applications of the stack.
+
+
+When executed, a Use Case can have some side behaviors:
 
 - ``✔️`` Autolog
 - ``✔️`` Auto input validation
 - ``⏳`` Autocache
 - ``⏳`` Autonotify
-- ``✔️`` Scope based authorization
-- ``⏳`` Role based authorization
+- ``✔️`` Scope based authorization validation
+- ``⏳`` Role based authorization validation
 
 ##### 📄 Autolog
 Whenever an instance of use case gets executed, an automatic log will be generated. It can be in two modes:
