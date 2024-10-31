@@ -221,7 +221,7 @@ Once an implementation of the ```Logger``` interface is created, to provide it t
 LoggerProvider.SINGLETON.setProvidedInstance(LoggerAdapter.SINGLETON);
 ```
 
-The ```LoggerProvider``` is a native component of the cae-framework. The ```LoggerProvider::setProvideInstance``` will receive any implementation of the ```Logger``` interface.
+The ```LoggerProvider``` is a native component of the cae-framework. The ```LoggerProvider::setProvidedInstance``` will receive any implementation of the ```Logger``` interface.
 
 Expanding on the usage of the ```LoggerProvider``` API:
 
