@@ -225,7 +225,7 @@ The ```LoggerProvider``` is a native component of the cae-framework. The ```Logg
 
 Expanding on the usage of the ```LoggerProvider``` API:
 
-- ```LoggerProvider::structuredFormat```: if set ```true```, the apresentation style of the log payload is the JSON mentioned in the beginning of this section. If ```false```, in a simple text format.
+- ```LoggerProvider::structuredFormat```: if set ```true```, the presentation style of the log payload is the JSON mentioned in the beginning of this section. If ```false```, in a simple text format.
 - ```LoggerProvider::setUseCasesLoggingIO```: another ```boolean``` for setting whether or not the autolog will include the IO data of Use Case executions.
 - ```LoggerProvider::setPortsLoggingIO```: same as the previous one, but for ```Ports``` (we'll get there).
 - ```LoggerProvider::setLoggingStackTrace```: whether or not the autolog will include logs of StackTrace for exceptions thrown during Use Case executions.
