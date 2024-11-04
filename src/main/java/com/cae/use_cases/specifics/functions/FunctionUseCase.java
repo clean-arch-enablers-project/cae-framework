@@ -3,20 +3,37 @@ package com.cae.use_cases.specifics.functions;
 import com.cae.loggers.StackTraceLogger;
 import com.cae.trier.Trier;
 import com.cae.use_cases.UseCase;
+import com.cae.use_cases.UseCaseWithInput;
+import com.cae.use_cases.authorization.ResourceOwnershipRetriever;
+import com.cae.use_cases.authorization.RoleBasedAuth;
 import com.cae.use_cases.auto_logger.AutoLoggingManager;
 import com.cae.use_cases.contexts.ExecutionContext;
 import com.cae.use_cases.exceptions.UseCaseExecutionException;
 import com.cae.use_cases.io.UseCaseInput;
+
+import java.util.Optional;
 
 /**
  * Specific type of UseCase which has both input and output
  * @param <I> type of input
  * @param <O> type of output
  */
-public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCase {
+public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCase implements UseCaseWithInput {
 
     protected FunctionUseCase() {
         super();
+        this.resourceOwnershipRetriever = null;
+    }
+
+    protected FunctionUseCase(ResourceOwnershipRetriever resourceOwnershipRetriever){
+        super();
+        this.resourceOwnershipRetriever = resourceOwnershipRetriever;
+    }
+
+    protected final ResourceOwnershipRetriever resourceOwnershipRetriever;
+
+    public Optional<ResourceOwnershipRetriever> getResourceOwnershipRetriever(){
+        return Optional.ofNullable(this.resourceOwnershipRetriever);
     }
 
     /**
@@ -37,12 +54,17 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
      */
     public O execute(I input, ExecutionContext context){
         return Trier.of(() -> {
-            this.handleAuthorization(context);
+            this.handleAuthorization(input, context);
             input.validateProperties();
             return this.finallyExecute(input, context);
         })
         .setHandlerForUnexpectedException(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
         .finishAndExecuteAction();
+    }
+
+    private void handleAuthorization(I input, ExecutionContext context) {
+        this.handleScopeBasedAuthorization(context);
+        RoleBasedAuth.handle(input, context, this);
     }
 
     private O finallyExecute(I input, ExecutionContext context) {

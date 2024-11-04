@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class UseCaseExecutionAuthorizer {
+public class ScopeBasedAuth {
 
     public static boolean allows(Actor actor, String[] requiredScopes){
         var providedScopes = actor.getScopes();

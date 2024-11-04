@@ -33,7 +33,7 @@ public abstract class RunnableUseCase extends UseCase {
      */
     public void execute(ExecutionContext context){
         Trier.of(() -> {
-            this.handleAuthorization(context);
+            this.handleScopeBasedAuthorization(context);
             this.finallyExecute(context);
         })
         .setHandlerForUnexpectedException(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))

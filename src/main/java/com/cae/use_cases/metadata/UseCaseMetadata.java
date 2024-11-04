@@ -1,6 +1,10 @@
 package com.cae.use_cases.metadata;
 
+import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import com.cae.use_cases.UseCase;
+import com.cae.use_cases.UseCaseId;
+import com.cae.use_cases.authorization.annotations.RoleBasedProtectedUseCase;
+import com.cae.use_cases.authorization.annotations.ScopeBasedProtectedUseCase;
 import lombok.Getter;
 
 /**
@@ -25,36 +29,81 @@ import lombok.Getter;
 @Getter
 public class UseCaseMetadata {
 
+    private final String id;
     private final String name;
     private final Boolean isProtected;
     private final String[] scope;
+    private final Boolean roleProtectionEnabled;
 
-    /**
-     * Instantiates the use case metadata with the protected status set to true,
-     * which means it will be considered that the use case is not set to open access.
-     * @param useCaseType the use case class
-     * @return the use case metadata instance
-     * @param <U> the use case type
-     */
-    public static  <U extends UseCase> UseCaseMetadata ofProtectedUseCase(Class<U> useCaseType, String[] scope){
-        return new UseCaseMetadata(useCaseType, true, scope);
+    public static <U extends UseCase> UseCaseMetadata of(U useCase) {
+        var type = useCase.getClass();
+        var requiredScope = UseCaseMetadata.getRequiredScopesOutta(type);
+        var isRoleProtected = UseCaseMetadata.findOutWhetherOrNotRoleProtected(type);
+        return new UseCaseMetadata(type, (requiredScope.length > 0 || isRoleProtected), requiredScope, isRoleProtected);
     }
 
-    /**
-     * Instantiates the use case metadata with the protected status set to false,
-     * which means it will be considered that the use case is set to open access.
-     * @param useCaseType the use case class
-     * @return the use case metadata instance
-     * @param <U> the use case type
-     */
-    public static <U extends UseCase> UseCaseMetadata ofOpenAccessUseCase(Class<U> useCaseType){
-        return new UseCaseMetadata(useCaseType, false, null);
+    private static String[] getRequiredScopesOutta(Class<?> useCaseType) {
+        var typeIsAnnotated = useCaseType.isAnnotationPresent(ScopeBasedProtectedUseCase.class);
+        if (typeIsAnnotated)
+            return useCaseType.getAnnotation(ScopeBasedProtectedUseCase.class).scope();
+        if (useCaseType == UseCase.class)
+            return new String[]{};
+        return UseCaseMetadata.getRequiredScopesOutta(useCaseType.getSuperclass());
     }
 
-    private <U extends UseCase> UseCaseMetadata(Class<U> useCaseType, Boolean isProtected, String[] scope) {
+    private static Boolean findOutWhetherOrNotRoleProtected(Class<?> useCaseType) {
+        var isAnnotated = useCaseType.isAnnotationPresent(RoleBasedProtectedUseCase.class);
+        if (isAnnotated)
+            return true;
+        if (useCaseType == UseCase.class)
+            return false;
+        return UseCaseMetadata.findOutWhetherOrNotRoleProtected(useCaseType.getSuperclass());
+    }
+
+    private <U extends UseCase> UseCaseMetadata(
+            Class<U> useCaseType,
+            Boolean isProtected,
+            String[] scope,
+            Boolean roleProtectionEnabled) {
+        this.id = UseCaseMetadata.getIdOutta(useCaseType, roleProtectionEnabled);
         this.name = getNameOutta(useCaseType);
         this.isProtected = isProtected;
         this.scope = scope;
+        this.roleProtectionEnabled = roleProtectionEnabled;
+    }
+
+    private static <U extends UseCase> String getIdOutta(
+            Class<U> useCaseType,
+            Boolean roleProtection) {
+        var idFromUseCaseIdAnnotation = UseCaseMetadata.getIdByUseCaseIdAnnotation(useCaseType);
+        var idFromRoleBasedProtectedAnnotation = "";
+        if (Boolean.TRUE.equals(roleProtection)){
+            idFromRoleBasedProtectedAnnotation = UseCaseMetadata.getIdByRoleBasedProtectedUseCaseAnnotation(useCaseType);
+            if (idFromRoleBasedProtectedAnnotation.isBlank() && idFromUseCaseIdAnnotation.isBlank())
+                throw new InternalMappedException(
+                        "Problem during the extraction of use case ID",
+                        "The use case type '" + useCaseType.getSimpleName() + "' doesn't have an ID provided neither by the UseCaseId nor the RoleBasedProtectedUseCase annotations. Please provide an ID by either one of the annotations."
+                );
+        }
+        return idFromUseCaseIdAnnotation.isBlank()? idFromRoleBasedProtectedAnnotation : idFromUseCaseIdAnnotation;
+    }
+
+    private static String getIdByUseCaseIdAnnotation(Class<?> useCaseType){
+        var isAnnotated = useCaseType.isAnnotationPresent(UseCaseId.class);
+        if (isAnnotated)
+            return useCaseType.getAnnotation(UseCaseId.class).id();
+        if (useCaseType == UseCase.class)
+            return "";
+        return UseCaseMetadata.getIdByUseCaseIdAnnotation(useCaseType.getSuperclass());
+    }
+
+    private static String getIdByRoleBasedProtectedUseCaseAnnotation(Class<?> useCaseType) {
+        var isAnnotated = useCaseType.isAnnotationPresent(RoleBasedProtectedUseCase.class);
+        if (isAnnotated)
+            return useCaseType.getAnnotation(RoleBasedProtectedUseCase.class).useCaseId();
+        if (useCaseType == UseCase.class)
+            return "";
+        return UseCaseMetadata.getIdByRoleBasedProtectedUseCaseAnnotation(useCaseType.getSuperclass());
     }
 
     private <U extends UseCase> String getNameOutta(Class<U> useCaseType) {

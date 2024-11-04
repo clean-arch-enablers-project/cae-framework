@@ -35,7 +35,7 @@ public abstract class SupplierUseCase <O> extends UseCase {
      */
     public O execute(ExecutionContext context){
         return Trier.of(() -> {
-            this.handleAuthorization(context);
+            this.handleScopeBasedAuthorization(context);
             return this.finallyExecute(context);
         })
         .setHandlerForUnexpectedException(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
