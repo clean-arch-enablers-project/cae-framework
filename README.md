@@ -366,6 +366,12 @@ var useCaseOutput = useCase.execute(useCaseInput, executionContext);
 
 <br>
 
+### 📖 Autodoc
+During the build phase of your application, each Use Case has its metadata extracted to a file named ```cae-docfile.json```. This is an autodocumentation that can be integrated with the ```CAE Real-Time Service Catalog``` SaaS which is on its way to be born. The concept is that during CI/CD pipelines a Service Catalog is kept up to date in real time, enabling teams across the organization to keep up with what's available. 
+
+The autodoc feature doesn't care whether your Use Case instances are dispatched as REST Endpoints, Kafka Consumers, SQS Listeners, CRON jobs or any other type of primary adapter flavour: it only has eyes for the Use Cases themselves, which means a single way to document all Use Cases in a seamless manner.
+
+
 ## 🌐 Other components of the SDK:
 
 - ``✔️`` [cae-cli](https://github.com/clean-arch-enablers-project/cae-cli)
