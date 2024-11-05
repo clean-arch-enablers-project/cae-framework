@@ -1,6 +1,7 @@
 package com.cae.ports.specifics.consumers;
 
 import com.cae.loggers.LoggerProvider;
+import com.cae.ports.ConsumerPort;
 import com.cae.use_cases.contexts.ExecutionContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

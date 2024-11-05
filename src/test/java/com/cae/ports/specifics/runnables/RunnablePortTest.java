@@ -1,5 +1,6 @@
 package com.cae.ports.specifics.runnables;
 
+import com.cae.ports.RunnablePort;
 import com.cae.use_cases.contexts.ExecutionContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +33,7 @@ class RunnablePortTest {
         Assertions.assertTrue(portImplementation.someStrings.contains(id.toString()));
     }
 
-    public static class SomeRunnablePortImplementation extends RunnablePort{
+    public static class SomeRunnablePortImplementation extends RunnablePort {
         public final List<String> someStrings = new ArrayList<>();
         @Override
         protected void executeLogic(ExecutionContext correlation) {

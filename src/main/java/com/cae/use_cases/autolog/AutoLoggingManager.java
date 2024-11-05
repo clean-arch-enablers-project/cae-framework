@@ -7,7 +7,7 @@ import com.cae.loggers.formats.IO;
 import com.cae.loggers.formats.UseCaseLogStructuredFormat;
 import com.cae.loggers.native_io_extraction_mode.NativeExtractionMode;
 import com.cae.loggers.native_io_extraction_mode.json.SimpleJsonBuilder;
-import com.cae.ports.auto_logging.PortInsights;
+import com.cae.ports.autolog.PortInsights;
 import com.cae.use_cases.UseCase;
 import com.cae.use_cases.contexts.ExecutionContext;
 import com.cae.use_cases.io.UseCaseInput;

@@ -1,6 +1,7 @@
 package com.cae.ports.specifics.suppliers;
 
 import com.cae.loggers.LoggerProvider;
+import com.cae.ports.SupplierPort;
 import com.cae.use_cases.contexts.ExecutionContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +37,7 @@ class SupplierPortTest {
     }
 
 
-    public static class SomeSupplierPortImplementation extends SupplierPort<String>{
+    public static class SomeSupplierPortImplementation extends SupplierPort<String> {
         @Override
         protected String executeLogic(ExecutionContext correlation) {
             return correlation.getCorrelationId().toString();

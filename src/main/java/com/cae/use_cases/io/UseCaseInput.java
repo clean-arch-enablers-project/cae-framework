@@ -1,9 +1,10 @@
 package com.cae.use_cases.io;
 
+import com.cae.loggers.LoggerProvider;
 import com.cae.mapped_exceptions.MappedException;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
-import com.cae.use_cases.authorization.annotations.ResourceIdentifier;
-import com.cae.use_cases.authorization.annotations.ResourceOwnerIdentifier;
+import com.cae.use_cases.autoauth.annotations.ResourceIdentifier;
+import com.cae.use_cases.autoauth.annotations.ResourceOwnerIdentifier;
 import com.cae.use_cases.io.annotations.NotBlankInputField;
 import com.cae.use_cases.io.annotations.NotEmptyInputField;
 import com.cae.use_cases.io.annotations.NotNullInputField;
@@ -39,6 +40,7 @@ public class UseCaseInput {
             }
             this.validatePropertiesArbitrarily();
         } catch (MappedException mappedException){
+            LoggerProvider.SINGLETON.getProvidedInstance().ifPresent(providedLogger -> providedLogger.logError(mappedException.toString()));
             throw mappedException;
         } catch (Exception e) {
             throw new InternalMappedException("Something went wrong while trying to validate properties of use case input object.",  "More details on this: " + e);

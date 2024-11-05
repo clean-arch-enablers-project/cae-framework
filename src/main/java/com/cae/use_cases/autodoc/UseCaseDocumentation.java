@@ -1,11 +1,11 @@
 package com.cae.use_cases.autodoc;
 
 import com.cae.use_cases.UseCase;
-import com.cae.use_cases.authorization.annotations.ScopeBasedProtectedUseCase;
-import com.cae.use_cases.specifics.consumers.ConsumerUseCase;
-import com.cae.use_cases.specifics.functions.FunctionUseCase;
-import com.cae.use_cases.specifics.runnables.RunnableUseCase;
-import com.cae.use_cases.specifics.suppliers.SupplierUseCase;
+import com.cae.use_cases.autoauth.annotations.ScopeBasedProtection;
+import com.cae.use_cases.ConsumerUseCase;
+import com.cae.use_cases.FunctionUseCase;
+import com.cae.use_cases.RunnableUseCase;
+import com.cae.use_cases.SupplierUseCase;
 import lombok.*;
 
 import java.lang.reflect.ParameterizedType;
@@ -57,14 +57,14 @@ public class UseCaseDocumentation {
     }
 
     private static Boolean handleProtectionStatus(Class<? extends UseCase> useCaseClass, Class<?> rootUseCaseClass) {
-        return useCaseClass.isAnnotationPresent(ScopeBasedProtectedUseCase.class) || rootUseCaseClass.isAnnotationPresent(ScopeBasedProtectedUseCase.class);
+        return useCaseClass.isAnnotationPresent(ScopeBasedProtection.class) || rootUseCaseClass.isAnnotationPresent(ScopeBasedProtection.class);
     }
 
     private static List<String> handleScopes(Class<? extends UseCase> useCaseClass, Class<?> rootUseCaseClass) {
-        if (useCaseClass.isAnnotationPresent(ScopeBasedProtectedUseCase.class))
-            return List.of(useCaseClass.getAnnotation(ScopeBasedProtectedUseCase.class).scope());
-        if (rootUseCaseClass.isAnnotationPresent(ScopeBasedProtectedUseCase.class))
-            return List.of(rootUseCaseClass.getAnnotation(ScopeBasedProtectedUseCase.class).scope());
+        if (useCaseClass.isAnnotationPresent(ScopeBasedProtection.class))
+            return List.of(useCaseClass.getAnnotation(ScopeBasedProtection.class).scope());
+        if (rootUseCaseClass.isAnnotationPresent(ScopeBasedProtection.class))
+            return List.of(rootUseCaseClass.getAnnotation(ScopeBasedProtection.class).scope());
         return new ArrayList<>();
     }
 
