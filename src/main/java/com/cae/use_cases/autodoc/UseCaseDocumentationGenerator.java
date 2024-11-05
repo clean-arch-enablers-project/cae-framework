@@ -1,4 +1,4 @@
-package com.cae.use_cases.auto_documentation;
+package com.cae.use_cases.autodoc;
 
 import com.cae.use_cases.UseCase;
 import lombok.AccessLevel;

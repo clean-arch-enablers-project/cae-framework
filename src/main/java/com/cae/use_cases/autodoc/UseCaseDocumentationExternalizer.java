@@ -1,9 +1,9 @@
-package com.cae.use_cases.auto_documentation;
+package com.cae.use_cases.autodoc;
 
 
 import com.cae.loggers.native_io_extraction_mode.json.SimpleJsonBuilder;
 import com.cae.use_cases.registries.UseCaseRegistry;
-import com.cae.use_cases.auto_initializer.UseCaseAutoInitializer;
+import com.cae.use_cases.autoinit.UseCaseAutoInitializer;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;

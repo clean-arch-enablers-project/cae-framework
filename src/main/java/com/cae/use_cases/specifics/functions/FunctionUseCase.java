@@ -6,7 +6,7 @@ import com.cae.use_cases.UseCase;
 import com.cae.use_cases.UseCaseWithInput;
 import com.cae.use_cases.authorization.ResourceOwnershipRetriever;
 import com.cae.use_cases.authorization.RoleBasedAuth;
-import com.cae.use_cases.auto_logger.AutoLoggingManager;
+import com.cae.use_cases.autolog.AutoLoggingManager;
 import com.cae.use_cases.contexts.ExecutionContext;
 import com.cae.use_cases.exceptions.UseCaseExecutionException;
 import com.cae.use_cases.io.UseCaseInput;

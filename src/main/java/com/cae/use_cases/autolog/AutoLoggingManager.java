@@ -1,4 +1,4 @@
-package com.cae.use_cases.auto_logger;
+package com.cae.use_cases.autolog;
 
 import com.cae.loggers.IOLoggingHandler;
 import com.cae.loggers.Logger;

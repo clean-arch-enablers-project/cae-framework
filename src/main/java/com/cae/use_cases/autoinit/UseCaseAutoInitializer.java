@@ -1,4 +1,4 @@
-package com.cae.use_cases.auto_initializer;
+package com.cae.use_cases.autoinit;
 
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import com.cae.use_cases.UseCase;
