@@ -8,9 +8,9 @@ import java.util.List;
 
 @Getter
 @Builder
-public class ActorImplementation implements Actor<Long> {
+public class ActorImplementation implements Actor {
 
-    private final Long id;
+    private final String id;
     private final List<String> scopes;
 
 }
