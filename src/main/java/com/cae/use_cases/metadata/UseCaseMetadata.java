@@ -2,7 +2,7 @@ package com.cae.use_cases.metadata;
 
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import com.cae.use_cases.UseCase;
-import com.cae.use_cases.UseCaseId;
+import com.cae.use_cases.UseCaseAsAction;
 import com.cae.use_cases.autoauth.annotations.RoleBasedProtection;
 import com.cae.use_cases.autoauth.annotations.ScopeBasedProtection;
 import lombok.Getter;
@@ -82,16 +82,16 @@ public class UseCaseMetadata {
             if (idFromRoleBasedProtectedAnnotation.isBlank() && idFromUseCaseIdAnnotation.isBlank())
                 throw new InternalMappedException(
                         "Problem during the extraction of use case ID",
-                        "The use case type '" + useCaseType.getSimpleName() + "' doesn't have an ID provided neither by the UseCaseId nor the RoleBasedProtection annotations. Please provide an ID by either one of the annotations."
+                        "The use case type '" + useCaseType.getSimpleName() + "' doesn't have an ID provided neither by the UseCaseAsAction nor the RoleBasedProtection annotations. Please provide an ID by either one of the annotations."
                 );
         }
         return idFromUseCaseIdAnnotation.isBlank()? idFromRoleBasedProtectedAnnotation : idFromUseCaseIdAnnotation;
     }
 
     private static String getIdByUseCaseIdAnnotation(Class<?> useCaseType){
-        var isAnnotated = useCaseType.isAnnotationPresent(UseCaseId.class);
+        var isAnnotated = useCaseType.isAnnotationPresent(UseCaseAsAction.class);
         if (isAnnotated)
-            return useCaseType.getAnnotation(UseCaseId.class).id();
+            return useCaseType.getAnnotation(UseCaseAsAction.class).actionId();
         if (useCaseType == UseCase.class)
             return "";
         return UseCaseMetadata.getIdByUseCaseIdAnnotation(useCaseType.getSuperclass());
@@ -100,7 +100,7 @@ public class UseCaseMetadata {
     private static String getIdByRoleBasedProtectedUseCaseAnnotation(Class<?> useCaseType) {
         var isAnnotated = useCaseType.isAnnotationPresent(RoleBasedProtection.class);
         if (isAnnotated)
-            return useCaseType.getAnnotation(RoleBasedProtection.class).useCaseId();
+            return useCaseType.getAnnotation(RoleBasedProtection.class).actionId();
         if (useCaseType == UseCase.class)
             return "";
         return UseCaseMetadata.getIdByRoleBasedProtectedUseCaseAnnotation(useCaseType.getSuperclass());

@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 @Target(value = ElementType.TYPE)
 public @interface RoleBasedProtection {
 
-    String useCaseId() default "";
+    String actionId() default "";
 
 }

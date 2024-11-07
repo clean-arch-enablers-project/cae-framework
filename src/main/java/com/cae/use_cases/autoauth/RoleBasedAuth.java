@@ -21,7 +21,7 @@ public class RoleBasedAuth {
             UseCaseInput input,
             ExecutionContext context,
             UseCaseWithInput useCase){
-        if (((UseCase) useCase).getUseCaseMetadata().getRoleProtectionEnabled()){
+        if (Boolean.TRUE.equals(((UseCase) useCase).getUseCaseMetadata().getRoleProtectionEnabled())){
             var resourceOwnerId = input.getResourceOwnerIdentifier();
             if (resourceOwnerId.isPresent()) handleByResourceOwnerId(resourceOwnerId.get(), context, (UseCase) useCase);
             else handleByResourceId(input, context, useCase);
@@ -41,7 +41,7 @@ public class RoleBasedAuth {
     private static String getResourceIdOutta(UseCaseInput input, UseCase useCase) {
         return input.getResourceIdentifier().orElseThrow(() -> new InternalMappedException(
                 "Problem trying to get the resource identifier from input '" + input.getClass().getSimpleName() + "'",
-                "The use case '" + useCase.getUseCaseMetadata().getName() + "' was annotated as RoleBasedProtection, so it is mandatory that " +
+                "The use case '" + useCase.getUseCaseMetadata().getName() + "' was annotated with RoleBasedProtection, so it is mandatory that " +
                         "either a resource identifier or a resource owner identifier is provided within the use case input instance. " +
                         "This is done by annotating one of the input fields with @ResourceIdentifier (for indirect ownership validation) or @ResourceOwnerIdentifier (for direct ownership validation)"
         ));
@@ -68,7 +68,7 @@ public class RoleBasedAuth {
             UseCase useCase) {
         var useCaseId = useCase.getUseCaseMetadata().getId();
         var actor = getActorOutta(context);
-        var actorRoles = getRolesFor(actor, useCaseId);
+        var actorRoles = getRolesFor(actor, useCaseId, context);
         var rolesThatMatchAndAllowTheUseCase = findOutWhichRolesMatch(actorRoles, useCaseId);
         if (rolesThatMatchAndAllowTheUseCase.isEmpty())
             throw new NotAuthorizedMappedException(
@@ -90,7 +90,7 @@ public class RoleBasedAuth {
         );
     }
 
-    private static List<Role> getRolesFor(Actor actor, String useCaseId) {
+    private static List<RoleContract> getRolesFor(Actor actor, String useCaseId, ExecutionContext context) {
         return RoleRetrieverRegistry.SINGLETON.getRoleRetrieverByUseCaseId(useCaseId)
                 .orElseGet(() -> RoleRetrieverRegistry.SINGLETON.getDefaultRetriever().orElseThrow(() ->
                         new InternalMappedException(
@@ -101,16 +101,16 @@ public class RoleBasedAuth {
                                         "specific instance at the Use Case's constructor level."
                         )
                 ))
-                .getRolesBy(actor.getId());
+                .getRolesBy(actor.getId(), context);
     }
 
-    private static List<Role> findOutWhichRolesMatch(List<Role> actorRoles, String useCaseId) {
-        var finalResult = new ArrayList<Role>();
+    private static List<RoleContract> findOutWhichRolesMatch(List<RoleContract> actorRoles, String useCaseId) {
+        var finalResult = new ArrayList<RoleContract>();
         for (var role : actorRoles){
             var roleHasMatchingProperties = role.getStatements()
                     .stream()
                     .anyMatch(
-                            statement -> statement.getUseCaseIds().stream().anyMatch(statementUseCaseId -> statementUseCaseId.equals(useCaseId))
+                            statement -> statement.getActionIds().stream().anyMatch(statementUseCaseId -> statementUseCaseId.equals(useCaseId))
                             && statement.allows()
                     );
             if (roleHasMatchingProperties) finalResult.add(role);

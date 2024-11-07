@@ -9,11 +9,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConcreteRoleStatement implements RoleStatement{
+public class ConcreteRoleStatement implements RoleStatementContract {
 
     private String roleStatementIdentifier;
     private Boolean allows;
-    private List<String> useCaseIds;
+    private List<String> actionIds;
 
     public Boolean allows(){
         return this.allows;

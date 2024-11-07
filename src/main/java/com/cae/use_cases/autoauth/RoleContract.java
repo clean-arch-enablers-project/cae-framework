@@ -2,10 +2,10 @@ package com.cae.use_cases.autoauth;
 
 import java.util.List;
 
-public interface Role {
+public interface RoleContract {
 
     String getRoleIdentifier();
     String getOwnerIdentifier();
-    List<RoleStatement> getStatements();
+    List<RoleStatementContract> getStatements();
 
 }

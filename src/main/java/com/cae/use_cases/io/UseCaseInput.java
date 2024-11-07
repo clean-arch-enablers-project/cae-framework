@@ -157,9 +157,7 @@ public class UseCaseInput {
                 .filter(fieldAndGetter -> fieldAndGetter.field.isAnnotationPresent(ResourceOwnerIdentifier.class))
                 .map(fieldAndGetter -> {
                     try {
-                        var value = fieldAndGetter.getter.invoke(this);
-                        if (!(value instanceof String)) throw new InternalMappedException("Wrong type", "@ResourceOwnerIdentifier fields must be String");
-                        return (String) value;
+                        return fieldAndGetter.getter.invoke(this).toString();
                     } catch (Exception e) {
                         throw new InternalMappedException(
                                 "Problem trying to invoke getter of '" + fieldAndGetter.field.getName()+"'",
@@ -177,9 +175,7 @@ public class UseCaseInput {
                 .filter(fieldAndGetter -> fieldAndGetter.field.isAnnotationPresent(ResourceIdentifier.class))
                 .map(fieldAndGetter -> {
                     try {
-                        var value = fieldAndGetter.getter.invoke(this);
-                        if (!(value instanceof String)) throw new InternalMappedException("Wrong type", "@ResourceIdentifier fields must be String");
-                        return (String) value;
+                        return fieldAndGetter.getter.invoke(this).toString();
                     } catch (Exception e) {
                         throw new InternalMappedException(
                                 "Problem trying to invoke getter of '" + fieldAndGetter.field.getName()+"'",
