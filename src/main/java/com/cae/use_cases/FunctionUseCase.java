@@ -1,6 +1,7 @@
 package com.cae.use_cases;
 
 import com.cae.loggers.StackTraceLogger;
+import com.cae.notifier.NotifierManager;
 import com.cae.trier.Trier;
 import com.cae.use_cases.autoauth.ResourceOwnershipRetriever;
 import com.cae.use_cases.autoauth.RoleBasedAuth;
@@ -8,6 +9,8 @@ import com.cae.use_cases.autolog.AutoLoggingManager;
 import com.cae.use_cases.contexts.ExecutionContext;
 import com.cae.use_cases.io.UseCaseInput;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 /**
@@ -66,13 +69,18 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
 
     private O finallyExecute(I input, ExecutionContext context) {
         var loggingManager = AutoLoggingManager.of(this, context);
+        var startingMoment = LocalDateTime.now();
         try {
             var output = this.applyInternalLogic(input, context);
-            loggingManager.logExecution(context, input, output, null);
+            var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
+            NotifierManager.handleNotificationOn(this, null, latency, context);
+            loggingManager.logExecution(context, input, output, null, latency);
             return output;
         } catch (Exception anyException){
+            var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
+            NotifierManager.handleNotificationOn(this, anyException, latency, context);
             StackTraceLogger.SINGLETON.handleLoggingStackTrace(anyException, context, this.getUseCaseMetadata().getName());
-            loggingManager.logExecution(context, input, null, anyException);
+            loggingManager.logExecution(context, input, null, anyException, latency);
             throw anyException;
         }
     }

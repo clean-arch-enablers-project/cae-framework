@@ -17,7 +17,12 @@ public class PortInsightsManager {
         return new PortInsightsManager(portName);
     }
 
-    public void keepInsightOf(ExecutionContext context, Object input, Object output, Exception exception){
+    public void keepInsightOf(
+            ExecutionContext context,
+            Object input,
+            Object output,
+            Exception exception,
+            Long latency){
         this.runSynchronouslyIfNecessary(CompletableFuture.runAsync(() -> {
             var loggerProvider = LoggerProvider.SINGLETON;
             var ioInsightBuilder = new StringBuilder();
@@ -29,6 +34,7 @@ public class PortInsightsManager {
             var fullInsight = this.portName +
                     "'s insights:" +
                     ioInsightBuilder +
+                    " (" + latency + "ms)" +
                     (exceptionInsight.isBlank() ? " no exception has been thrown" : exceptionInsight);
             PortInsights.SINGLETON.register(context, fullInsight);
         }));

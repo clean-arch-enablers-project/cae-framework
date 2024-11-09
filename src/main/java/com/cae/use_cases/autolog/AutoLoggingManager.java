@@ -14,8 +14,6 @@ import com.cae.use_cases.io.UseCaseInput;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -27,7 +25,6 @@ public class AutoLoggingManager<U extends UseCase> {
 
     private final U useCase;
     private final StringBuilder stringBuilder;
-    private final LocalDateTime startingMoment;
     private final Logger logger;
     private final ExecutionContext correlation;
 
@@ -37,7 +34,6 @@ public class AutoLoggingManager<U extends UseCase> {
         return new AutoLoggingManager<>(
                 useCase,
                 new StringBuilder(),
-                LocalDateTime.now(),
                 useCase.getLogger(),
                 correlation);
     }
@@ -46,12 +42,13 @@ public class AutoLoggingManager<U extends UseCase> {
             ExecutionContext context,
             UseCaseInput input,
             Object output,
-            Exception exception){
+            Exception exception,
+            Long latency){
         this.synchronousExecutionIfNeeded(CompletableFuture.runAsync(() -> {
             if (Boolean.TRUE.equals(LoggerProvider.SINGLETON.getStructuredFormat()))
-                this.generateLogInStructuredFormat(input, output, exception, context);
+                this.generateLogInStructuredFormat(input, output, exception, context, latency);
             else
-                this.generateLogInSimpleFormat(input, output, exception, context);
+                this.generateLogInSimpleFormat(input, output, exception, context, latency);
             PortInsights.SINGLETON.flush(context);
             this.logWhatsGenerated(exception == null);
         }));
@@ -66,20 +63,22 @@ public class AutoLoggingManager<U extends UseCase> {
             UseCaseInput input,
             Object output,
             Exception exception,
-            ExecutionContext context){
+            ExecutionContext context,
+            Long latency){
         if (exception == null)
-            this.generateSimpleLogForSuccessfulExecution(input, output, context);
+            this.generateSimpleLogForSuccessfulExecution(input, output, context, latency);
         else
-            this.generateSimpleLogForUnsuccessfulExecution(exception, input, output, context);
+            this.generateSimpleLogForUnsuccessfulExecution(exception, input, output, context, latency);
     }
 
     private void generateSimpleLogForSuccessfulExecution(
             UseCaseInput input,
             Object output,
-            ExecutionContext context){
+            ExecutionContext context,
+            Long latency){
         this.stringBuilder
                 .append(this.generateFirstHalfOfLogString())
-                .append(this.generateLastHalfOfSuccessfulLogString())
+                .append(this.generateLastHalfOfSuccessfulLogString(latency))
                 .append(Optional.ofNullable(PortInsights.SINGLETON.getFor(context)).map(insights -> " | Port insights: " + insights).orElse(""));
         this.generateIOLogString(input, output);
     }
@@ -88,10 +87,11 @@ public class AutoLoggingManager<U extends UseCase> {
             Exception anyException,
             UseCaseInput input,
             Object output,
-            ExecutionContext context){
+            ExecutionContext context,
+            Long latency){
         this.stringBuilder
                 .append(this.generateFirstHalfOfLogString())
-                .append(this.generateLastHalfOfUnsuccessfulLogString(anyException))
+                .append(this.generateLastHalfOfUnsuccessfulLogString(anyException, latency))
                 .append(Optional.ofNullable(PortInsights.SINGLETON.getFor(context)).map(insights -> " | Port insights: " + SimpleJsonBuilder.buildFor(insights)).orElse(""));
         this.generateIOLogString(input, output);
     }
@@ -112,28 +112,32 @@ public class AutoLoggingManager<U extends UseCase> {
     }
 
     private String generateFirstHalfOfLogString(){
-        return "Use case \""
+        return "Use case '"
                 + (this.useCase.getUseCaseMetadata().getName())
-                + "\" execution with correlation ID of \""
+                + "' execution with correlation ID of '"
                 + this.correlation.getCorrelationId().toString();
     }
 
-    private String generateLastHalfOfSuccessfulLogString(){
-        return "\" finished successfully. It took about "
-                + Duration.between(this.startingMoment, LocalDateTime.now()).toMillis()
+    private String generateLastHalfOfSuccessfulLogString(Long latency){
+        return "' finished successfully. It took about "
+                + latency
                 + " milliseconds.";
     }
 
-    private String generateLastHalfOfUnsuccessfulLogString(Exception anyException){
-        return "\" threw an exception. \""
+    private String generateLastHalfOfUnsuccessfulLogString(Exception anyException, Long latency){
+        return "' threw an exception and took about "
+                + latency
+                + " milliseconds. '"
                 + (anyException.getClass().getSimpleName().concat(": ").concat(anyException.getMessage()))
-                + ("\".");
+                + ("'.");
     }
 
     private void generateLogInStructuredFormat(
             UseCaseInput input,
             Object output,
-            Exception exception, ExecutionContext context) {
+            Exception exception,
+            ExecutionContext context,
+            Long latency) {
         var io = Boolean.FALSE.equals(LoggerProvider.SINGLETON.getUseCasesLoggingIO())? null : IO.builder()
                 .input(input)
                 .output(output)
@@ -141,7 +145,7 @@ public class AutoLoggingManager<U extends UseCase> {
         var executionData = UseCaseLogStructuredFormat.UseCaseExecutionLogFormat.builder()
                 .useCase(this.useCase.getUseCaseMetadata().getName())
                 .correlationId(this.correlation.toString())
-                .latency(Duration.between(this.startingMoment, LocalDateTime.now()).toMillis())
+                .latency(latency)
                 .successful(exception == null)
                 .exception(exception == null? null : exception.toString())
                 .io(io)

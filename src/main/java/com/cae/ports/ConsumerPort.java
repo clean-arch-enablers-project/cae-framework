@@ -2,10 +2,14 @@ package com.cae.ports;
 
 
 import com.cae.loggers.StackTraceLogger;
+import com.cae.notifier.NotifierManager;
 import com.cae.ports.autolog.PortInsightsManager;
 import com.cae.ports.exceptions.PortExecutionException;
 import com.cae.trier.Trier;
 import com.cae.use_cases.contexts.ExecutionContext;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 /**
  * Specific type of port: consumer ports are ports that receive inputs
@@ -22,12 +26,17 @@ public abstract class ConsumerPort <I> extends Port {
     public void executePortOn(I input, ExecutionContext context){
         Trier.of(() -> {
             var insightsManager = PortInsightsManager.of(this.name);
+            var startingMoment = LocalDateTime.now();
             try {
                 this.executeLogic(input, context);
-                insightsManager.keepInsightOf(context, input, null, null);
+                var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
+                NotifierManager.handleNotificationOn(this, null, latency, context);
+                insightsManager.keepInsightOf(context, input, null, null, latency);
             } catch (Exception anyException){
+                var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
+                NotifierManager.handleNotificationOn(this, anyException, latency, context);
                 StackTraceLogger.SINGLETON.handleLoggingStackTrace(anyException, context, this.name);
-                insightsManager.keepInsightOf(context, input, null, anyException);
+                insightsManager.keepInsightOf(context, input, null, anyException, latency);
                 throw anyException;
             }
         })

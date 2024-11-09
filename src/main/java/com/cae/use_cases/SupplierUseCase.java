@@ -1,9 +1,13 @@
 package com.cae.use_cases;
 
 import com.cae.loggers.StackTraceLogger;
+import com.cae.notifier.NotifierManager;
 import com.cae.trier.Trier;
 import com.cae.use_cases.autolog.AutoLoggingManager;
 import com.cae.use_cases.contexts.ExecutionContext;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 /**
  * Specific type of UseCase which has no input but provides output
@@ -42,13 +46,18 @@ public abstract class SupplierUseCase <O> extends UseCase {
 
     private O finallyExecute(ExecutionContext context) {
         var loggingManager = AutoLoggingManager.of(this, context);
+        var startingMoment = LocalDateTime.now();
         try {
             var output = this.applyInternalLogic(context);
-            loggingManager.logExecution(context, null, output, null);
+            var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
+            NotifierManager.handleNotificationOn(this, null, latency, context);
+            loggingManager.logExecution(context, null, output, null, latency);
             return output;
         } catch (Exception anyException){
+            var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
+            NotifierManager.handleNotificationOn(this, anyException, latency, context);
             StackTraceLogger.SINGLETON.handleLoggingStackTrace(anyException, context, this.getUseCaseMetadata().getName());
-            loggingManager.logExecution(context, null, null, anyException);
+            loggingManager.logExecution(context, null, null, anyException, latency);
             throw anyException;
         }
     }
