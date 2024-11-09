@@ -1,5 +1,6 @@
 package com.cae.notifier;
 
+import com.cae.mapped_exceptions.specifics.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,15 +16,10 @@ public class NotifierProvider {
     public static final NotifierProvider SINGLETON = new NotifierProvider();
 
     private Notifier providedInstance;
-    private Boolean considerInputMappedExceptions = false;
-    private Boolean considerNotFoundMappedExceptions = false;
-    private Boolean considerNotAuthenticatedMappedExceptions = false;
-    private Boolean considerNotAuthorizedMappedExceptions = false;
-    private Boolean considerInternalMappedExceptions = false;
-    private Boolean considerUnexpectedExceptions;
-    private final Set<Exception> customExceptionsToConsider = ConcurrentHashMap.newKeySet();
+    private Boolean considerUnexpectedExceptions = false;
+    private final Set<Class<? extends Exception>> customExceptionsToConsider = ConcurrentHashMap.newKeySet();
     private Boolean considerLatency = false;
-    private Integer latencyThreshold = 500;
+    private Integer latencyThreshold;
 
     public NotifierProvider setProvidedInstance(Notifier notifier){
         this.providedInstance = notifier;
@@ -35,27 +31,27 @@ public class NotifierProvider {
     }
 
     public NotifierProvider considerInputMappedExceptions(){
-        this.considerInputMappedExceptions = true;
+        this.customExceptionsToConsider.add(InputMappedException.class);
         return this;
     }
 
     public NotifierProvider considerNotFoundMappedExceptions(){
-        this.considerNotFoundMappedExceptions = true;
+        this.customExceptionsToConsider.add(NotFoundMappedException.class);
         return this;
     }
 
     public NotifierProvider considerNotAuthenticatedMappedExceptions(){
-        this.considerNotAuthenticatedMappedExceptions = true;
+        this.customExceptionsToConsider.add(NotAuthenticatedMappedException.class);
         return this;
     }
 
     public NotifierProvider considerNotAuthorizedMappedExceptions(){
-        this.considerNotAuthorizedMappedExceptions = true;
+        this.customExceptionsToConsider.add(NotAuthorizedMappedException.class);
         return this;
     }
 
     public NotifierProvider considerInternalMappedExceptions(){
-        this.considerInternalMappedExceptions = true;
+        this.customExceptionsToConsider.add(InternalMappedException.class);
         return this;
     }
 
@@ -64,8 +60,8 @@ public class NotifierProvider {
         return this;
     }
 
-    public NotifierProvider consider(Exception exception){
-        this.customExceptionsToConsider.add(exception);
+    public <T extends Exception> NotifierProvider consider(Class<T> exceptionType){
+        this.customExceptionsToConsider.add(exceptionType);
         return this;
     }
 
