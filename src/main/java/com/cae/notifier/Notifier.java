@@ -13,16 +13,10 @@ public interface Notifier {
     @Builder
     @Getter
     class Notification{
-        private final String message;
+        private final String subject;
         private final ExecutionContext executionContext;
         private final Exception exception;
-        private final List<Reason> reasons;
-    }
-
-    @Builder
-    @Getter
-    class Reason{
-        private final String name;
+        private final List<String> reasons;
     }
 
 }
