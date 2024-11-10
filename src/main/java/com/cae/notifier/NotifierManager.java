@@ -1,5 +1,6 @@
 package com.cae.notifier;
 
+import com.cae.mapped_exceptions.specifics.*;
 import com.cae.ports.Port;
 import com.cae.use_cases.UseCase;
 import com.cae.use_cases.contexts.ExecutionContext;
@@ -44,7 +45,9 @@ public class NotifierManager {
             reasons.add("Latency threshold: " + notificationSettings.getLatencyThreshold() + "ms allowed vs. actually " + latency + "ms");
         Optional.ofNullable(exception).ifPresent(actualException -> {
             if (notificationSettings.getCustomExceptionsToConsider().contains(actualException.getClass()))
-                reasons.add("An exception was thrown during its execution. It matched one of the types set for notification.");
+                reasons.add("An exception was thrown during its execution. It specifically matched one of the parameterized types set for notification.");
+            else if (NotifierManager.checkWhetherGenericallyMatchesMappedExceptions(notificationSettings, actualException))
+                reasons.add("An exception was thrown during its execution. It generically matched one of the MappedException types set for notification.");
             else if (Boolean.TRUE.equals(notificationSettings.getConsiderUnexpectedExceptions()))
                 reasons.add("An unexpected exception was thrown during its execution.");
         });
@@ -57,6 +60,23 @@ public class NotifierManager {
                     .build();
             notifier.emitNotification(notification);
         }
+    }
+
+    private static boolean checkWhetherGenericallyMatchesMappedExceptions(
+            NotifierProvider notificationSettings,
+            Exception actualException) {
+        var map = notificationSettings.getCustomExceptionsToConsider();
+        return
+                (map.contains(InternalMappedException.class) && actualException instanceof InternalMappedException)
+                ||
+                (map.contains(InputMappedException.class) && actualException instanceof InputMappedException)
+                ||
+                (map.contains(NotFoundMappedException.class) && actualException instanceof NotFoundMappedException)
+                ||
+                (map.contains(NotAuthenticatedMappedException.class) && actualException instanceof NotAuthenticatedMappedException)
+                ||
+                (map.contains(NotAuthorizedMappedException.class) && actualException instanceof NotAuthorizedMappedException);
+
     }
 
 }

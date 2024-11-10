@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-@Getter
+@Getter(AccessLevel.PROTECTED)
 public class NotifierProvider {
 
     public static final NotifierProvider SINGLETON = new NotifierProvider();
@@ -60,7 +60,7 @@ public class NotifierProvider {
         return this;
     }
 
-    public <T extends Exception> NotifierProvider consider(Class<T> exceptionType){
+    public <T extends Exception> NotifierProvider considerSpecifically(Class<T> exceptionType){
         this.customExceptionsToConsider.add(exceptionType);
         return this;
     }
