@@ -77,7 +77,7 @@
         <dependency>
             <groupId>com.clean-arch-enablers</groupId>
             <artifactId>http-client</artifactId>
-            <version>0.0.2</version>
+            <version>1.1.0</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
