@@ -1,7 +1,5 @@
 package com.cae.ports;
 
-import com.cae.ports.auto_logging.PortInsightsManager;
-import com.cae.use_cases.contexts.ExecutionContext;
 import lombok.Getter;
 
 /**

@@ -10,6 +10,7 @@ import java.util.List;
 @Builder
 public class ActorImplementation implements Actor {
 
+    private final String id;
     private final List<String> scopes;
 
 }

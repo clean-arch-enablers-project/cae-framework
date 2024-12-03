@@ -1,6 +1,7 @@
 package com.cae.ports.specifics.functions;
 
 import com.cae.loggers.LoggerProvider;
+import com.cae.ports.FunctionPort;
 import com.cae.use_cases.contexts.ExecutionContext;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,7 +38,7 @@ class FunctionPortTest {
         Mockito.verify(this.correlation, Mockito.times(LoggerProvider.SINGLETON.getPortsLoggingIO()? 3 : 1)).getCorrelationId();
     }
 
-    private static class SomeFunctionPortImplementation extends FunctionPort<String, Boolean>{
+    private static class SomeFunctionPortImplementation extends FunctionPort<String, Boolean> {
         @Override
         protected Boolean executeLogic(String input, ExecutionContext correlation) {
             return input.isBlank() || correlation.getCorrelationId().toString().isBlank();
