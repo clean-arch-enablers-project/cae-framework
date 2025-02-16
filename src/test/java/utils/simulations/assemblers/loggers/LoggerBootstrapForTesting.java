@@ -1,7 +1,7 @@
 package utils.simulations.assemblers.loggers;
 
-import com.cae.loggers.IOLoggingMode;
-import com.cae.loggers.LoggerProvider;
+import com.cae.autolog.AutologProvider;
+import com.cae.autolog.IOLoggingMode;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import utils.simulations.adapters.loggers.LoggerAdapterForTesting;
@@ -10,22 +10,20 @@ import utils.simulations.adapters.loggers.LoggerAdapterForTesting;
 public class LoggerBootstrapForTesting {
 
     public static void startupDefaultSettings(){
-        LoggerProvider.SINGLETON
+        AutologProvider.SINGLETON
                 .setProvidedInstance(LoggerAdapterForTesting.SINGLETON)
                 .setUseCasesLoggingIO(true)
                 .setPortsLoggingIO(true)
                 .structuredFormat(false)
-                .async(false)
                 .setIOLoggingMode(IOLoggingMode.TO_STRING);
     }
 
     public static void startupSyncAllTrueSettingsAndNative(){
-        LoggerProvider.SINGLETON
+        AutologProvider.SINGLETON
                 .setProvidedInstance(LoggerAdapterForTesting.SINGLETON)
                 .setUseCasesLoggingIO(true)
                 .setPortsLoggingIO(true)
                 .structuredFormat(true)
-                .async(false)
                 .setIOLoggingMode(IOLoggingMode.CAE_NATIVE);
     }
 

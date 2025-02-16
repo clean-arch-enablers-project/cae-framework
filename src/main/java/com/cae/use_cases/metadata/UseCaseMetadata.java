@@ -3,8 +3,8 @@ package com.cae.use_cases.metadata;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import com.cae.use_cases.UseCase;
 import com.cae.use_cases.UseCaseAsAction;
-import com.cae.use_cases.autoauth.annotations.RoleBasedProtection;
-import com.cae.use_cases.autoauth.annotations.ScopeBasedProtection;
+import com.cae.autoauth.annotations.RoleBasedProtection;
+import com.cae.autoauth.annotations.ScopeBasedProtection;
 import lombok.Getter;
 
 /**

@@ -1,12 +1,12 @@
 package com.cae.use_cases;
 
-import com.cae.loggers.Logger;
-import com.cae.loggers.LoggerProvider;
+import com.cae.autolog.Logger;
+import com.cae.autolog.AutologProvider;
 import com.cae.mapped_exceptions.MappedException;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
-import com.cae.use_cases.autoauth.ScopeBasedAuth;
+import com.cae.autoauth.ScopeBasedAuth;
 import com.cae.use_cases.contexts.ExecutionContext;
-import com.cae.use_cases.autoauth.exceptions.NotAllowedMappedException;
+import com.cae.autoauth.exceptions.NotAllowedMappedException;
 import com.cae.use_cases.metadata.UseCaseMetadata;
 import com.cae.use_cases.registries.UseCaseRegistry;
 import lombok.Getter;
@@ -30,14 +30,14 @@ public abstract class UseCase {
     }
 
     public Logger getLogger(){
-        return LoggerProvider.SINGLETON.getProvidedInstance()
+        return AutologProvider.SINGLETON.getProvidedInstance()
                 .orElseThrow(this::handleNoLoggerProvided);
     }
 
     private MappedException handleNoLoggerProvided() {
         return new InternalMappedException(
                 "No logger instance provided for the use case \"" + this.getUseCaseMetadata().getName() + "\"",
-                "Please provide an instance via the LoggerProvider singleton instance"
+                "Please provide an instance via the AutologProvider singleton instance"
         );
     }
 

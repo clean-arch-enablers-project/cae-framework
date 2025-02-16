@@ -25,8 +25,8 @@ class TrierTest {
     @Test
     void shouldRunFunctionActionWithoutProblems(){
         var result = Trier.of(this::functionAction, "some input")
-                .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
-                .finishAndExecuteAction();
+                .setUnexpectedExceptionHandler(unexpectedException -> this.exceptionToHandleTheUnexpected)
+                .execute();
         Assertions.assertNotNull(result);
         Assertions.assertEquals("Function action worked! You used 'some input' as input", result);
     }
@@ -34,15 +34,15 @@ class TrierTest {
     @Test
     void shouldRunConsumerActionWithoutProblems(){
         var trierBuilder = Trier.of(this::consumerAction, "some input")
-                .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected);
-        Assertions.assertDoesNotThrow(trierBuilder::finishAndExecuteAction);
+                .setUnexpectedExceptionHandler(unexpectedException -> this.exceptionToHandleTheUnexpected);
+        Assertions.assertDoesNotThrow(trierBuilder::execute);
     }
 
     @Test
     void shouldRunSupplierActionWithoutProblems(){
         var result = Trier.of(this::supplierAction)
-                .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
-                .finishAndExecuteAction();
+                .setUnexpectedExceptionHandler(unexpectedException -> this.exceptionToHandleTheUnexpected)
+                .execute();
         Assertions.assertNotNull(result);
         Assertions.assertEquals("Supplier action worked!", result);
     }
@@ -50,16 +50,16 @@ class TrierTest {
     @Test
     void shouldRunRunnableActionWithoutProblems(){
         var trierBuilder = Trier.of(this::runnableAction)
-                .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected);
-        Assertions.assertDoesNotThrow(trierBuilder::finishAndExecuteAction);
+                .setUnexpectedExceptionHandler(unexpectedException -> this.exceptionToHandleTheUnexpected);
+        Assertions.assertDoesNotThrow(trierBuilder::execute);
     }
 
     @Test
     void shouldHandleUnexpectedProblematicFunctionAction(){
         try{
             Trier.of(this::unexpectedProblematicFunctionAction, "some input")
-                    .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
-                    .finishAndExecuteAction();
+                    .setUnexpectedExceptionHandler(unexpectedException -> this.exceptionToHandleTheUnexpected)
+                    .execute();
         } catch (Exception caughtException){
             Assertions.assertInstanceOf(MappedException.class, caughtException);
             Assertions.assertEquals(caughtException, this.exceptionToHandleTheUnexpected);
@@ -70,9 +70,9 @@ class TrierTest {
     @Test
     void shouldHandleUnexpectedProblematicConsumerAction(){
         var trierBuilder = Trier.of(this::unexpectedProblematicConsumerAction, "some input")
-                .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected);
+                .setUnexpectedExceptionHandler(unexpectedException -> this.exceptionToHandleTheUnexpected);
         try{
-            trierBuilder.finishAndExecuteAction();
+            trierBuilder.execute();
         } catch (Exception caughtException){
             Assertions.assertInstanceOf(MappedException.class, caughtException);
             Assertions.assertEquals(caughtException, this.exceptionToHandleTheUnexpected);
@@ -84,8 +84,8 @@ class TrierTest {
     void shouldHandleUnexpectedProblematicSupplierAction(){
         try {
             Trier.of(this::unexpectedProblematicSupplierAction)
-                    .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
-                    .finishAndExecuteAction();
+                    .setUnexpectedExceptionHandler(unexpectedException -> this.exceptionToHandleTheUnexpected)
+                    .execute();
         } catch (Exception caughtException){
             Assertions.assertInstanceOf(MappedException.class, caughtException);
             Assertions.assertEquals(caughtException, this.exceptionToHandleTheUnexpected);
@@ -96,9 +96,9 @@ class TrierTest {
     @Test
     void shouldHandleUnexpectedProblematicRunnableAction(){
         var trierBuilder = Trier.of(this::unexpectedProblematicRunnableAction)
-                .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected);
+                .setUnexpectedExceptionHandler(unexpectedException -> this.exceptionToHandleTheUnexpected);
         try{
-            trierBuilder.finishAndExecuteAction();
+            trierBuilder.execute();
         } catch (Exception caughtException){
             Assertions.assertInstanceOf(MappedException.class, caughtException);
             Assertions.assertEquals(caughtException, this.exceptionToHandleTheUnexpected);
@@ -110,8 +110,8 @@ class TrierTest {
     void shouldHandleExpectedProblematicFunctionAction(){
         try{
             Trier.of(this::expectedProblematicFunctionAction, "some input")
-                    .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
-                    .finishAndExecuteAction();
+                    .setUnexpectedExceptionHandler(unexpectedException -> this.exceptionToHandleTheUnexpected)
+                    .execute();
         } catch (Exception caughtException){
             Assertions.assertInstanceOf(MappedException.class, caughtException);
             Assertions.assertNotEquals(caughtException, this.exceptionToHandleTheUnexpected);
@@ -123,8 +123,8 @@ class TrierTest {
     void shouldHandleExpectedProblematicConsumerAction(){
         try{
             Trier.of(this::expectedProblematicConsumerAction, "some input")
-                    .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
-                    .finishAndExecuteAction();
+                    .setUnexpectedExceptionHandler(unexpectedException -> this.exceptionToHandleTheUnexpected)
+                    .execute();
         } catch (Exception caughtException){
             Assertions.assertInstanceOf(MappedException.class, caughtException);
             Assertions.assertNotEquals(caughtException, this.exceptionToHandleTheUnexpected);
@@ -136,8 +136,8 @@ class TrierTest {
     void shouldHandleExpectedProblematicSupplierAction(){
         try{
             Trier.of(this::expectedProblematicSupplierAction)
-                    .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
-                    .finishAndExecuteAction();
+                    .setUnexpectedExceptionHandler(unexpectedException -> this.exceptionToHandleTheUnexpected)
+                    .execute();
         } catch (Exception caughtException){
             Assertions.assertInstanceOf(MappedException.class, caughtException);
             Assertions.assertNotEquals(caughtException, this.exceptionToHandleTheUnexpected);
@@ -149,8 +149,8 @@ class TrierTest {
     void shouldHandleExpectedProblematicRunnableAction(){
         try{
             Trier.of(this::expectedProblematicRunnableAction)
-                    .setHandlerForUnexpectedException(unexpectedException -> this.exceptionToHandleTheUnexpected)
-                    .finishAndExecuteAction();
+                    .setUnexpectedExceptionHandler(unexpectedException -> this.exceptionToHandleTheUnexpected)
+                    .execute();
         } catch (Exception caughtException){
             Assertions.assertInstanceOf(MappedException.class, caughtException);
             Assertions.assertNotEquals(caughtException, this.exceptionToHandleTheUnexpected);
@@ -163,7 +163,7 @@ class TrierTest {
     }
 
     void consumerAction(String input){
-        log.info("Consumer action worked! You used '" + input + "' as input");
+        log.info("Consumer action worked! You used '{}' as input", input);
     }
 
     String supplierAction(){

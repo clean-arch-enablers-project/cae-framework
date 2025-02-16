@@ -1,6 +1,6 @@
 package utils.simulations.core.use_cases.create_new_user;
 
-import com.cae.use_cases.autoauth.annotations.ScopeBasedProtection;
+import com.cae.autoauth.annotations.ScopeBasedProtection;
 import com.cae.use_cases.FunctionUseCase;
 import utils.simulations.core.use_cases.create_new_user.io.inputs.CreateNewUserUseCaseInput;
 import utils.simulations.core.use_cases.create_new_user.io.outputs.CreateNewUserUseCaseOutput;

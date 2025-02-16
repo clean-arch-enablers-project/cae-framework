@@ -1,9 +1,9 @@
 package com.cae.use_cases;
 
-import com.cae.loggers.StackTraceLogger;
-import com.cae.notifier.NotifierManager;
+import com.cae.autolog.StackTraceLogger;
+import com.cae.autonotify.Autonotify;
 import com.cae.trier.Trier;
-import com.cae.use_cases.autolog.AutoLoggingManager;
+import com.cae.autolog.Autolog;
 import com.cae.use_cases.contexts.ExecutionContext;
 
 import java.time.Duration;
@@ -40,22 +40,22 @@ public abstract class SupplierUseCase <O> extends UseCase {
             this.handleScopeBasedAuthorization(context);
             return this.finallyExecute(context);
         })
-        .setHandlerForUnexpectedException(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
-        .finishAndExecuteAction();
+        .setUnexpectedExceptionHandler(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
+        .execute();
     }
 
     private O finallyExecute(ExecutionContext context) {
-        var loggingManager = AutoLoggingManager.of(this, context);
+        var loggingManager = Autolog.of(this, context);
         var startingMoment = LocalDateTime.now();
         try {
             var output = this.applyInternalLogic(context);
             var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
-            NotifierManager.handleNotificationOn(this, null, latency, context);
+            Autonotify.handleNotificationOn(this, null, latency, context);
             loggingManager.logExecution(context, null, output, null, latency);
             return output;
         } catch (Exception anyException){
             var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
-            NotifierManager.handleNotificationOn(this, anyException, latency, context);
+            Autonotify.handleNotificationOn(this, anyException, latency, context);
             StackTraceLogger.SINGLETON.handleLoggingStackTrace(anyException, context, this.getUseCaseMetadata().getName());
             loggingManager.logExecution(context, null, null, anyException, latency);
             throw anyException;
