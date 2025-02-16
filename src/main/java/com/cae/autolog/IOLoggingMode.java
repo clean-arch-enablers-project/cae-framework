@@ -1,4 +1,4 @@
-package com.cae.loggers;
+package com.cae.autolog;
 
 public enum IOLoggingMode {
     CAE_NATIVE,

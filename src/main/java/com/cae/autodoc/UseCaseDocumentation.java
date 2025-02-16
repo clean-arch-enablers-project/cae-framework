@@ -1,7 +1,7 @@
-package com.cae.use_cases.autodoc;
+package com.cae.autodoc;
 
 import com.cae.use_cases.UseCase;
-import com.cae.use_cases.autoauth.annotations.ScopeBasedProtection;
+import com.cae.autoauth.annotations.ScopeBasedProtection;
 import com.cae.use_cases.ConsumerUseCase;
 import com.cae.use_cases.FunctionUseCase;
 import com.cae.use_cases.RunnableUseCase;

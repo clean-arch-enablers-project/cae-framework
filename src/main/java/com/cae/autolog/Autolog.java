@@ -1,12 +1,9 @@
-package com.cae.use_cases.autolog;
+package com.cae.autolog;
 
-import com.cae.loggers.AutologProvider;
-import com.cae.loggers.IOLoggingHandler;
-import com.cae.loggers.Logger;
-import com.cae.loggers.formats.IO;
-import com.cae.loggers.formats.UseCaseLogStructuredFormat;
-import com.cae.loggers.native_io_extraction_mode.NativeExtractionMode;
-import com.cae.loggers.native_io_extraction_mode.json.SimpleJsonBuilder;
+import com.cae.autolog.formats.IO;
+import com.cae.autolog.formats.UseCaseLogStructuredFormat;
+import com.cae.autolog.native_io_extraction_mode.NativeExtractionMode;
+import com.cae.autolog.native_io_extraction_mode.json.SimpleJsonBuilder;
 import com.cae.ports.autolog.PortInsights;
 import com.cae.use_cases.UseCase;
 import com.cae.use_cases.contexts.ExecutionContext;

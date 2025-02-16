@@ -1,6 +1,6 @@
-package com.cae.use_cases.autodoc;
+package com.cae.autodoc;
 
-import com.cae.loggers.native_io_extraction_mode.json.sensitive.Sensitive;
+import com.cae.autolog.native_io_extraction_mode.json.sensitive.Sensitive;
 import com.cae.use_cases.io.annotations.NotBlankInputField;
 import com.cae.use_cases.io.annotations.NotEmptyInputField;
 import com.cae.use_cases.io.annotations.NotNullInputField;

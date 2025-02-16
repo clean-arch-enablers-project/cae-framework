@@ -1,11 +1,11 @@
 package com.cae.use_cases;
 
-import com.cae.loggers.StackTraceLogger;
-import com.cae.notifier.NotifierManager;
+import com.cae.autolog.StackTraceLogger;
+import com.cae.autonotify.Autonotify;
 import com.cae.trier.Trier;
-import com.cae.use_cases.autoauth.ResourceOwnershipRetriever;
-import com.cae.use_cases.autoauth.RoleBasedAuth;
-import com.cae.use_cases.autolog.AutoLoggingManager;
+import com.cae.autoauth.ResourceOwnershipRetriever;
+import com.cae.autoauth.RoleBasedAuth;
+import com.cae.autolog.Autolog;
 import com.cae.use_cases.contexts.ExecutionContext;
 import com.cae.use_cases.io.UseCaseInput;
 
@@ -58,8 +58,8 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
             input.validateProperties();
             return this.finallyExecute(input, context);
         })
-        .setHandlerForUnexpectedException(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
-        .finishAndExecuteAction();
+        .setUnexpectedExceptionHandler(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
+        .execute();
     }
 
     private void handleAuthorization(I input, ExecutionContext context) {
@@ -68,17 +68,17 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
     }
 
     private O finallyExecute(I input, ExecutionContext context) {
-        var loggingManager = AutoLoggingManager.of(this, context);
+        var loggingManager = Autolog.of(this, context);
         var startingMoment = LocalDateTime.now();
         try {
             var output = this.applyInternalLogic(input, context);
             var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
-            NotifierManager.handleNotificationOn(this, null, latency, context);
+            Autonotify.handleNotificationOn(this, null, latency, context);
             loggingManager.logExecution(context, input, output, null, latency);
             return output;
         } catch (Exception anyException){
             var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
-            NotifierManager.handleNotificationOn(this, anyException, latency, context);
+            Autonotify.handleNotificationOn(this, anyException, latency, context);
             StackTraceLogger.SINGLETON.handleLoggingStackTrace(anyException, context, this.getUseCaseMetadata().getName());
             loggingManager.logExecution(context, input, null, anyException, latency);
             throw anyException;

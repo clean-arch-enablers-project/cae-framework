@@ -1,10 +1,10 @@
-package com.cae.use_cases.autodoc;
+package com.cae.autodoc;
 
 import com.cae.env_vars.EnvVarRetriever;
 import com.cae.http_client.HttpRequestStarter;
 import com.cae.http_client.HttpResponse;
 import com.cae.http_client.implementations.HttpRequestStarterImplementation;
-import com.cae.loggers.native_io_extraction_mode.json.SimpleJsonBuilder;
+import com.cae.autolog.native_io_extraction_mode.json.SimpleJsonBuilder;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import lombok.*;
 

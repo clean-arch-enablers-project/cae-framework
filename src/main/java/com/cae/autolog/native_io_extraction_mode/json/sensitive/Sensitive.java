@@ -1,4 +1,4 @@
-package com.cae.loggers.native_io_extraction_mode.json.sensitive;
+package com.cae.autolog.native_io_extraction_mode.json.sensitive;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

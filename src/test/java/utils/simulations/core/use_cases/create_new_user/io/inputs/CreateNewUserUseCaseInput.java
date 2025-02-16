@@ -1,6 +1,6 @@
 package utils.simulations.core.use_cases.create_new_user.io.inputs;
 
-import com.cae.loggers.native_io_extraction_mode.json.sensitive.Sensitive;
+import com.cae.autolog.native_io_extraction_mode.json.sensitive.Sensitive;
 import com.cae.use_cases.io.UseCaseInput;
 import com.cae.use_cases.io.annotations.NotBlankInputField;
 import com.cae.use_cases.io.annotations.NotNullInputField;

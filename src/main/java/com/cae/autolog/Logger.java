@@ -1,4 +1,4 @@
-package com.cae.loggers;
+package com.cae.autolog;
 
 /**
  * Architectural border. Implement this interface with your preferred

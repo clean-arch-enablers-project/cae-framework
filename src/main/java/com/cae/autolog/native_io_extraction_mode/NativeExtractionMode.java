@@ -1,6 +1,6 @@
-package com.cae.loggers.native_io_extraction_mode;
+package com.cae.autolog.native_io_extraction_mode;
 
-import com.cae.loggers.native_io_extraction_mode.json.SimpleJsonBuilder;
+import com.cae.autolog.native_io_extraction_mode.json.SimpleJsonBuilder;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

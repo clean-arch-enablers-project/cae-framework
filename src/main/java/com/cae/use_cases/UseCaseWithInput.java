@@ -1,6 +1,6 @@
 package com.cae.use_cases;
 
-import com.cae.use_cases.autoauth.ResourceOwnershipRetriever;
+import com.cae.autoauth.ResourceOwnershipRetriever;
 
 import java.util.Optional;
 

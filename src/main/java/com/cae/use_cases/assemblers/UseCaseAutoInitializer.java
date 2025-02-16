@@ -1,8 +1,7 @@
-package com.cae.use_cases.autoinit;
+package com.cae.use_cases.assemblers;
 
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import com.cae.use_cases.UseCase;
-import com.cae.use_cases.assemblers.UseCaseAssembler;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

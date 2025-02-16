@@ -1,4 +1,4 @@
-package com.cae.use_cases.autoauth;
+package com.cae.autoauth;
 
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import com.cae.mapped_exceptions.specifics.NotAuthorizedMappedException;

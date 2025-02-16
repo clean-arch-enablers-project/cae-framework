@@ -1,4 +1,4 @@
-package com.cae.use_cases.autodoc;
+package com.cae.autodoc;
 
 
 import com.cae.mapped_exceptions.specifics.InternalMappedException;

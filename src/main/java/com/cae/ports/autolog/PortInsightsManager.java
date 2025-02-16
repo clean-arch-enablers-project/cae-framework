@@ -1,7 +1,7 @@
 package com.cae.ports.autolog;
 
-import com.cae.loggers.IOLoggingHandler;
-import com.cae.loggers.LoggerProvider;
+import com.cae.autolog.AutologProvider;
+import com.cae.autolog.IOLoggingHandler;
 import com.cae.use_cases.contexts.ExecutionContext;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class PortInsightsManager {
             Exception exception,
             Long latency){
         this.runSynchronouslyIfNecessary(CompletableFuture.runAsync(() -> {
-            var loggerProvider = LoggerProvider.SINGLETON;
+            var loggerProvider = AutologProvider.SINGLETON;
             var ioInsightBuilder = new StringBuilder();
             if (Boolean.TRUE.equals(loggerProvider.getPortsLoggingIO())) ioInsightBuilder.append(this.generateIOInsightFor(input, output));
             var exceptionInsight = "";
@@ -41,7 +41,7 @@ public class PortInsightsManager {
     }
 
     private void runSynchronouslyIfNecessary(CompletableFuture<Void> future){
-        if (Boolean.FALSE.equals(LoggerProvider.SINGLETON.getAsync()))
+        if (Boolean.FALSE.equals(AutologProvider.SINGLETON.getAsync()))
             future.join();
     }
 

@@ -11,10 +11,10 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class NotifierManager {
+public class Autonotify {
 
     public static void handleNotificationOn(UseCase useCase, Exception exception, Long latency, ExecutionContext context){
-        AutonotifyProvider.SINGLETON.getProvidedInstance().ifPresent(notifier -> NotifierManager.handle(
+        AutonotifyProvider.SINGLETON.getProvidedInstance().ifPresent(notifier -> Autonotify.handle(
                 notifier,
                 useCase.getUseCaseMetadata().getName(),
                 exception,
@@ -24,7 +24,7 @@ public class NotifierManager {
     }
 
     public static void handleNotificationOn(Port port, Exception exception, Long latency, ExecutionContext context){
-        AutonotifyProvider.SINGLETON.getProvidedInstance().ifPresent(notifier -> NotifierManager.handle(
+        AutonotifyProvider.SINGLETON.getProvidedInstance().ifPresent(notifier -> Autonotify.handle(
                 notifier,
                 port.getName(),
                 exception,
@@ -46,7 +46,7 @@ public class NotifierManager {
         Optional.ofNullable(exception).ifPresent(actualException -> {
             if (notificationSettings.getCustomExceptionsToConsider().contains(actualException.getClass()))
                 reasons.add("An exception was thrown during its execution. It specifically matched one of the parameterized types set for notification.");
-            else if (NotifierManager.checkWhetherGenericallyMatchesMappedExceptions(notificationSettings, actualException))
+            else if (Autonotify.checkWhetherGenericallyMatchesMappedExceptions(notificationSettings, actualException))
                 reasons.add("An exception was thrown during its execution. It generically matched one of the MappedException types set for notification.");
             else if (Boolean.TRUE.equals(notificationSettings.getConsiderUnexpectedExceptions()))
                 reasons.add("An unexpected exception was thrown during its execution.");

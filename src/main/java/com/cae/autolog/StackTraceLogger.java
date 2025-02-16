@@ -1,4 +1,4 @@
-package com.cae.loggers;
+package com.cae.autolog;
 
 import com.cae.mapped_exceptions.MappedException;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;

@@ -1,4 +1,4 @@
-package com.cae.use_cases.autodoc;
+package com.cae.autodoc;
 
 import com.cae.autodoc.Autodoc;
 import org.junit.jupiter.api.Assertions;

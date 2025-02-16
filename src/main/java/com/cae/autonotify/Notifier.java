@@ -1,4 +1,4 @@
-package com.cae.notifier;
+package com.cae.autonotify;
 
 import com.cae.use_cases.contexts.ExecutionContext;
 import lombok.Builder;

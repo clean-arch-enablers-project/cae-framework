@@ -1,4 +1,4 @@
-package com.cae.use_cases.autoauth.exceptions;
+package com.cae.autoauth.exceptions;
 
 import com.cae.mapped_exceptions.specifics.InputMappedException;
 import com.cae.use_cases.UseCase;

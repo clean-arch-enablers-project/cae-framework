@@ -1,7 +1,7 @@
 package com.cae.ports;
 
-import com.cae.loggers.StackTraceLogger;
-import com.cae.notifier.NotifierManager;
+import com.cae.autolog.StackTraceLogger;
+import com.cae.autonotify.Autonotify;
 import com.cae.ports.autolog.PortInsightsManager;
 import com.cae.ports.exceptions.PortExecutionException;
 import com.cae.trier.Trier;
@@ -31,19 +31,19 @@ public abstract class FunctionPort <I, O> extends Port {
             try {
                 var output = this.executeLogic(input, context);
                 var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
-                NotifierManager.handleNotificationOn(this, null, latency, context);
+                Autonotify.handleNotificationOn(this, null, latency, context);
                 insightsManager.keepInsightOf(context, input, output, null, latency);
                 return output;
             } catch (Exception anyException){
                 var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
-                NotifierManager.handleNotificationOn(this, anyException, latency, context);
+                Autonotify.handleNotificationOn(this, anyException, latency, context);
                 StackTraceLogger.SINGLETON.handleLoggingStackTrace(anyException, context, this.name);
                 insightsManager.keepInsightOf(context, input, null, anyException, latency);
                 throw anyException;
             }
         })
-        .setHandlerForUnexpectedException(unexpectedException -> new PortExecutionException(unexpectedException, this.name))
-        .finishAndExecuteAction();
+        .setUnexpectedExceptionHandler(unexpectedException -> new PortExecutionException(unexpectedException, this.name))
+        .execute();
     }
 
     /**

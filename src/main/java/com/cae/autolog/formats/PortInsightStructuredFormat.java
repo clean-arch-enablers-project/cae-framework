@@ -1,4 +1,4 @@
-package com.cae.loggers.formats;
+package com.cae.autolog.formats;
 
 import lombok.Builder;
 import lombok.Getter;

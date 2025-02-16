@@ -1,6 +1,6 @@
-package com.cae.loggers;
+package com.cae.autolog;
 
-import com.cae.loggers.native_io_extraction_mode.NativeExtractionMode;
+import com.cae.autolog.native_io_extraction_mode.NativeExtractionMode;
 
 public class IOLoggingHandler {
 

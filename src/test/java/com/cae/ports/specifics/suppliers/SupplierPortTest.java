@@ -1,6 +1,6 @@
 package com.cae.ports.specifics.suppliers;
 
-import com.cae.loggers.LoggerProvider;
+import com.cae.autolog.AutologProvider;
 import com.cae.ports.SupplierPort;
 import com.cae.use_cases.contexts.ExecutionContext;
 import org.junit.jupiter.api.Assertions;
@@ -24,7 +24,7 @@ class SupplierPortTest {
 
     @Test
     void shouldExecuteThePortImplementationLogicAsExpected(){
-        LoggerProvider.SINGLETON
+        AutologProvider.SINGLETON
                 .setProvidedInstance(LoggerAdapterForTesting.SINGLETON)
                 .setPortsLoggingIO(true);
         var correlation = Mockito.mock(ExecutionContext.class);
@@ -32,7 +32,7 @@ class SupplierPortTest {
         Mockito.when(correlation.getCorrelationId()).thenReturn(id);
         var portImplementation = new SomeSupplierPortImplementation();
         var portImplementationResult = portImplementation.executePort(correlation);
-        Mockito.verify(correlation, Mockito.times(LoggerProvider.SINGLETON.getPortsLoggingIO()? 3 : 1)).getCorrelationId();
+        Mockito.verify(correlation, Mockito.times(AutologProvider.SINGLETON.getPortsLoggingIO()? 3 : 1)).getCorrelationId();
         Assertions.assertEquals(id.toString(), portImplementationResult);
     }
 
