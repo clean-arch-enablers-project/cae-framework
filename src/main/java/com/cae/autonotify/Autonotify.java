@@ -1,4 +1,4 @@
-package com.cae.notifier;
+package com.cae.autonotify;
 
 import com.cae.mapped_exceptions.specifics.*;
 import com.cae.ports.Port;
@@ -14,7 +14,7 @@ import java.util.Optional;
 public class NotifierManager {
 
     public static void handleNotificationOn(UseCase useCase, Exception exception, Long latency, ExecutionContext context){
-        NotifierProvider.SINGLETON.getProvidedInstance().ifPresent(notifier -> NotifierManager.handle(
+        AutonotifyProvider.SINGLETON.getProvidedInstance().ifPresent(notifier -> NotifierManager.handle(
                 notifier,
                 useCase.getUseCaseMetadata().getName(),
                 exception,
@@ -24,7 +24,7 @@ public class NotifierManager {
     }
 
     public static void handleNotificationOn(Port port, Exception exception, Long latency, ExecutionContext context){
-        NotifierProvider.SINGLETON.getProvidedInstance().ifPresent(notifier -> NotifierManager.handle(
+        AutonotifyProvider.SINGLETON.getProvidedInstance().ifPresent(notifier -> NotifierManager.handle(
                 notifier,
                 port.getName(),
                 exception,
@@ -39,7 +39,7 @@ public class NotifierManager {
             Exception exception,
             Long latency,
             ExecutionContext context){
-        var notificationSettings = NotifierProvider.SINGLETON;
+        var notificationSettings = AutonotifyProvider.SINGLETON;
         var reasons = new ArrayList<String>();
         if (Boolean.TRUE.equals(notificationSettings.getConsiderLatency()) && notificationSettings.getLatencyThreshold() < latency)
             reasons.add("Latency threshold: " + notificationSettings.getLatencyThreshold() + "ms allowed vs. actually " + latency + "ms");
@@ -63,7 +63,7 @@ public class NotifierManager {
     }
 
     private static boolean checkWhetherGenericallyMatchesMappedExceptions(
-            NotifierProvider notificationSettings,
+            AutonotifyProvider notificationSettings,
             Exception actualException) {
         var map = notificationSettings.getCustomExceptionsToConsider();
         return

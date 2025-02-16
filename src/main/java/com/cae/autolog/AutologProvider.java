@@ -5,17 +5,17 @@ import lombok.Getter;
 import java.util.Optional;
 
 @Getter
-public class LoggerProvider {
+public class AutologProvider {
 
-    private LoggerProvider(){}
+    private AutologProvider(){}
 
-    public static final LoggerProvider SINGLETON = new LoggerProvider();
+    public static final AutologProvider SINGLETON = new AutologProvider();
 
     private Logger providedInstance;
     private Boolean useCasesLoggingIO = false;
     private Boolean portsLoggingIO = false;
     private IOLoggingMode ioLoggingMode = IOLoggingMode.CAE_NATIVE;
-    private Boolean async = true;
+    private final Boolean async = false;
     private Boolean structuredFormat = false;
     private Boolean logStackTrace = false;
     private Integer linesOfStackTrace = 5;
@@ -28,42 +28,37 @@ public class LoggerProvider {
         return this.ioLoggingMode;
     }
 
-    public LoggerProvider setProvidedInstance(Logger providedInstance){
+    public AutologProvider setProvidedInstance(Logger providedInstance){
         this.providedInstance = providedInstance;
         return this;
     }
 
-    public LoggerProvider setUseCasesLoggingIO(Boolean useCasesLoggingIO){
+    public AutologProvider setUseCasesLoggingIO(Boolean useCasesLoggingIO){
         this.useCasesLoggingIO = useCasesLoggingIO;
         return this;
     }
 
-    public LoggerProvider setPortsLoggingIO(Boolean portsLoggingIO){
+    public AutologProvider setPortsLoggingIO(Boolean portsLoggingIO){
         this.portsLoggingIO = portsLoggingIO;
         return this;
     }
 
-    public LoggerProvider setIOLoggingMode(IOLoggingMode ioLoggingMode){
+    public AutologProvider setIOLoggingMode(IOLoggingMode ioLoggingMode){
         this.ioLoggingMode = ioLoggingMode;
         return this;
     }
 
-    public LoggerProvider structuredFormat(boolean structuredFormat){
+    public AutologProvider structuredFormat(boolean structuredFormat){
         this.structuredFormat = structuredFormat;
         return this;
     }
 
-    public LoggerProvider async(boolean async){
-        this.async = async;
-        return this;
-    }
-
-    public LoggerProvider setLoggingStackTrace(Boolean loggingStackTrace){
+    public AutologProvider setLoggingStackTrace(Boolean loggingStackTrace){
         this.logStackTrace = loggingStackTrace;
         return this;
     }
 
-    public LoggerProvider setNumberOfLinesFromStackTrace(Integer numberOfLines){
+    public AutologProvider setNumberOfLinesFromStackTrace(Integer numberOfLines){
         this.linesOfStackTrace = numberOfLines;
         return this;
     }

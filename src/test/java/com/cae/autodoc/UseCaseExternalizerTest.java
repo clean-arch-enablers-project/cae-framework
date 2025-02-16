@@ -1,5 +1,6 @@
 package com.cae.use_cases.autodoc;
 
+import com.cae.autodoc.Autodoc;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,7 @@ class UseCaseExternalizerTest {
 //    @Test
 //    void shouldRunTheRegistererWithoutExplodingMyPC(){
 //        var domainName = "Services";
-//        Assertions.assertDoesNotThrow(() -> UseCaseDocumentationExternalizer.externalize(null, "Services"));
+//        Assertions.assertDoesNotThrow(() -> Autodoc.externalize(null, "Services"));
 //        this.checkIfFileWasCreated(domainName);
 //    }
 
@@ -34,7 +35,7 @@ class UseCaseExternalizerTest {
     @Test
     void shouldInstantiateExternalizeUseCaseExceptionCorrectly(){
         var someOriginalException = new RuntimeException("some not good stuff just happened");
-        var exception = new UseCaseDocumentationExternalizer.ExternalizeUseCaseException(someOriginalException);
+        var exception = new Autodoc.ExternalizeUseCaseException(someOriginalException);
         Assertions.assertEquals("Something went wrong while trying to externalize use cases info. More details: " + someOriginalException, exception.getMessage());
     }
 

@@ -17,11 +17,11 @@ import java.util.stream.Collectors;
  * that file: real-time-up-to-date use case catalog of your applications
  * could be a nice way of using it.
  */
-public class UseCaseDocumentationExternalizer {
+public class Autodoc {
 
     private final BufferedWriter fileWriter;
 
-    private UseCaseDocumentationExternalizer(){
+    private Autodoc(){
         try {
             this.fileWriter = new BufferedWriter(new FileWriter("cae-docfile.json"));
         } catch (IOException e) {
@@ -29,9 +29,9 @@ public class UseCaseDocumentationExternalizer {
         }
     }
 
-    public static void externalize(String useCasesPackageForAssemblersLayer, String domainName, Boolean kotlin) throws IOException, ClassNotFoundException {
+    public static void run(String useCasesPackageForAssemblersLayer, String domainName, Boolean kotlin) throws IOException, ClassNotFoundException {
         UseCaseAutoInitializer.initializeByAssemblerLayer(useCasesPackageForAssemblersLayer);
-        var registerer = new UseCaseDocumentationExternalizer();
+        var registerer = new Autodoc();
         var useCasesDocumented = UseCaseRegistry.SINGLETON.getRegisteredUseCases()
                 .stream()
                 .map(useCase -> UseCaseDocumentationGenerator.generateFor(useCase, kotlin))

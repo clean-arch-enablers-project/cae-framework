@@ -1,8 +1,8 @@
 package com.cae.use_cases.autolog;
 
+import com.cae.loggers.AutologProvider;
 import com.cae.loggers.IOLoggingHandler;
 import com.cae.loggers.Logger;
-import com.cae.loggers.LoggerProvider;
 import com.cae.loggers.formats.IO;
 import com.cae.loggers.formats.UseCaseLogStructuredFormat;
 import com.cae.loggers.native_io_extraction_mode.NativeExtractionMode;
@@ -21,17 +21,17 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class AutoLoggingManager<U extends UseCase> {
+public class Autolog<U extends UseCase> {
 
     private final U useCase;
     private final StringBuilder stringBuilder;
     private final Logger logger;
     private final ExecutionContext correlation;
 
-    public static <U extends UseCase> AutoLoggingManager<U> of(
+    public static <U extends UseCase> Autolog<U> of(
             U useCase,
             ExecutionContext correlation){
-        return new AutoLoggingManager<>(
+        return new Autolog<>(
                 useCase,
                 new StringBuilder(),
                 useCase.getLogger(),
@@ -45,7 +45,7 @@ public class AutoLoggingManager<U extends UseCase> {
             Exception exception,
             Long latency){
         this.synchronousExecutionIfNeeded(CompletableFuture.runAsync(() -> {
-            if (Boolean.TRUE.equals(LoggerProvider.SINGLETON.getStructuredFormat()))
+            if (Boolean.TRUE.equals(AutologProvider.SINGLETON.getStructuredFormat()))
                 this.generateLogInStructuredFormat(input, output, exception, context, latency);
             else
                 this.generateLogInSimpleFormat(input, output, exception, context, latency);
@@ -55,7 +55,7 @@ public class AutoLoggingManager<U extends UseCase> {
     }
 
     private void synchronousExecutionIfNeeded(CompletableFuture<Void> future) {
-        if (Boolean.FALSE.equals(LoggerProvider.SINGLETON.getAsync()))
+        if (Boolean.FALSE.equals(AutologProvider.SINGLETON.getAsync()))
             future.join();
     }
 
@@ -97,7 +97,7 @@ public class AutoLoggingManager<U extends UseCase> {
     }
 
     private <I extends UseCaseInput, O> void generateIOLogString(I input, O output){
-        if (LoggerProvider.SINGLETON.getProvidedInstance().isPresent() && Boolean.TRUE.equals(LoggerProvider.SINGLETON.getUseCasesLoggingIO())){
+        if (AutologProvider.SINGLETON.getProvidedInstance().isPresent() && Boolean.TRUE.equals(AutologProvider.SINGLETON.getUseCasesLoggingIO())){
             Optional.ofNullable(input).ifPresent(this::handleInputLogging);
             Optional.ofNullable(output).ifPresent(this::handleOutputLogging);
         }
@@ -138,7 +138,7 @@ public class AutoLoggingManager<U extends UseCase> {
             Exception exception,
             ExecutionContext context,
             Long latency) {
-        var io = Boolean.FALSE.equals(LoggerProvider.SINGLETON.getUseCasesLoggingIO())? null : IO.builder()
+        var io = Boolean.FALSE.equals(AutologProvider.SINGLETON.getUseCasesLoggingIO())? null : IO.builder()
                 .input(input)
                 .output(output)
                 .build();

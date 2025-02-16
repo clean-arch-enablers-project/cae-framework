@@ -28,7 +28,7 @@ public class GPTDocumentation {
                 .headerOf("Content-Type", "application/json")
                 .headerOf("Accept", "*/*")
                 .handlerForAnyUnsuccessfulResponse(GPTDocumentation::handle)
-                .finishBuildingModel();
+                .buildRequestModel();
         return request.sendRequestReturning(Output.class);
     }
 

@@ -12,14 +12,14 @@ public class StackTraceLogger {
     public static final StackTraceLogger SINGLETON = new StackTraceLogger();
 
     public void handleLoggingStackTrace(Exception exception, ExecutionContext context, String name){
-        if (Boolean.TRUE.equals(LoggerProvider.SINGLETON.getLogStackTrace())){
-            var logger = LoggerProvider.SINGLETON.getProvidedInstance()
+        if (Boolean.TRUE.equals(AutologProvider.SINGLETON.getLogStackTrace())){
+            var logger = AutologProvider.SINGLETON.getProvidedInstance()
                     .orElseThrow(() -> new InternalMappedException(
                             "No logger instance was provided",
                             "Please make sure an instance of Logger is provided"
                     ));
             var mappedException = new MappedException("stack trace logging", "", exception);
-            var linesOfStackTrace = mappedException.getLinesFromStackTraceFromOriginalException(LoggerProvider.SINGLETON.getLinesOfStackTrace());
+            var linesOfStackTrace = mappedException.getLinesFromStackTraceFromOriginalException(AutologProvider.SINGLETON.getLinesOfStackTrace());
             var linesAsUniqueString = linesOfStackTrace.stream()
                     .reduce(
                             "From execution context of '" + context.toString() + "' at '" + name + "'",
