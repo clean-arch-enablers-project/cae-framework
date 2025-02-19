@@ -7,7 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import utils.simulations.adapters.authorizers.ActorImplementation;
-import utils.simulations.assemblers.loggers.LoggerBootstrapForTesting;
+import utils.simulations.assemblers.autonotify.MyAppAutonotifyBootstrap;
+import utils.simulations.assemblers.loggers.MyAppAutologBootstrap;
 import utils.simulations.assemblers.use_cases.update_user.UpdateUserUseCaseAssembler;
 import utils.simulations.core.use_cases.update_user.UpdateUserUseCase;
 import utils.simulations.core.use_cases.update_user.io.inputs.UpdateUserUseCaseInput;
@@ -21,7 +22,8 @@ class UpdateUserUseCaseDemoTest {
 
     @BeforeAll
     static void setup(){
-        LoggerBootstrapForTesting.startupSyncAllTrueSettingsAndNative();
+        MyAppAutonotifyBootstrap.startupDefaultSettings();
+        MyAppAutologBootstrap.startupSyncAllTrueSettingsAndNative();
     }
 
     @Test

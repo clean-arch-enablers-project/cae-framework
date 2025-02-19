@@ -10,7 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import utils.simulations.assemblers.loggers.LoggerBootstrapForTesting;
+import utils.simulations.assemblers.loggers.MyAppAutologBootstrap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ class ConsumerPortTest {
     @BeforeEach
     void setUp(){
         Mockito.when(this.context.getCorrelationId()).thenReturn(this.id);
-        LoggerBootstrapForTesting.startupDefaultSettings();
+        MyAppAutologBootstrap.startupDefaultSettings();
     }
 
     @Test

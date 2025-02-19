@@ -14,7 +14,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import utils.simulations.assemblers.loggers.LoggerBootstrapForTesting;
+import utils.simulations.assemblers.loggers.MyAppAutologBootstrap;
 
 import java.util.Optional;
 
@@ -31,7 +31,7 @@ class UseCaseInputTest {
         var innerObject = new SomeNormalInnerUseCaseInput();
         innerObject.setInnerFieldWhichMustNotBeNull(1);
         this.normalUseCase.setFieldWhichMustHaveItsPropertiesValid(innerObject);
-        LoggerBootstrapForTesting.startupDefaultSettings();
+        MyAppAutologBootstrap.startupDefaultSettings();
     }
 
     @Test

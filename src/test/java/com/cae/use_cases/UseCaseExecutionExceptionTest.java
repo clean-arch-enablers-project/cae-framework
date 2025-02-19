@@ -7,14 +7,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import utils.simulations.assemblers.loggers.LoggerBootstrapForTesting;
+import utils.simulations.assemblers.loggers.MyAppAutologBootstrap;
 
 @ExtendWith(MockitoExtension.class)
 class UseCaseExecutionExceptionTest {
 
     @BeforeEach
     void setup(){
-        LoggerBootstrapForTesting.startupDefaultSettings();
+        MyAppAutologBootstrap.startupDefaultSettings();
     }
 
     @Test

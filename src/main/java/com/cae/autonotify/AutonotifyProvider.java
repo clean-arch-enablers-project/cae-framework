@@ -1,11 +1,14 @@
 package com.cae.autonotify;
 
+import com.cae.env_vars.exceptions.MissingEnvVarException;
 import com.cae.mapped_exceptions.specifics.*;
+import com.cae.trier.retries.NoRetriesLeftException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.Optional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -15,19 +18,20 @@ public class AutonotifyProvider {
 
     public static final AutonotifyProvider SINGLETON = new AutonotifyProvider();
 
-    private Notifier providedInstance;
+    private final List<NotificationObserver> providedInstances = new ArrayList<>();
     private Boolean considerUnexpectedExceptions = false;
     private final Set<Class<? extends Exception>> customExceptionsToConsider = ConcurrentHashMap.newKeySet();
     private Boolean considerLatency = false;
     private Integer latencyThreshold;
 
-    public AutonotifyProvider setProvidedInstance(Notifier notifier){
-        this.providedInstance = notifier;
+    public AutonotifyProvider setAllProvidedInstances(List<NotificationObserver> notificationObservers){
+        this.providedInstances.addAll(notificationObservers);
         return this;
     }
 
-    public Optional<Notifier> getProvidedInstance(){
-        return Optional.ofNullable(this.providedInstance);
+    public AutonotifyProvider setProvidedInstance(NotificationObserver notificationObserver){
+        this.providedInstances.add(notificationObserver);
+        return this;
     }
 
     public AutonotifyProvider considerInputMappedExceptions(){
@@ -52,6 +56,16 @@ public class AutonotifyProvider {
 
     public AutonotifyProvider considerInternalMappedExceptions(){
         this.customExceptionsToConsider.add(InternalMappedException.class);
+        return this;
+    }
+
+    public AutonotifyProvider considerNoRetriesLeftExceptions(){
+        this.customExceptionsToConsider.add(NoRetriesLeftException.class);
+        return this;
+    }
+
+    public AutonotifyProvider considerMissingEnvVarExceptions(){
+        this.customExceptionsToConsider.add(MissingEnvVarException.class);
         return this;
     }
 

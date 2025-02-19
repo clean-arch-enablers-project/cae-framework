@@ -9,57 +9,83 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Autonotify {
 
-    public static void handleNotificationOn(UseCase useCase, Exception exception, Long latency, ExecutionContext context){
-        AutonotifyProvider.SINGLETON.getProvidedInstance().ifPresent(notifier -> Autonotify.handle(
-                notifier,
+    public static void handleNotificationOn(
+            UseCase useCase,
+            Exception exception,
+            Long latency,
+            ExecutionContext context){
+        Autonotify.generateNotificationBy(
                 useCase.getUseCaseMetadata().getName(),
                 exception,
                 latency,
                 context
-        ));
+        ).ifPresent(Autonotify::notify);
     }
 
-    public static void handleNotificationOn(Port port, Exception exception, Long latency, ExecutionContext context){
-        AutonotifyProvider.SINGLETON.getProvidedInstance().ifPresent(notifier -> Autonotify.handle(
-                notifier,
+    public static void handleNotificationOn(
+            Port port,
+            Exception exception,
+            Long latency,
+            ExecutionContext context){
+        Autonotify.generateNotificationBy(
                 port.getName(),
                 exception,
                 latency,
                 context
-        ));
+        ).ifPresent(Autonotify::notify);
     }
 
-    private static void handle(
-            Notifier notifier,
+    public static void manuallyNotify(Notification notification){
+        Autonotify.notify(notification);
+    }
+
+    private static void notify(Notification notification){
+        var executor = AutonotifyThreadPoolProvider.SINGLETON.getExecutor();
+        AutonotifyProvider.SINGLETON
+                .getProvidedInstances()
+                .forEach(notificationObserver -> CompletableFuture.runAsync(() -> notificationObserver.getNotified(notification), executor));
+    }
+
+    private static Optional<Notification> generateNotificationBy(
             String subject,
             Exception exception,
             Long latency,
             ExecutionContext context){
-        var notificationSettings = AutonotifyProvider.SINGLETON;
         var reasons = new ArrayList<String>();
-        if (Boolean.TRUE.equals(notificationSettings.getConsiderLatency()) && notificationSettings.getLatencyThreshold() < latency)
-            reasons.add("Latency threshold: " + notificationSettings.getLatencyThreshold() + "ms allowed vs. actually " + latency + "ms");
-        Optional.ofNullable(exception).ifPresent(actualException -> {
-            if (notificationSettings.getCustomExceptionsToConsider().contains(actualException.getClass()))
-                reasons.add("An exception was thrown during its execution. It specifically matched one of the parameterized types set for notification.");
-            else if (Autonotify.checkWhetherGenericallyMatchesMappedExceptions(notificationSettings, actualException))
-                reasons.add("An exception was thrown during its execution. It generically matched one of the MappedException types set for notification.");
-            else if (Boolean.TRUE.equals(notificationSettings.getConsiderUnexpectedExceptions()))
-                reasons.add("An unexpected exception was thrown during its execution.");
-        });
-        if (!reasons.isEmpty()) {
-            var notification = Notifier.Notification.builder()
-                    .subject(subject)
-                    .executionContext(context)
-                    .exception(exception)
-                    .reasons(reasons)
-                    .build();
-            notifier.emitNotification(notification);
-        }
+        Autonotify.checkLatencyCriteria(latency, reasons);
+        Optional.ofNullable(exception)
+                .ifPresent(actualException -> Autonotify.checkExceptionsCriteria(actualException, reasons));
+        if (reasons.isEmpty())
+            return Optional.empty();
+        var notification = Notification.builder()
+                .subject(subject)
+                .executionContext(context)
+                .exception(exception)
+                .reasons(reasons)
+                .build();
+        return Optional.ofNullable(notification);
+    }
+
+    private static void checkLatencyCriteria(
+            Long latency,
+            ArrayList<String> reasons) {
+        if (Boolean.TRUE.equals(AutonotifyProvider.SINGLETON.getConsiderLatency()) && AutonotifyProvider.SINGLETON.getLatencyThreshold() < latency)
+            reasons.add("Latency threshold: " + AutonotifyProvider.SINGLETON.getLatencyThreshold() + "ms allowed vs. actually " + latency + "ms");
+    }
+
+    private static void checkExceptionsCriteria(Exception actualException, ArrayList<String> reasons) {
+        var notificationSettings = AutonotifyProvider.SINGLETON;
+        if (notificationSettings.getCustomExceptionsToConsider().contains(actualException.getClass()))
+            reasons.add("An exception was thrown during its execution. It specifically matched one of the parameterized types set for notification (" + actualException.getClass().getSimpleName() + ")");
+        else if (Autonotify.checkWhetherGenericallyMatchesMappedExceptions(notificationSettings, actualException))
+            reasons.add("An exception was thrown during its execution. It generically matched one of the MappedException types set for notification (" + actualException.getClass().getSimpleName() + ")");
+        else if (Boolean.TRUE.equals(notificationSettings.getConsiderUnexpectedExceptions()))
+            reasons.add("An unexpected exception was thrown during its execution  (" + actualException.getClass().getSimpleName() + ")");
     }
 
     private static boolean checkWhetherGenericallyMatchesMappedExceptions(

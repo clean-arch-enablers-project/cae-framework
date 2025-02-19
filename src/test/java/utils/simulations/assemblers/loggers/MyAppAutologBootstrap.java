@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import utils.simulations.adapters.loggers.LoggerAdapterForTesting;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class LoggerBootstrapForTesting {
+public class MyAppAutologBootstrap {
 
     public static void startupDefaultSettings(){
         AutologProvider.SINGLETON

@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import utils.simulations.assemblers.loggers.LoggerBootstrapForTesting;
+import utils.simulations.assemblers.loggers.MyAppAutologBootstrap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ class RunnablePortTest {
 
     @BeforeEach
     void setup(){
-        LoggerBootstrapForTesting.startupDefaultSettings();
+        MyAppAutologBootstrap.startupDefaultSettings();
     }
 
     @Test
