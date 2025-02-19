@@ -10,7 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import utils.simulations.adapters.loggers.LoggerAdapterForTesting;
-import utils.simulations.assemblers.loggers.LoggerBootstrapForTesting;
+import utils.simulations.assemblers.loggers.MyAppAutologBootstrap;
 
 import java.util.UUID;
 
@@ -19,7 +19,7 @@ class SupplierPortTest {
 
     @BeforeEach
     void setup(){
-        LoggerBootstrapForTesting.startupDefaultSettings();
+        MyAppAutologBootstrap.startupDefaultSettings();
     }
 
     @Test
