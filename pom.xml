@@ -3,12 +3,12 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <name>CleanArchEnablers</name>
+    <name>CAE Framework</name>
     <description>Framework for making clean architecture easier</description>
     <url>https://github.com/clean-arch-enablers-project/cae-framework/blob/main/README.md</url>
     <groupId>com.clean-arch-enablers</groupId>
     <artifactId>cae-framework</artifactId>
-    <version>3.0.0</version>
+    <version>4.0.0</version>
     <packaging>jar</packaging>
     <licenses>
         <license>
@@ -37,7 +37,7 @@
         <dependency>
             <groupId>com.clean-arch-enablers</groupId>
             <artifactId>cae-env-vars</artifactId>
-            <version>3.0.0</version>
+            <version>4.0.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
@@ -55,7 +55,7 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>1.5.11</version>
+            <version>1.5.16</version>
             <scope>test</scope>
         </dependency>
         <dependency>
