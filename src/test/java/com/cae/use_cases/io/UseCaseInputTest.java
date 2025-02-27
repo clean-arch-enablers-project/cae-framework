@@ -36,70 +36,70 @@ class UseCaseInputTest {
 
     @Test
     void shouldValidateWithoutProblemsTheUseCaseInputImplementation(){
-        Assertions.assertDoesNotThrow(this.normalUseCase::validateProperties);
+        Assertions.assertDoesNotThrow(this.normalUseCase::autoverify);
     }
 
     @Test
     void shouldThrowNullFieldExceptionWhenValidatingUseCaseInputImplementation(){
         this.normalUseCase.setFieldWhichMustNotBeNull(null);
-        Assertions.assertThrows(NullFieldException.class, this.normalUseCase::validateProperties);
+        Assertions.assertThrows(NullFieldException.class, this.normalUseCase::autoverify);
     }
 
     @Test
     void shouldThrowBlankFieldExceptionWhenValidatingUseCaseInputImplementation(){
         this.normalUseCase.setFieldWhichMustNotBeBlank("    ");
-        Assertions.assertThrows(BlankFieldException.class, this.normalUseCase::validateProperties);
+        Assertions.assertThrows(BlankFieldException.class, this.normalUseCase::autoverify);
     }
 
     @Test
     void shouldThrowEmptyFieldExceptionWhenValidatingUseCaseInputImplementation(){
         this.normalUseCase.setFieldWhichMustNotBeEmpty("");
-        Assertions.assertThrows(EmptyFieldException.class, this.normalUseCase::validateProperties);
+        Assertions.assertThrows(EmptyFieldException.class, this.normalUseCase::autoverify);
     }
 
     @Test
     void shouldThrowNullFieldExceptionWhenValidatingInnerPropertiesOfAPropertyOfTheUseCaseInputImplementation(){
         this.normalUseCase.getFieldWhichMustHaveItsPropertiesValid().setInnerFieldWhichMustNotBeNull(null);
-        Assertions.assertThrows(NullFieldException.class, this.normalUseCase::validateProperties);
+        Assertions.assertThrows(NullFieldException.class, this.normalUseCase::autoverify);
     }
 
     @Test
     void shouldThrowNotBlankAnnotationOnWrongTypeException(){
         var input = new SomeProblematicInputWithNotBlankAnnotation();
         input.setSomeInteger(1);
-        Assertions.assertThrows(NotBlankAnnotationOnWrongTypeException.class, input::validateProperties);
+        Assertions.assertThrows(NotBlankAnnotationOnWrongTypeException.class, input::autoverify);
     }
 
     @Test
     void shouldThrowNotEmptyAnnotationOnWrongTypeException(){
         var input = new SomeProblematicInputWithNotEmptyAnnotation();
         input.setSomeInteger(1);
-        Assertions.assertThrows(NotEmptyAnnotationOnWrongTypeException.class, input::validateProperties);
+        Assertions.assertThrows(NotEmptyAnnotationOnWrongTypeException.class, input::autoverify);
     }
 
     @Test
     void shouldThrowValidInnerPropertiesAnnotationOnWrongTypeException(){
         var input = new SomeProblematicInputWithValidInnerPropertiesAnnotation();
         input.setSomeInteger(1);
-        Assertions.assertThrows(ValidInnerPropertiesAnnotationOnWrongTypeException.class, input::validateProperties);
+        Assertions.assertThrows(ValidInnerPropertiesAnnotationOnWrongTypeException.class, input::autoverify);
     }
 
     @Test
     void shouldThrowGetterMethodNotFoundException(){
         var input = new SomeProblematicInputWithNoGetterMethods();
-        Assertions.assertThrows(UseCaseInput.GetterMethodNotFoundException.class, input::validateProperties);
+        Assertions.assertThrows(UseCaseInput.GetterMethodNotFoundException.class, input::autoverify);
     }
 
     @Test
     void shouldThrowInternalMappedException(){
         var input = new SomeProblematicInputWithGetterMethod();
-        Assertions.assertThrows(InternalMappedException.class, input::validateProperties);
+        Assertions.assertThrows(InternalMappedException.class, input::autoverify);
     }
 
     @Test
     void shouldThrowAtLeastOneOfTheFieldsIsSupposedToBeFilledException(){
         var inputWithArbitraryValidationRules = new SomeUseCaseInputThatImplementsArbitrarilyValidationRules();
-        Assertions.assertThrows(SomeUseCaseInputThatImplementsArbitrarilyValidationRules.AtLeastOneOfTheFieldsIsSupposedToBeFilledException.class, inputWithArbitraryValidationRules::validateProperties);
+        Assertions.assertThrows(SomeUseCaseInputThatImplementsArbitrarilyValidationRules.AtLeastOneOfTheFieldsIsSupposedToBeFilledException.class, inputWithArbitraryValidationRules::autoverify);
     }
 
     @Getter

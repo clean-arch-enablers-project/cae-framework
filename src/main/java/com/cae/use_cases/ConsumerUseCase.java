@@ -53,7 +53,7 @@ public abstract class ConsumerUseCase <I extends UseCaseInput> extends UseCase i
     public void execute(I input, ExecutionContext context){
         Trier.of(() -> {
             this.handleAuthorization(input, context);
-            input.validateProperties();
+            input.autoverify();
             this.finallyExecute(input, context);
         })
         .setUnexpectedExceptionHandler(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))

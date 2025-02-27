@@ -30,7 +30,7 @@ public class UseCaseInput {
 
     private List<FieldAndGetter> fieldAndGetterList;
 
-    public void validateProperties(){
+    public void autoverify(){
         try {
             for (var fieldAndGetter : this.getFieldAndGetterList()) {
                 this.handleNotBlankAnnotation(fieldAndGetter);
@@ -120,7 +120,7 @@ public class UseCaseInput {
         if (fieldAndGetter.field.isAnnotationPresent(ValidInnerPropertiesInputField.class)){
             Optional.ofNullable(fieldAndGetter.getter.invoke(this)).ifPresent(value -> {
                 if (value instanceof UseCaseInput)
-                    ((UseCaseInput) value).validateProperties();
+                    ((UseCaseInput) value).autoverify();
                 else if(value instanceof Collection){
                     for (var item : (Collection<?>) value)
                         this.handleCollectionItemValidation(item, fieldAndGetter.field);
@@ -133,7 +133,7 @@ public class UseCaseInput {
 
     private void handleCollectionItemValidation(Object item, Field field){
         if (item instanceof UseCaseInput)
-            ((UseCaseInput) item).validateProperties();
+            ((UseCaseInput) item).autoverify();
         else
             throw new ValidInnerPropertiesAnnotationOnWrongTypeException(this.getFullFieldName(field));
     }
