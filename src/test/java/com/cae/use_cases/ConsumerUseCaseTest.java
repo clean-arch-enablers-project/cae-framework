@@ -24,16 +24,16 @@ class ConsumerUseCaseTest {
     @Test
     void shouldCallTheValidatePropertiesMethodFromInput(){
         var input = Mockito.mock(TheConsumerUseCaseImplementationInput.class);
-        Mockito.doNothing().when(input).validateProperties();
+        Mockito.doNothing().when(input).autoverify();
         var useCase = new SomeConsumerUseCaseImplementation();
         useCase.execute(input, this.correlation);
-        Mockito.verify(input, Mockito.times(1)).validateProperties();
+        Mockito.verify(input, Mockito.times(1)).autoverify();
     }
 
     @Test
     void shouldRunWithoutProblemsTheUseCase(){
         var input = Mockito.mock(TheConsumerUseCaseImplementationInput.class);
-        Mockito.doNothing().when(input).validateProperties();
+        Mockito.doNothing().when(input).autoverify();
         var useCase = new SomeConsumerUseCaseImplementation();
         Assertions.assertDoesNotThrow(() -> useCase.execute(input, this.correlation));
     }
@@ -41,7 +41,7 @@ class ConsumerUseCaseTest {
     @Test
     void shouldHandleNotExpectedExceptionDuringUseCaseExecution(){
         var input = Mockito.mock(TheConsumerUseCaseImplementationInput.class);
-        Mockito.doNothing().when(input).validateProperties();
+        Mockito.doNothing().when(input).autoverify();
         var useCase = new SomeUnexpectedProblematicConsumerUseCaseImplementation();
         Assertions.assertThrows(UseCaseExecutionException.class, () -> useCase.execute(input, this.correlation));
     }
@@ -49,7 +49,7 @@ class ConsumerUseCaseTest {
     @Test
     void shouldHandleExpectedExceptionDuringUseCaseExecution(){
         var input = Mockito.mock(TheConsumerUseCaseImplementationInput.class);
-        Mockito.doNothing().when(input).validateProperties();
+        Mockito.doNothing().when(input).autoverify();
         var useCase = new SomeExpectedProblematicConsumerUseCaseImplementation();
         Assertions.assertThrows(SomeExpectedShitThatMightHappen.class, () -> useCase.execute(input, this.correlation));
     }

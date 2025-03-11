@@ -55,7 +55,7 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
     public O execute(I input, ExecutionContext context){
         return Trier.of(() -> {
             this.handleAuthorization(input, context);
-            input.validateProperties();
+            input.autoverify();
             return this.finallyExecute(input, context);
         })
         .setUnexpectedExceptionHandler(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))

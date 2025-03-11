@@ -24,18 +24,18 @@ class FunctionUseCaseTest {
     @Test
     void shouldCallTheValidatePropertiesMethodFromInput(){
         var input = Mockito.mock(TheFunctionUseCaseImplementationInput.class);
-        Mockito.doNothing().when(input).validateProperties();
+        Mockito.doNothing().when(input).autoverify();
         var useCase = new SomeNormalFunctionUseCaseImplementation();
         var useCaseResult = useCase.execute(input, this.correlation);
         Assertions.assertNotNull(useCaseResult);
         Assertions.assertEquals("Just executed my internal logic", useCaseResult);
-        Mockito.verify(input, Mockito.times(1)).validateProperties();
+        Mockito.verify(input, Mockito.times(1)).autoverify();
     }
 
     @Test
     void shouldRunWithoutProblemsTheUseCase(){
         var input = Mockito.mock(TheFunctionUseCaseImplementationInput.class);
-        Mockito.doNothing().when(input).validateProperties();
+        Mockito.doNothing().when(input).autoverify();
         var useCase = new SomeNormalFunctionUseCaseImplementation();
         Assertions.assertDoesNotThrow(() -> useCase.execute(input, this.correlation));
     }
@@ -43,7 +43,7 @@ class FunctionUseCaseTest {
     @Test
     void shouldHandleNotExpectedExceptionDuringUseCaseExecution(){
         var input = Mockito.mock(TheFunctionUseCaseImplementationInput.class);
-        Mockito.doNothing().when(input).validateProperties();
+        Mockito.doNothing().when(input).autoverify();
         var useCase = new SomeUnexpectedProblematicFunctionUseCaseImplementation();
         Assertions.assertThrows(UseCaseExecutionException.class, () -> useCase.execute(input, this.correlation));
     }
@@ -51,7 +51,7 @@ class FunctionUseCaseTest {
     @Test
     void shouldHandleExpectedExceptionDuringUseCaseExecution(){
         var input = Mockito.mock(TheFunctionUseCaseImplementationInput.class);
-        Mockito.doNothing().when(input).validateProperties();
+        Mockito.doNothing().when(input).autoverify();
         var useCase = new SomeExpectedProblematicFunctionUseCaseImplementation();
         Assertions.assertThrows(SomeExpectedShitThatMightHappen.class, () -> useCase.execute(input, this.correlation));
     }
