@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -41,19 +40,12 @@ public class Autolog<U extends UseCase> {
             Object output,
             Exception exception,
             Long latency){
-        this.synchronousExecutionIfNeeded(CompletableFuture.runAsync(() -> {
-            if (Boolean.TRUE.equals(AutologProvider.SINGLETON.getStructuredFormat()))
-                this.generateLogInStructuredFormat(input, output, exception, context, latency);
-            else
-                this.generateLogInSimpleFormat(input, output, exception, context, latency);
-            PortInsights.SINGLETON.flush(context);
-            this.logWhatsGenerated(exception == null);
-        }));
-    }
-
-    private void synchronousExecutionIfNeeded(CompletableFuture<Void> future) {
-        if (Boolean.FALSE.equals(AutologProvider.SINGLETON.getAsync()))
-            future.join();
+        if (Boolean.TRUE.equals(AutologProvider.SINGLETON.getStructuredFormat()))
+            this.generateLogInStructuredFormat(input, output, exception, context, latency);
+        else
+            this.generateLogInSimpleFormat(input, output, exception, context, latency);
+        PortInsights.SINGLETON.flush(context);
+        this.logWhatsGenerated(exception == null);
     }
 
     private void generateLogInSimpleFormat(

@@ -6,8 +6,6 @@ import com.cae.use_cases.contexts.ExecutionContext;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
-import java.util.concurrent.CompletableFuture;
-
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class PortInsightsManager {
 
@@ -23,26 +21,19 @@ public class PortInsightsManager {
             Object output,
             Exception exception,
             Long latency){
-        this.runSynchronouslyIfNecessary(CompletableFuture.runAsync(() -> {
-            var loggerProvider = AutologProvider.SINGLETON;
-            var ioInsightBuilder = new StringBuilder();
-            if (Boolean.TRUE.equals(loggerProvider.getPortsLoggingIO())) ioInsightBuilder.append(this.generateIOInsightFor(input, output));
-            var exceptionInsight = "";
-            if (exception != null){
-                exceptionInsight = " an exception has been thrown along the way: " + exception;
-            }
-            var fullInsight = this.portName +
-                    "'s insights:" +
-                    ioInsightBuilder +
-                    " (" + latency + "ms)" +
-                    (exceptionInsight.isBlank() ? " no exception has been thrown" : exceptionInsight);
-            PortInsights.SINGLETON.register(context, fullInsight);
-        }));
-    }
-
-    private void runSynchronouslyIfNecessary(CompletableFuture<Void> future){
-        if (Boolean.FALSE.equals(AutologProvider.SINGLETON.getAsync()))
-            future.join();
+        var loggerProvider = AutologProvider.SINGLETON;
+        var ioInsightBuilder = new StringBuilder();
+        if (Boolean.TRUE.equals(loggerProvider.getPortsLoggingIO())) ioInsightBuilder.append(this.generateIOInsightFor(input, output));
+        var exceptionInsight = "";
+        if (exception != null){
+            exceptionInsight = " an exception has been thrown along the way: " + exception;
+        }
+        var fullInsight = this.portName +
+                "'s insights:" +
+                ioInsightBuilder +
+                " (" + latency + "ms)" +
+                (exceptionInsight.isBlank() ? " no exception has been thrown" : exceptionInsight);
+        PortInsights.SINGLETON.register(context, fullInsight);
     }
 
     private String generateIOInsightFor(Object input, Object output) {
