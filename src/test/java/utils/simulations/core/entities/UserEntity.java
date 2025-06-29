@@ -1,6 +1,5 @@
 package utils.simulations.core.entities;
 
-import com.cae.entities.Entity;
 import com.cae.autolog.native_io_extraction_mode.json.sensitive.Sensitive;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +9,7 @@ import utils.simulations.core.entities.enums.UserTypeEnum;
 @Builder
 @Getter
 @Setter
-public class UserEntity implements Entity {
+public class UserEntity {
 
     private Long id;
     private String name;

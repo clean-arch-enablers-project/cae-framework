@@ -2,13 +2,10 @@ package com.cae.autodoc;
 
 
 import com.cae.autolog.native_io_extraction_mode.json.SimpleJsonBuilder;
-import com.cae.use_cases.registries.UseCaseRegistry;
-import com.cae.use_cases.assemblers.UseCaseAutoInitializer;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.stream.Collectors;
 
 /**
  * When set to run on some phase of your building process (e.g. Maven, etc.)
@@ -23,23 +20,15 @@ public class Autodoc {
 
     private Autodoc(){
         try {
-            this.fileWriter = new BufferedWriter(new FileWriter("cae-docfile.json"));
+            this.fileWriter = new BufferedWriter(new FileWriter("cae-autodoc.json"));
         } catch (IOException e) {
             throw new ExternalizeUseCaseException(e);
         }
     }
 
-    public static void run(String useCasesPackageForAssemblersLayer, String domainName, Boolean kotlin) throws IOException, ClassNotFoundException {
-        UseCaseAutoInitializer.initializeByAssemblerLayer(useCasesPackageForAssemblersLayer);
+    public static void run(String domainName, String projectPackage, boolean isKotlin) throws IOException, ClassNotFoundException {
         var registerer = new Autodoc();
-        var useCasesDocumented = UseCaseRegistry.SINGLETON.getRegisteredUseCases()
-                .stream()
-                .map(useCase -> UseCaseDocumentationGenerator.generateFor(useCase, kotlin))
-                .collect(Collectors.toList());
-        var fullDocumentation = DomainDocumentation.builder()
-                .domain(domainName)
-                .useCases(useCasesDocumented)
-                .build();
+        var fullDocumentation = AutodocGeneration.generateFor(domainName, projectPackage, isKotlin);
         registerer.startExternalization(fullDocumentation);
         registerer.endExternalization();
     }

@@ -12,24 +12,28 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class UseCaseCodeRetriever {
+public class CodeRetriever {
 
     public static String retrieveCodeFor(
-            String useCaseImplementationLocation,
-            String useCaseImplementationName,
+            String implementationLocation,
+            String implementationName,
             boolean kotlin) {
-        var currentPath = System.getProperty("user.dir").replace("assemblers", "core");
+        var currentPath = System.getProperty("user.dir");
+        if (!Files.exists(Paths.get(currentPath + File.separator + "cae-settings.json"))) throw new InternalMappedException(
+                "Couldn't retrieve source code for " + implementationName,
+                "Make sure you run this process in the root of your project structure and it has the cae-settings.json file"
+        );
         var location = currentPath +
                 File.separator + "src" + File.separator + "main" + File.separator + (kotlin? "kotlin" : "java") + File.separator +
-                useCaseImplementationLocation.replace(".", File.separator) + File.separator +
-                useCaseImplementationName + (kotlin? ".kt" : ".java");
+                implementationLocation.replace(".", File.separator) + File.separator +
+                implementationName + (kotlin? ".kt" : ".java");
         var path = Paths.get(location);
         if (Files.exists(path)){
-            return UseCaseCodeRetriever.getCodeFrom(path);
+            return CodeRetriever.getCodeFrom(path);
         }
         throw new InternalMappedException(
-                "The file '" + path + "' couldn't be found. Make sure you are triggering the documentation process from the Assemblers layer.",
-                "Your project structure should have 3 layers in order to use the GPT documentation mode: {domainName}-core, {domainName}-adapters and {domainName}-assemblers,"
+                "The file '" + path + "' couldn't be found.",
+                "Make sure the file exists in the expected path"
         );
     }
 

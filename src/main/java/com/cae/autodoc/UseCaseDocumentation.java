@@ -1,11 +1,8 @@
 package com.cae.autodoc;
 
-import com.cae.use_cases.UseCase;
+import com.cae.autoauth.annotations.RoleBasedProtection;
 import com.cae.autoauth.annotations.ScopeBasedProtection;
-import com.cae.use_cases.ConsumerUseCase;
-import com.cae.use_cases.FunctionUseCase;
-import com.cae.use_cases.RunnableUseCase;
-import com.cae.use_cases.SupplierUseCase;
+import com.cae.use_cases.*;
 import lombok.*;
 
 import java.lang.reflect.ParameterizedType;
@@ -32,7 +29,7 @@ public class UseCaseDocumentation {
                 .ioContract(handleIOContractFrom(declarationClass))
                 .isProtected(handleProtectionStatus(implementationClass, declarationClass))
                 .scopes(handleScopes(implementationClass, declarationClass))
-                .useCaseSourceCode(UseCaseCodeRetriever.retrieveCodeFor(
+                .sourceCode(CodeRetriever.retrieveCodeFor(
                         implementationClass.getPackageName(),
                         implementationClass.getSimpleName(),
                         kotlin
@@ -40,11 +37,30 @@ public class UseCaseDocumentation {
                 .build();
     }
 
-    private static Class<?> getDeclarationClassOf(Class<? extends UseCase> useCaseClass) {
+    private static Class<?> getDeclarationClassOf(Class<?> useCaseClass) {
         var currentSuperClass = useCaseClass.getSuperclass();
         if (currentSuperClass == FunctionUseCase.class || currentSuperClass == ConsumerUseCase.class || currentSuperClass == SupplierUseCase.class || currentSuperClass == RunnableUseCase.class)
             return useCaseClass;
         return currentSuperClass;
+    }
+
+    public static UseCaseDocumentation of(Class<?> implementationClass, boolean kotlin){
+        var declarationClass = getDeclarationClassOf(implementationClass);
+        return UseCaseDocumentation.builder()
+                .useCaseDeclaration(declarationClass.getSimpleName())
+                .useCaseDeclarationLocation(declarationClass.getPackageName())
+                .useCaseImplementation(implementationClass.getSimpleName())
+                .useCaseImplementationLocation(implementationClass.getPackageName())
+                .ioContract(handleIOContractFrom(declarationClass))
+                .isProtected(handleProtectionStatus(implementationClass, declarationClass))
+                .scopes(handleScopes(implementationClass, declarationClass))
+                .actionId(handleActionId(implementationClass, declarationClass))
+                .sourceCode(CodeRetriever.retrieveCodeFor(
+                        implementationClass.getPackageName(),
+                        implementationClass.getSimpleName(),
+                        kotlin
+                ))
+                .build();
     }
 
     private static List<IOContractDocumentation> handleIOContractFrom(Class<?> rootUseCaseClass) {
@@ -56,16 +72,24 @@ public class UseCaseDocumentation {
                 .collect(Collectors.toList());
     }
 
-    private static Boolean handleProtectionStatus(Class<? extends UseCase> useCaseClass, Class<?> rootUseCaseClass) {
+    private static Boolean handleProtectionStatus(Class<?> useCaseClass, Class<?> rootUseCaseClass) {
         return useCaseClass.isAnnotationPresent(ScopeBasedProtection.class) || rootUseCaseClass.isAnnotationPresent(ScopeBasedProtection.class);
     }
 
-    private static List<String> handleScopes(Class<? extends UseCase> useCaseClass, Class<?> rootUseCaseClass) {
+    private static List<String> handleScopes(Class<?> useCaseClass, Class<?> rootUseCaseClass) {
         if (useCaseClass.isAnnotationPresent(ScopeBasedProtection.class))
             return List.of(useCaseClass.getAnnotation(ScopeBasedProtection.class).scope());
         if (rootUseCaseClass.isAnnotationPresent(ScopeBasedProtection.class))
             return List.of(rootUseCaseClass.getAnnotation(ScopeBasedProtection.class).scope());
         return new ArrayList<>();
+    }
+
+    private static String handleActionId(Class<?> useCaseClass, Class<?> rootUseCaseClass) {
+        if (useCaseClass.isAnnotationPresent(RoleBasedProtection.class))
+            return useCaseClass.getAnnotation(RoleBasedProtection.class).actionId();
+        if (rootUseCaseClass.isAnnotationPresent(RoleBasedProtection.class))
+            return rootUseCaseClass.getAnnotation(RoleBasedProtection.class).actionId();
+        return null;
     }
 
     private String useCaseDeclaration;
@@ -74,8 +98,9 @@ public class UseCaseDocumentation {
     private String useCaseImplementationLocation;
     private List<IOContractDocumentation> ioContract;
     private String description;
-    private String useCaseSourceCode;
+    private String sourceCode;
     private Boolean isProtected;
     private List<String> scopes;
+    private String actionId;
 
 }
