@@ -1,11 +1,11 @@
 package com.cae.use_cases;
 
-import com.cae.autolog.StackTraceLogger;
-import com.cae.autonotify.Autonotify;
-import com.cae.trier.Trier;
 import com.cae.autoauth.ResourceOwnershipRetriever;
 import com.cae.autoauth.RoleBasedAuth;
 import com.cae.autolog.Autolog;
+import com.cae.autolog.StackTraceLogger;
+import com.cae.autonotify.Autonotify;
+import com.cae.trier.Trier;
 import com.cae.use_cases.contexts.ExecutionContext;
 import com.cae.use_cases.io.UseCaseInput;
 
@@ -55,7 +55,6 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
     public O execute(I input, ExecutionContext context){
         return Trier.of(() -> {
             this.handleAuthorization(input, context);
-            input.autoverify();
             return this.finallyExecute(input, context);
         })
         .setUnexpectedExceptionHandler(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
@@ -71,6 +70,7 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
         var loggingManager = Autolog.of(this, context);
         var startingMoment = LocalDateTime.now();
         try {
+            input.autoverify();
             var output = this.applyInternalLogic(input, context);
             var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
             Autonotify.handleNotificationOn(this, null, latency, context);

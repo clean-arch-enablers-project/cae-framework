@@ -53,7 +53,6 @@ public abstract class ConsumerUseCase <I extends UseCaseInput> extends UseCase i
     public void execute(I input, ExecutionContext context){
         Trier.of(() -> {
             this.handleAuthorization(input, context);
-            input.autoverify();
             this.finallyExecute(input, context);
         })
         .setUnexpectedExceptionHandler(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
@@ -69,6 +68,7 @@ public abstract class ConsumerUseCase <I extends UseCaseInput> extends UseCase i
         var loggingManager = Autolog.of(this, context);
         var startingMoment = LocalDateTime.now();
         try {
+            input.autoverify();
             this.applyInternalLogic(input, context);
             var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
             Autonotify.handleNotificationOn(this, null, latency, context);
