@@ -92,8 +92,8 @@ When executed, a Use Case can have some side behaviors:
 - ``⏳`` Autocache
 - ``✔️`` Autonotify
 - ``✔️`` Autometrics
-- ``✔️`` Scope based authorization validation (Autoauth)
-- ``✔️`` Role based authorization validation (Autoauth)
+- ``✔️`` Autoauth with Scopes
+- ``✔️`` Autoauth with RBAC
 
 ##### 📄 Autolog
 Whenever an instance of use case gets executed, an automatic log will be generated. It can be in two modes:
