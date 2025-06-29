@@ -1,6 +1,6 @@
 package utils.simulations.core.use_cases.update_user;
 
-import com.cae.autoauth.annotations.ScopeBasedProtection;
+import com.cae.autofeatures.autoauth.annotations.ScopeBasedProtection;
 import com.cae.use_cases.ConsumerUseCase;
 import utils.simulations.core.use_cases.update_user.io.inputs.UpdateUserUseCaseInput;
 

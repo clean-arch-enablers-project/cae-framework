@@ -1,6 +1,6 @@
 package com.cae.ports.specifics.consumers;
 
-import com.cae.autolog.AutologProvider;
+import com.cae.autofeatures.autolog.AutologProvider;
 import com.cae.ports.ConsumerPort;
 import com.cae.use_cases.contexts.ExecutionContext;
 import org.junit.jupiter.api.Assertions;

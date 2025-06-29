@@ -1,11 +1,13 @@
 package com.cae.ports;
 
-import com.cae.autolog.StackTraceLogger;
-import com.cae.autonotify.Autonotify;
+import com.cae.autofeatures.autolog.StackTraceLogger;
+import com.cae.autofeatures.autometrics.Autometrics;
+import com.cae.autofeatures.autometrics.Metric;
+import com.cae.autofeatures.autonotify.Autonotify;
 import com.cae.ports.autolog.PortInsightsManager;
 import com.cae.ports.exceptions.PortExecutionException;
-import com.cae.trier.Trier;
 import com.cae.use_cases.contexts.ExecutionContext;
+import com.cae.trier.Trier;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -28,10 +30,12 @@ public abstract class RunnablePort extends Port {
                 this.executeLogic(context);
                 var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
                 Autonotify.handleNotificationOn(this, null, latency, context);
+                Autometrics.collect(Metric.of(this.getName(), latency, null, false));
                 insightsManager.keepInsightOf(context, null, null, null, latency);
             } catch (Exception anyException){
                 var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
                 Autonotify.handleNotificationOn(this, anyException, latency, context);
+                Autometrics.collect(Metric.of(this.getName(), latency, anyException, false));
                 StackTraceLogger.SINGLETON.handleLoggingStackTrace(anyException, context, this.name);
                 insightsManager.keepInsightOf(context, null, null, anyException, latency);
                 throw anyException;

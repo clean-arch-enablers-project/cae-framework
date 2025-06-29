@@ -10,10 +10,10 @@ import java.util.List;
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 public class UseCaseRegistry {
 
-    public static final UseCaseRegistry SINGLETON = new UseCaseRegistry(new ArrayList<>());
-    public final List<UseCaseRegistryInterested> interestedParties = new ArrayList<>();
+    public static final UseCaseRegistry SINGLETON = new UseCaseRegistry();
 
-    private final List<UseCase> useCases;
+    public final List<UseCaseRegistryInterested> interestedParties = new ArrayList<>();
+    private final List<UseCase> useCases = new ArrayList<>();
 
     public void add(UseCase useCase){
         this.useCases.add(useCase);

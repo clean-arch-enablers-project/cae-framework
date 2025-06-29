@@ -1,7 +1,7 @@
 package com.cae.use_cases.io;
 
-import com.cae.autoauth.annotations.ResourceIdentifier;
-import com.cae.autoauth.annotations.ResourceOwnerIdentifier;
+import com.cae.autofeatures.autoauth.annotations.ResourceIdentifier;
+import com.cae.autofeatures.autoauth.annotations.ResourceOwnerIdentifier;
 import com.cae.mapped_exceptions.MappedException;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import com.cae.use_cases.io.annotations.NotBlankInputField;

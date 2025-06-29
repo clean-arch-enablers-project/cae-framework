@@ -1,12 +1,12 @@
 package com.cae.use_cases;
 
-import com.cae.autolog.Logger;
-import com.cae.autolog.AutologProvider;
+import com.cae.autofeatures.autolog.Logger;
+import com.cae.autofeatures.autolog.AutologProvider;
 import com.cae.mapped_exceptions.MappedException;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
-import com.cae.autoauth.ScopeBasedAuth;
+import com.cae.autofeatures.autoauth.ScopeBasedAuth;
 import com.cae.use_cases.contexts.ExecutionContext;
-import com.cae.autoauth.exceptions.NotAllowedMappedException;
+import com.cae.autofeatures.autoauth.exceptions.NotAllowedMappedException;
 import com.cae.use_cases.metadata.UseCaseMetadata;
 import com.cae.use_cases.registries.UseCaseRegistry;
 import lombok.Getter;

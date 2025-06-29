@@ -1,7 +1,7 @@
 package utils.simulations.core.use_cases.create_new_user.implementation;
 
-import com.cae.autonotify.Autonotify;
-import com.cae.autonotify.Notification;
+import com.cae.autofeatures.autonotify.Autonotify;
+import com.cae.autofeatures.autonotify.Notification;
 import com.cae.use_cases.contexts.ExecutionContext;
 import lombok.RequiredArgsConstructor;
 import utils.simulations.core.entities.CPFEntity;

@@ -1,7 +1,7 @@
 package com.cae.ports.autolog;
 
-import com.cae.autolog.AutologProvider;
-import com.cae.autolog.IOLoggingHandler;
+import com.cae.autofeatures.autolog.AutologProvider;
+import com.cae.autofeatures.autolog.IOAutologHandler;
 import com.cae.use_cases.contexts.ExecutionContext;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -50,11 +50,11 @@ public class PortInsightsManager {
     }
 
     private String generateInputPartOfLog(Object input) {
-        return (input == null ? "" : IOLoggingHandler.generateTextForLoggingInput(input, "PORT"));
+        return (input == null ? "" : IOAutologHandler.generateTextForLoggingInput(input, "PORT"));
     }
 
     private String generateOutputPartOfLog(Object output) {
-        return (output == null ? "" : IOLoggingHandler.generateTextForLoggingOutput(output, "PORT"));
+        return (output == null ? "" : IOAutologHandler.generateTextForLoggingOutput(output, "PORT"));
     }
 
 }

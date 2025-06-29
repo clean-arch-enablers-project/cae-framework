@@ -1,6 +1,6 @@
 package utils.simulations.core.entities;
 
-import com.cae.autolog.native_io_extraction_mode.json.sensitive.Sensitive;
+import com.cae.autofeatures.autolog.native_io_extraction_mode.json.sensitive.Sensitive;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;

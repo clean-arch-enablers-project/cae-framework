@@ -1,10 +1,12 @@
 package com.cae.use_cases;
 
-import com.cae.autoauth.ResourceOwnershipRetriever;
-import com.cae.autoauth.RoleBasedAuth;
-import com.cae.autolog.Autolog;
-import com.cae.autolog.StackTraceLogger;
-import com.cae.autonotify.Autonotify;
+import com.cae.autofeatures.autoauth.ResourceOwnershipRetriever;
+import com.cae.autofeatures.autoauth.RoleBasedAuth;
+import com.cae.autofeatures.autolog.Autolog;
+import com.cae.autofeatures.autolog.StackTraceLogger;
+import com.cae.autofeatures.autometrics.Autometrics;
+import com.cae.autofeatures.autometrics.Metric;
+import com.cae.autofeatures.autonotify.Autonotify;
 import com.cae.trier.Trier;
 import com.cae.use_cases.contexts.ExecutionContext;
 import com.cae.use_cases.io.UseCaseInput;
@@ -67,20 +69,22 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
     }
 
     private O finallyExecute(I input, ExecutionContext context) {
-        var loggingManager = Autolog.of(this, context);
+        var autolog = Autolog.of(this, context);
         var startingMoment = LocalDateTime.now();
         try {
             input.autoverify();
             var output = this.applyInternalLogic(input, context);
             var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
             Autonotify.handleNotificationOn(this, null, latency, context);
-            loggingManager.logExecution(context, input, output, null, latency);
+            Autometrics.collect(Metric.of(this.getUseCaseMetadata().getName(), latency, null, true));
+            autolog.logExecution(context, input, output, null, latency);
             return output;
         } catch (Exception anyException){
             var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
             Autonotify.handleNotificationOn(this, anyException, latency, context);
+            Autometrics.collect(Metric.of(this.getUseCaseMetadata().getName(), latency, anyException, true));
             StackTraceLogger.SINGLETON.handleLoggingStackTrace(anyException, context, this.getUseCaseMetadata().getName());
-            loggingManager.logExecution(context, input, null, anyException, latency);
+            autolog.logExecution(context, input, null, anyException, latency);
             throw anyException;
         }
     }
