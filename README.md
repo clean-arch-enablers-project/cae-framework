@@ -250,12 +250,12 @@ LoggerProvider.SINGLETON
 
 <br>
 
-##### ⤵ Autoverify
+##### ✅ Autoverify
 
 Two types of Use Case accept input: the ```FunctionUseCase``` and the ```ConsumerUseCase```. Since they do, it is desirable to have a way to establish required input fields as _not-null_, _not-blank_, _not-empty_, etc. The cae-framework supports all of these, natively:
 
 - ```@NotNullInputField```: for fields of any type that must not be null.
-- ```@NotBlankInputField```: for ```String``` fields which can't be blank (empty or all-space strings).
+- ```@NotBlankInputField```: for ```String``` fields which can't be blank (empty or all-space strings) or ```Collection``` fields of ```String``` inner elements.
 - ```@NotEmptyInputField```: for ```String``` and ```Collection``` fields that cannot be empty.
 - ```@ValidInnerPropertiesInputField```: for custom types that, inside, have their own properties with their own validation rules, based on the annotations mentioned above.
 
@@ -282,7 +282,7 @@ public class AuthRootAccountUseCaseInput extends UseCaseInput {
 }
 ```
 
-That way, whenever the ```AuthRootAccountUseCase``` instance gets executed and receives an ```AuthRootAccountUseCaseInput``` object as input, the Use Case will internally call the ```UseCaseInput::validateProperties``` API, which will ensure the validation rule is respected. If it is, the Use Case accepts the input and proceeds to process it. If it is not, the Use Case rejects and throws an exception specifying what went wrong:
+That way, whenever the ```AuthRootAccountUseCase``` instance gets executed and receives an ```AuthRootAccountUseCaseInput``` object as input, the Use Case will internally call the ```UseCaseInput::autoverify``` API, which will ensure the validation rule is applied. If it is, the Use Case accepts the input and proceeds to process it. If it is not, the Use Case rejects and throws an exception specifying what went wrong:
 
 <br>
 
