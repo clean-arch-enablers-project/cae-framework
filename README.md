@@ -60,7 +60,7 @@ public abstract class GetUserAccountProfilesUseCase extends SupplierUseCase<GetU
 public abstract class DeleteInactiveLeadsUseCase extends RunnableUseCase {}
 ```
 
-Use Case types which accept input require the parameterized generic type of the input to be a subclass of ```UseCaseInput```, this way the Use Case can leverage the ```UseCaseInput``` API for input validation rules. For the output types nothing is required.
+Use Case types which accept input require the parameterized generic type of the input to be a subclass of ```UseCaseInput```, this way the Use Case can leverage the ```UseCaseInput::autoverify``` API for input validation rules. For the output types nothing is required.
 
 <br>
 
@@ -88,11 +88,12 @@ The random approach serves well when the workflow begins at that point, but in c
 When executed, a Use Case can have some side behaviors:
 
 - ``✔️`` Autolog
-- ``✔️`` Auto input validation
+- ``✔️`` Autoverify
 - ``⏳`` Autocache
-- ``⏳`` Autonotify
-- ``✔️`` Scope based authorization validation
-- ``⏳`` Role based authorization validation
+- ``✔️`` Autonotify
+- ``✔️`` Autometrics
+- ``✔️`` Scope based authorization validation (Autoauth)
+- ``✔️`` Role based authorization validation (Autoauth)
 
 ##### 📄 Autolog
 Whenever an instance of use case gets executed, an automatic log will be generated. It can be in two modes:
@@ -105,12 +106,12 @@ The structured mode is a JSON payload with the log data, while the natural langu
 The contained info is:
 
 - The use case: the name of the use case which is being executed (the object's class name)
-- Execution correlation Id: an unique identifier per execution (can be parameterized or randomly generated)
+- Execution correlation Id: an unique identifier per execution (can be parameterized or randomly generated as mentioned previously)
 - Whether or not successful: if the flow didn't throw any exceptions
 - Exception thrown (in case of unsuccessful executions): what went wrong
 - Latency
 - Port insights: insights of what's going on during the execution of each of the use case's ports
-- IO data: what the use case execution received as input and what returned as output
+- IO data: what the use case execution received as input and what it returned as output
 
 An example for the structured format:
 
@@ -149,12 +150,14 @@ As for the natural language style:
 Use case "auth_root_account_implementation" execution with correlation ID of "509cbcbe-c6e8-4ffa-9ca6-62b1cd35e2e3" finished successfully. It took about 65 milliseconds. | Port insights: [FindRootAccountByLoginIdPortAdapter's insights: no exception has been thrown, FindRootAccountSecretPortAdapter's insights: no exception has been thrown, SessionTokenGenerationPortAdapter's insights: no exception has been thrown] [USE CASE INPUT]: { "pass": "**********", "loginId": "caertsc@capitolio.com" }; [USE CASE OUTPUT]: { "expiration": "3600", "name": "Capitólio", "id": "4", "token": "eyJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjQiLCJhY3RvciI6IjQiLCJzY29wZXMiOiJST09UIiwiZXhwIjoxNzMwMjQ3NDExfQ.kYGx3I8KbwzzRk9znYb-r6_h58359QVQZTFwFB9ipl8" };
 ```
 
-The IO data processing for inclusion into the log payload is done natively with a _to-json_ method. During its execution, the cae-native process takes into account the fields of the IO objects that are marked with the ```@Sensitive``` annotation. Depending on the parameterized configuration of this annotation, the autolog will:
+The IO data processing for inclusion into the log payload can be done natively by the framework. If that processing is delegated to the framework, it will take into account the fields marked with the ```@Sensitive``` annotation. Depending on the parameterized configuration of this annotation, the autolog will:
 
-- Completely mask the field value
-- Partially mask the field value
-- Mask from right or from left
-- Just ignore the actual value and put a fixed length of "*" characters
+- Completely mask the field value into the log
+- Partially mask the field value into the log
+- Mask from right or from left into the log
+- Just ignore the actual value and put a fixed length of "*" characters into the log
+
+Example:
 
 ```java
 @Getter
@@ -225,7 +228,7 @@ The ```LoggerProvider``` is a native component of the cae-framework. The ```Logg
 
 Expanding on the usage of the ```LoggerProvider``` API:
 
-- ```LoggerProvider::structuredFormat```: if set ```true```, the presentation style of the log payload is the JSON mentioned in the beginning of this section. If ```false```, in a simple text format.
+- ```LoggerProvider::structuredFormat```: if set ```true```, the presentation style of the log payload is the JSON mentioned in the beginning of this section. If ```false```, it will be in a simple-text format.
 - ```LoggerProvider::setUseCasesLoggingIO```: another ```boolean``` for setting whether or not the autolog will include the IO data of Use Case executions.
 - ```LoggerProvider::setPortsLoggingIO```: same as the previous one, but for ```Ports``` (we'll get there).
 - ```LoggerProvider::setLoggingStackTrace```: whether or not the autolog will include logs of StackTrace for exceptions thrown during Use Case executions.
@@ -247,7 +250,7 @@ LoggerProvider.SINGLETON
 
 <br>
 
-##### ⤵ Auto input validation
+##### ⤵ Autoverify
 
 Two types of Use Case accept input: the ```FunctionUseCase``` and the ```ConsumerUseCase```. Since they do, it is desirable to have a way to establish required input fields as _not-null_, _not-blank_, _not-empty_, etc. The cae-framework supports all of these, natively:
 
