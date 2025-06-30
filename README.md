@@ -424,12 +424,18 @@ Once you've instantiated a new ```Actor``` implementation object, it is time to 
 
 For Use Case types which aren't annotated with ```@ScopeBasedProtection```, the ```ExecutionContext``` instance provided in each execution isn't required to have an instance of the ```Actor``` interface, however, for protected Use Case types, if one is not provided, the execution will be rejected and an exception will be thrown.
 
-The way to provide an instance of ```Actor``` to the ```ExecutionContext``` is as follows, considering the example of ```ActorSessionManager``` mentioned above:
+The way to provide an instance of ```Actor``` to the ```ExecutionContext``` is as follows, considering the example of ```ActorAdapter``` mentioned above:
 
 ```java
-var actor = ActorSessionManager.createOutta(authorization);
-var executionContext = ExecutionContext.of(correlationId, actor);
-var useCaseOutput = useCase.execute(useCaseInput, executionContext);
+@PostMapping("/v1/enrollment-requests")
+public ResponseEntity<ContentWrapper<CreateNewEnrollmentRequestUseCaseOutput>> execute(
+      @RequestHeader(name = "Authorization") String authorization,
+      @RequestHeader String correlationId,
+      @RequestBody CreateNewEnrollmentRequestUseCaseInput input){
+  var actor = ActorAdapter.ofAuthorizationHeader(authorization); // <------- here
+  var output = this.v1CreateNewEnrollmentRequestUseCase.execute(input, ExecutionContext.of(correlationId, actor));
+  return ResponseEntity.status(201).body(ContentWrapper.of(output));
+}
 ```
 
 <br>
