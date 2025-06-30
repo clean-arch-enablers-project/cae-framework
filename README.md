@@ -315,7 +315,7 @@ public class DefaultNotificationObserver implements AutonotifySubscriber {
 
 }
 ```
-Then, provide it to the framework. You can provide as much as you see fit.
+Then, provide it to the framework. You can provide as many as you see fit.
 ```java
 public class StandaloneAutonotify {
 
