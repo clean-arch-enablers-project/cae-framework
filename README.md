@@ -221,24 +221,24 @@ public class LoggerAdapter implements Logger {
 Once an implementation of the ```Logger``` interface is created, to provide it to the framework, it goes like this:
 
 ```java
-LoggerProvider.SINGLETON.setProvidedInstance(LoggerAdapter.SINGLETON);
+AutologProvider.SINGLETON.setProvidedInstance(LoggerAdapter.SINGLETON);
 ```
 
-The ```LoggerProvider``` is a native component of the cae-framework. The ```LoggerProvider::setProvidedInstance``` will receive any implementation of the ```Logger``` interface.
+The ```AutologProvider``` is a native component of the cae-framework. The ```AutologProvider::setProvidedInstance``` will receive any implementation of the ```Logger``` interface.
 
-Expanding on the usage of the ```LoggerProvider``` API:
+Expanding on the usage of the ```AutologProvider``` API:
 
-- ```LoggerProvider::structuredFormat```: if set ```true```, the presentation style of the log payload is the JSON mentioned in the beginning of this section. If ```false```, it will be in a simple-text format.
-- ```LoggerProvider::setUseCasesLoggingIO```: another ```boolean``` for setting whether or not the autolog will include the IO data of Use Case executions.
-- ```LoggerProvider::setPortsLoggingIO```: same as the previous one, but for ```Ports``` (we'll get there).
-- ```LoggerProvider::setLoggingStackTrace```: whether or not the autolog will include logs of StackTrace for exceptions thrown during Use Case executions.
-- ```LoggerProvider::setNumberOfLinesFromStackTrace```: if the previous one is set ```true```, it is possible to set the number of StackTrace lines will be included into the log.
-- ```LoggerProvider::setIOLoggingMode```: whether to use the CAE Native mode (which converts objects to JSON) or to rely on the objects' ```toString``` implementations.
+- ```AutologProvider::structuredFormat```: if set ```true```, the presentation style of the log payload is the JSON mentioned in the beginning of this section. If ```false```, it will be in a simple-text format.
+- ```AutologProvider::setUseCasesLoggingIO```: another ```boolean``` for setting whether or not the autolog will include the IO data of Use Case executions.
+- ```AutologProvider::setPortsLoggingIO```: same as the previous one, but for ```Ports``` (we'll get there).
+- ```AutologProvider::setLoggingStackTrace```: whether or not the autolog will include logs of StackTrace for exceptions thrown during Use Case executions.
+- ```AutologProvider::setNumberOfLinesFromStackTrace```: if the previous one is set ```true```, it is possible to set the number of StackTrace lines will be included into the log.
+- ```AutologProvider::setIOLoggingMode```: whether to use the CAE Native mode (which converts objects to JSON) or to rely on the objects' ```toString``` implementations.
 
 It will look like this:
 
 ```java
-LoggerProvider.SINGLETON
+AutologProvider.SINGLETON
     .setProvidedInstance(LoggerAdapter.SINGLETON)
     .setIOLoggingMode(IOLoggingMode.CAE_NATIVE)
     .structuredFormat(false)
