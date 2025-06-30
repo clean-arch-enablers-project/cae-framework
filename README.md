@@ -298,7 +298,79 @@ Field 'AuthRootAccountUseCaseInput:loginId' can't have blank values.
 <br>
 
 ##### 🔔 Autonotify
-...
+With this Autofeature it is possible to parameterize scenarios that will trigger notifications to a list of ```NotificationSubscriber``` instances, such as Email Service Clients, Custom Metrics Clients, etc., you decide.
+
+It works like this:
+
+First, declare at least 1 ```NotificationSubscriber``` implementation.
+```java
+public class DefaultNotificationObserver implements AutonotifySubscriber {
+
+    public static final DefaultNotificationObserver SINGLETON = new DefaultNotificationObserver();
+
+    @Override
+    public void receiveNotification(Notification notification) {
+        SimpleEmailService.SINGLETON.sendTeamNotificationEmail(notification);
+    }
+
+}
+```
+Then, provide it to the framework. You can provide as much as you see fit.
+```java
+public class StandaloneAutonotify {
+
+    public static void startupSettings(){
+        AutonotifyProvider.SINGLETON
+                .setSubscriber(DefaultNotificationObserver.SINGLETON);
+    }
+
+}
+```
+Now it is just about parameterizing what scenarios must trigger new notifications.
+```java
+public class StandaloneAutonotify {
+
+    //examples with all possibilities
+    public static void startupSettings(){
+        AutonotifyProvider.SINGLETON
+                .considerNotAuthenticatedMappedExceptions()
+                .considerNotAuthorizedMappedExceptions()
+                .considerInputMappedExceptions()
+                .considerNotFoundMappedExceptions()
+                .considerInternalMappedExceptions()
+                .considerMissingEnvVarExceptions()
+                .considerNoRetriesLeftExceptions()
+                .considerUnexpectedExceptions()
+                .considerSpecifically(IOException.class)
+                .considerSpecifically(RejectedExecutionException.class)
+                .considerSpecifically(IllegalStateException.class)
+                .considerSpecifically(...any specific type)
+                .considerLatency(1000)
+                .setSubscriber(DefaultNotificationObserver.SINGLETON);
+    }
+
+}
+```
+So any mentioned exceptions being thrown during the execution of any ```UseCase``` or ```Port``` instances, a ```Notification``` object will be delivered to all of your provided NotificationSubscriber instances. That counts for latency threshold as well.
+
+A ```Notification``` has the following schema:
+
+```java
+public class Notification{
+    private final String subject; //has getter
+    private final ExecutionContext executionContext; //has getter
+    private final Exception exception; //has getter
+    private final List<String> reasons; //has getter
+
+    @Override
+    public String toString() {
+        return "Notification generated on '" +
+                this.subject +"' during the execution of correlation ID '" +
+                this.executionContext.toString() + "' because of the following reasons: " +
+                SimpleJsonBuilder.buildFor(this.reasons);
+    }
+}
+```
 
 <br>
 
