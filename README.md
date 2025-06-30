@@ -60,7 +60,7 @@ public abstract class GetUserAccountProfilesUseCase extends SupplierUseCase<GetU
 public abstract class DeleteInactiveLeadsUseCase extends RunnableUseCase {}
 ```
 
-Use Case types which accept input require the parameterized generic type of the input to be a subclass of ```UseCaseInput```, this way the Use Case can leverage the ```UseCaseInput``` API for input validation rules. For the output types nothing is required.
+Use Case types which accept input require the parameterized generic type of the input to be a subclass of ```UseCaseInput```, this way the Use Case can leverage the ```UseCaseInput::autoverify``` API for input validation rules. For the output types nothing is required.
 
 <br>
 
@@ -69,7 +69,7 @@ Every Use Case subtype will inherit the same API for getting executed:
 
 ```UseCase::execute```
 
-The difference between them all is only that some accept input and/or return output and others don't do either or at least one of the options. Regardless, everyone of them accepts the following parameter: an object of type ```ExecutionContext```. This object serves the purpose of identifying each request with a unique ID, so troubleshootings can rely on the execution context at the log level of analysis, for example. 
+The only differences among them are that some accept input and/or return output, while others do neither or only one of the two. Regardless, each type accepts the following parameter: an object of type ```ExecutionContext```. This object serves the purpose of identifying each request with a unique ID, so troubleshootings can rely on the execution context at the log level of analysis, for example. 
 
 The ```ExecutionContext``` object keeps an attribute called ```correlationId``` which is the UUID that identifies each execution. It can be generated randomly or provided programmatically:
 
@@ -88,11 +88,12 @@ The random approach serves well when the workflow begins at that point, but in c
 When executed, a Use Case can have some side behaviors:
 
 - ``✔️`` Autolog
-- ``✔️`` Auto input validation
+- ``✔️`` Autoverify
 - ``⏳`` Autocache
-- ``⏳`` Autonotify
-- ``✔️`` Scope based authorization validation
-- ``⏳`` Role based authorization validation
+- ``✔️`` Autonotify
+- ``✔️`` Autometrics
+- ``✔️`` Autoauth with Scopes
+- ``✔️`` Autoauth with RBAC
 
 ##### 📄 Autolog
 Whenever an instance of use case gets executed, an automatic log will be generated. It can be in two modes:
@@ -105,12 +106,12 @@ The structured mode is a JSON payload with the log data, while the natural langu
 The contained info is:
 
 - The use case: the name of the use case which is being executed (the object's class name)
-- Execution correlation Id: an unique identifier per execution (can be parameterized or randomly generated)
+- Execution correlation Id: an unique identifier per execution (can be parameterized or randomly generated as mentioned previously)
 - Whether or not successful: if the flow didn't throw any exceptions
 - Exception thrown (in case of unsuccessful executions): what went wrong
 - Latency
 - Port insights: insights of what's going on during the execution of each of the use case's ports
-- IO data: what the use case execution received as input and what returned as output
+- IO data: what the use case execution received as input and what it returned as output
 
 An example for the structured format:
 
@@ -149,12 +150,14 @@ As for the natural language style:
 Use case "auth_root_account_implementation" execution with correlation ID of "509cbcbe-c6e8-4ffa-9ca6-62b1cd35e2e3" finished successfully. It took about 65 milliseconds. | Port insights: [FindRootAccountByLoginIdPortAdapter's insights: no exception has been thrown, FindRootAccountSecretPortAdapter's insights: no exception has been thrown, SessionTokenGenerationPortAdapter's insights: no exception has been thrown] [USE CASE INPUT]: { "pass": "**********", "loginId": "caertsc@capitolio.com" }; [USE CASE OUTPUT]: { "expiration": "3600", "name": "Capitólio", "id": "4", "token": "eyJhbGciOiJIUzI1NiJ9.eyJvd25lciI6IjQiLCJhY3RvciI6IjQiLCJzY29wZXMiOiJST09UIiwiZXhwIjoxNzMwMjQ3NDExfQ.kYGx3I8KbwzzRk9znYb-r6_h58359QVQZTFwFB9ipl8" };
 ```
 
-The IO data processing for inclusion into the log payload is done natively with a _to-json_ method. During its execution, the cae-native process takes into account the fields of the IO objects that are marked with the ```@Sensitive``` annotation. Depending on the parameterized configuration of this annotation, the autolog will:
+The IO data processing for inclusion into the log payload can be done natively by the framework. If that processing is delegated to the framework, it will take into account the fields marked with the ```@Sensitive``` annotation. Depending on the parameterized configuration of this annotation, the autolog will:
 
-- Completely mask the field value
-- Partially mask the field value
-- Mask from right or from left
-- Just ignore the actual value and put a fixed length of "*" characters
+- Completely mask the field value into the log
+- Partially mask the field value into the log
+- Mask from right or from left into the log
+- Just ignore the actual value and put a fixed length of "*" characters into the log
+
+Example:
 
 ```java
 @Getter
@@ -218,26 +221,26 @@ public class LoggerAdapter implements Logger {
 Once an implementation of the ```Logger``` interface is created, to provide it to the framework, it goes like this:
 
 ```java
-LoggerProvider.SINGLETON.setProvidedInstance(LoggerAdapter.SINGLETON);
+AutologProvider.SINGLETON.setProvidedInstance(LoggerAdapter.SINGLETON);
 ```
 
-The ```LoggerProvider``` is a native component of the cae-framework. The ```LoggerProvider::setProvidedInstance``` will receive any implementation of the ```Logger``` interface.
+The ```AutologProvider``` is a native component of the cae-framework. The ```AutologProvider::setProvidedInstance``` will receive any implementation of the ```Logger``` interface.
 
-Expanding on the usage of the ```LoggerProvider``` API:
+Expanding on the usage of the ```AutologProvider``` API:
 
-- ```LoggerProvider::structuredFormat```: if set ```true```, the presentation style of the log payload is the JSON mentioned in the beginning of this section. If ```false```, in a simple text format.
-- ```LoggerProvider::setUseCasesLoggingIO```: another ```boolean``` for setting whether or not the autolog will include the IO data of Use Case executions.
-- ```LoggerProvider::setPortsLoggingIO```: same as the previous one, but for ```Ports``` (we'll get there).
-- ```LoggerProvider::setLoggingStackTrace```: whether or not the autolog will include logs of StackTrace for exceptions thrown during Use Case executions.
-- ```LoggerProvider::setNumberOfLinesFromStackTrace```: if the previous one is set ```true```, it is possible to set the number of StackTrace lines will be included into the log.
-- ```LoggerProvider::setIOLoggingMode```: whether to use the CAE Native mode (which converts objects to JSON) or to rely on the objects' ```toString``` implementations.
+- ```AutologProvider::structuredFormat```: if set ```true```, the presentation style of the log payload is the JSON mentioned in the beginning of this section. If ```false```, it will be in a simple-text format.
+- ```AutologProvider::setUseCasesLoggingIO```: another ```boolean``` for setting whether or not the autolog will include the IO data of Use Case executions.
+- ```AutologProvider::setPortsLoggingIO```: same as the previous one, but for ```Ports``` (we'll get there).
+- ```AutologProvider::setLoggingStackTrace```: whether or not the autolog will include logs of StackTrace for exceptions thrown during Use Case executions.
+- ```AutologProvider::setNumberOfLinesFromStackTrace```: if the previous one is set ```true```, it is possible to set the number of StackTrace lines will be included into the log.
+- ```AutologProvider::setIOLoggingMode```: whether to use the CAE Native mode (which converts objects to JSON) or to rely on the objects' ```toString``` implementations.
 
 It will look like this:
 
 ```java
-LoggerProvider.SINGLETON
+AutologProvider.SINGLETON
     .setProvidedInstance(LoggerAdapter.SINGLETON)
-    .setIOLoggingMode(IOLoggingMode.CAE_NATIVE)
+    .setIOLoggingMode(IOAutologMode.CAE_NATIVE)
     .structuredFormat(false)
     .setUseCasesLoggingIO(true)
     .setPortsLoggingIO(false)
@@ -247,12 +250,12 @@ LoggerProvider.SINGLETON
 
 <br>
 
-##### ⤵ Auto input validation
+##### ✅ Autoverify
 
 Two types of Use Case accept input: the ```FunctionUseCase``` and the ```ConsumerUseCase```. Since they do, it is desirable to have a way to establish required input fields as _not-null_, _not-blank_, _not-empty_, etc. The cae-framework supports all of these, natively:
 
 - ```@NotNullInputField```: for fields of any type that must not be null.
-- ```@NotBlankInputField```: for ```String``` fields which can't be blank (empty or all-space strings).
+- ```@NotBlankInputField```: for ```String``` fields which can't be blank (empty or all-space strings) or ```Collection``` fields of ```String``` inner elements.
 - ```@NotEmptyInputField```: for ```String``` and ```Collection``` fields that cannot be empty.
 - ```@ValidInnerPropertiesInputField```: for custom types that, inside, have their own properties with their own validation rules, based on the annotations mentioned above.
 
@@ -279,7 +282,7 @@ public class AuthRootAccountUseCaseInput extends UseCaseInput {
 }
 ```
 
-That way, whenever the ```AuthRootAccountUseCase``` instance gets executed and receives an ```AuthRootAccountUseCaseInput``` object as input, the Use Case will internally call the ```UseCaseInput::validateProperties``` API, which will ensure the validation rule is respected. If it is, the Use Case accepts the input and proceeds to process it. If it is not, the Use Case rejects and throws an exception specifying what went wrong:
+That way, whenever the ```AuthRootAccountUseCase``` instance gets executed and receives an ```AuthRootAccountUseCaseInput``` object as input, the Use Case will internally call the ```UseCaseInput::autoverify``` API, which will ensure the validation rule is applied. If it is, the Use Case accepts the input and proceeds to process it. If it is not, the Use Case rejects and throws an exception specifying what went wrong:
 
 <br>
 
@@ -295,21 +298,93 @@ Field 'AuthRootAccountUseCaseInput:loginId' can't have blank values.
 <br>
 
 ##### 🔔 Autonotify
-...
+With this Autofeature it is possible to parameterize scenarios that will trigger notifications to a list of ```NotificationSubscriber``` instances, such as Email Service Clients, Custom Metrics Clients, etc., you decide.
+
+It works like this:
+
+First, declare at least 1 ```NotificationSubscriber``` implementation.
+```java
+public class DefaultNotificationObserver implements AutonotifySubscriber {
+
+    public static final DefaultNotificationObserver SINGLETON = new DefaultNotificationObserver();
+
+    @Override
+    public void receiveNotification(Notification notification) {
+        SimpleEmailService.SINGLETON.sendTeamNotificationEmail(notification);
+    }
+
+}
+```
+Then, provide it to the framework. You can provide as many as you see fit.
+```java
+public class StandaloneAutonotify {
+
+    public static void startupSettings(){
+        AutonotifyProvider.SINGLETON
+                .setSubscriber(DefaultNotificationObserver.SINGLETON);
+    }
+
+}
+```
+Now it is just about parameterizing what scenarios must trigger new notifications.
+```java
+public class StandaloneAutonotify {
+
+    //examples with all possibilities
+    public static void startupSettings(){
+        AutonotifyProvider.SINGLETON
+                .considerNotAuthenticatedMappedExceptions()
+                .considerNotAuthorizedMappedExceptions()
+                .considerInputMappedExceptions()
+                .considerNotFoundMappedExceptions()
+                .considerInternalMappedExceptions()
+                .considerMissingEnvVarExceptions()
+                .considerNoRetriesLeftExceptions()
+                .considerUnexpectedExceptions()
+                .considerSpecifically(IOException.class)
+                .considerSpecifically(RejectedExecutionException.class)
+                .considerSpecifically(IllegalStateException.class)
+                .considerSpecifically(...any specific type)
+                .considerLatency(1000)
+                .setSubscriber(DefaultNotificationObserver.SINGLETON);
+    }
+
+}
+```
+So any mentioned exceptions being thrown during the execution of any ```UseCase``` or ```Port``` instances, a ```Notification``` object will be delivered to all of your provided ```NotificationSubscriber``` instances. That includes latency threshold as well.
+
+A ```Notification``` has the following schema:
+
+```java
+public class Notification{
+    private final String subject; //has getter
+    private final ExecutionContext executionContext; //has getter
+    private final Exception exception; //has getter
+    private final List<String> reasons; //has getter
+
+    @Override
+    public String toString() {
+        return "Notification generated on '" +
+                this.subject +"' during the execution of correlation ID '" +
+                this.executionContext.toString() + "' because of the following reasons: " +
+                SimpleJsonBuilder.buildFor(this.reasons);
+    }
+}
+```
 
 <br>
 
-##### 🎯 Scope based authorization
-Use Case types annotated with the ```@ProtectedUseCase``` will need to specify, within the annotation, the required scopes for being granted the access to execute the Use Case instance.
+##### 🎯 Autoauth with Scopes
+Use Case types annotated with the ```@ScopeBasedProtection``` will need to specify, within the annotation, the required scopes for being granted the access to execute the Use Case instance.
 
 ```java
-@ProtectedUseCase(scope = "ROOT || MAINTAINER")
+@ScopeBasedProtection(scope = "ROOT || MAINTAINER")
 public abstract class CreateUserAccountUseCase extends FunctionUseCase<
         CreateUserAccountUseCaseInput,
         CreateUserAccountUseCaseOutput> {}
 ```
 
-For the Use Case above (```CreateUserAccountUseCase```), it is necessary to have either the _ROOT_ or the _MAINTAINER_ scope in order to execute it. The way the framework knows whether or not the responsible for the execution has the required scopes is via the ```Actor``` interface.
+For the Use Case above (```CreateUserAccountUseCase```), it is necessary to have either the _ROOT_ or the _MAINTAINER_ scope in order to execute it. The way the framework knows whether the responsible for the execution has the required scopes is via the ```Actor``` interface.
 
 ```java
 public interface Actor {
@@ -317,51 +392,58 @@ public interface Actor {
 }
 ```
 
-An example for an actual implementation of it, on the side of a client application:
+The idea is that, for example, in your REST API you deserialize the Bearer (_access token such as a JWT)_ you receive and decompose its scopes to your own ```Actor``` implementation.
+
+An example of this, on the side of a client application:
 
 ```java
+@Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class ActorSessionManager implements Actor {
+public class ActorAdapter implements Actor {
 
-    @Getter
-    private final String owner;
-    @Getter
-    private final String id;
-    private final String scopes;
-
-    public static Actor createOutta(String authorizationHeader){
-        var jwt = JWT.of(authorizationHeader.replace("Bearer ", ""));
-        var claims = jwt.getDecryptedJWT();
+    public static Actor ofAuthorizationHeader(String authorizationHeader){
+        var plainJwt = Optional.ofNullable(authorizationHeader)
+                .orElseThrow(() -> new NotAuthenticatedMappedException("No session provided"))
+                .replace("Bearer ", "");
+        var jwt = JWT.ofAccessToken(plainJwt);
+        var claims = jwt.getDecryptedAccessToken();
         if (claims.getExpiration().before(new Date()))
-            throw new UnauthorizedException();
-        return new ActorSessionManager(
-                claims.getOwner(),
-                claims.getActor(),
-                claims.getScopes()
-        );
+            throw new NotAuthorizedMappedException("Session expired");
+        return new ActorAdapter(claims.getOwner(), List.of(claims.getScopes()));
     }
 
-    @Override
-    public List<String> getScopes() {
-        return List.of(this.scopes);
-    }
+    private final String id;
+    private final List<String> scopes;
+
+}
 ```
 
 The example above extracts the expected ```scopes``` out of a JWT.
 
-Once a concrete implementation of the ```Actor``` interface is created, the way to provide its instances on each Use Case execution is via the ```ExecutionContext``` object. For Use Case types which aren't annotated with ```@ProtectedUseCase```, the ```ExecutionContext``` instance provided in each execution isn't required to have an instance of the ```Actor``` interface, however, for protected Use Case types, if one is not provided, the execution will be rejected.
+Once you've instantiated a new ```Actor``` implementation object, it is time to pass it to the ```ExecutionContext``` object that will be used in your ```UseCase``` execution.
 
-The way to provide an instance of ```Actor``` to the ```ExecutionContext``` is as follows, considering the example of ```ActorSessionManager``` mentioned lastly as the implementation:
+For Use Case types which aren't annotated with ```@ScopeBasedProtection```, the ```ExecutionContext``` instance provided in each execution isn't required to have an instance of the ```Actor``` interface, however, for protected Use Case types, if one is not provided, the execution will be rejected and an exception will be thrown.
+
+The way to provide an instance of ```Actor``` to the ```ExecutionContext``` is as follows, considering the example of ```ActorAdapter``` mentioned above:
 
 ```java
-var actor = ActorSessionManager.createOutta(authorization);
-var executionContext = ExecutionContext.of(correlationId, actor);
-var useCaseOutput = useCase.execute(useCaseInput, executionContext);
+@PostMapping("/v1/enrollment-requests")
+public ResponseEntity<ContentWrapper<CreateNewEnrollmentRequestUseCaseOutput>> execute(
+      @RequestHeader(name = "Authorization") String authorization,
+      @RequestHeader String correlationId,
+      @RequestBody CreateNewEnrollmentRequestUseCaseInput input){
+  var actor = ActorAdapter.ofAuthorizationHeader(authorization); // <-- instantiates Actor
+  var context = ExecutionContext.of(correlationId, actor); // <-- passes to the ExecutionContext
+  var output = this.useCase.execute(input, context); // <-- passes to the UseCase
+  return ResponseEntity.status(201).body(ContentWrapper.of(output));
+}
 ```
+
+In the example above the ```Actor``` will only be authorized to execute the ```UseCase``` if it has the required scopes (considering such use case type uses ```ScopeBasedProtection```).
 
 <br>
 
-##### ⛑️ Role based authorization
+##### ⛑️ Autoauth with RBAC
 ...
 
 <br>
