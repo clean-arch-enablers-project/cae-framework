@@ -69,7 +69,7 @@ Every Use Case subtype will inherit the same API for getting executed:
 
 ```UseCase::execute```
 
-The difference between them all is only that some accept input and/or return output and others don't do either or at least one of the options. Regardless, each type accepts the following parameter: an object of type ```ExecutionContext```. This object serves the purpose of identifying each request with a unique ID, so troubleshootings can rely on the execution context at the log level of analysis, for example. 
+The only differences among them are that some accept input and/or return output, while others do neither or only one of the two. Regardless, each type accepts the following parameter: an object of type ```ExecutionContext```. This object serves the purpose of identifying each request with a unique ID, so troubleshootings can rely on the execution context at the log level of analysis, for example. 
 
 The ```ExecutionContext``` object keeps an attribute called ```correlationId``` which is the UUID that identifies each execution. It can be generated randomly or provided programmatically:
 
