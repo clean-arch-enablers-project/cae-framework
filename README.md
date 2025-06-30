@@ -397,31 +397,25 @@ The idea is that, for example, in your REST API you deserialize the Bearer (_acc
 An example of this, on the side of a client application:
 
 ```java
+@Getter
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-public class ActorSessionManager implements Actor {
+public class ActorAdapter implements Actor {
 
-    @Getter
-    private final String owner;
-    @Getter
-    private final String id;
-    private final String scopes;
-
-    public static Actor createOutta(String authorizationHeader){
-        var jwt = JWT.of(authorizationHeader.replace("Bearer ", ""));
-        var claims = jwt.getDecryptedJWT();
+    public static Actor ofAuthorizationHeader(String authorizationHeader){
+        var plainJwt = Optional.ofNullable(authorizationHeader)
+                .orElseThrow(() -> new NotAuthenticatedMappedException("No session provided"))
+                .replace("Bearer ", "");
+        var jwt = JWT.ofAccessToken(plainJwt);
+        var claims = jwt.getDecryptedAccessToken();
         if (claims.getExpiration().before(new Date()))
-            throw new UnauthorizedException();
-        return new ActorSessionManager(
-                claims.getOwner(),
-                claims.getActor(),
-                claims.getScopes()
-        );
+            throw new NotAuthorizedMappedException("Session expired");
+        return new ActorAdapter(claims.getOwner(), List.of(claims.getScopes()));
     }
 
-    @Override
-    public List<String> getScopes() {
-        return List.of(this.scopes);
-    }
+    private final String id;
+    private final List<String> scopes;
+
+}
 ```
 
 The example above extracts the expected ```scopes``` out of a JWT.
