@@ -1,7 +1,7 @@
 package utils.simulations.assemblers.loggers;
 
-import com.cae.autolog.AutologProvider;
-import com.cae.autolog.IOLoggingMode;
+import com.cae.autofeatures.autolog.AutologProvider;
+import com.cae.autofeatures.autolog.IOAutologMode;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import utils.simulations.adapters.loggers.LoggerAdapterForTesting;
@@ -15,7 +15,7 @@ public class MyAppAutologBootstrap {
                 .setUseCasesLoggingIO(true)
                 .setPortsLoggingIO(true)
                 .structuredFormat(false)
-                .setIOLoggingMode(IOLoggingMode.TO_STRING);
+                .setIOLoggingMode(IOAutologMode.TO_STRING);
     }
 
     public static void startupSyncAllTrueSettingsAndNative(){
@@ -24,7 +24,7 @@ public class MyAppAutologBootstrap {
                 .setUseCasesLoggingIO(true)
                 .setPortsLoggingIO(true)
                 .structuredFormat(true)
-                .setIOLoggingMode(IOLoggingMode.CAE_NATIVE);
+                .setIOLoggingMode(IOAutologMode.CAE_NATIVE);
     }
 
 }

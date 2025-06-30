@@ -104,7 +104,7 @@ class UseCaseInputTest {
 
     @Getter
     @Setter
-    private static class SomeNormalUseCaseInputImplementation extends UseCaseInput{
+    public static class SomeNormalUseCaseInputImplementation extends UseCaseInput{
 
         @NotEmptyInputField
         private String fieldWhichMustNotBeEmpty;
@@ -119,7 +119,7 @@ class UseCaseInputTest {
 
     @Getter
     @Setter
-    private static class SomeNormalInnerUseCaseInput extends UseCaseInput{
+    public static class SomeNormalInnerUseCaseInput extends UseCaseInput{
 
         @NotNullInputField
         private Integer innerFieldWhichMustNotBeNull;
@@ -128,7 +128,7 @@ class UseCaseInputTest {
 
     @Getter
     @Setter
-    private static class SomeProblematicInputWithNotBlankAnnotation extends UseCaseInput{
+    public static class SomeProblematicInputWithNotBlankAnnotation extends UseCaseInput{
 
         @NotBlankInputField
         private Integer someInteger;
@@ -137,7 +137,7 @@ class UseCaseInputTest {
 
     @Getter
     @Setter
-    private static class SomeProblematicInputWithNotEmptyAnnotation extends UseCaseInput{
+    public static class SomeProblematicInputWithNotEmptyAnnotation extends UseCaseInput{
 
         @NotEmptyInputField
         private Integer someInteger;
@@ -146,20 +146,20 @@ class UseCaseInputTest {
 
     @Getter
     @Setter
-    private static class SomeProblematicInputWithValidInnerPropertiesAnnotation extends UseCaseInput{
+    public static class SomeProblematicInputWithValidInnerPropertiesAnnotation extends UseCaseInput{
 
         @ValidInnerPropertiesInputField
         private Integer someInteger;
 
     }
 
-    private static class SomeProblematicInputWithNoGetterMethods extends UseCaseInput{
+    public static class SomeProblematicInputWithNoGetterMethods extends UseCaseInput{
 
         public final Integer someFieldWithoutGetter = 1;
 
     }
 
-    private static class SomeProblematicInputWithGetterMethod extends UseCaseInput{
+    public static class SomeProblematicInputWithGetterMethod extends UseCaseInput{
 
         @NotNullInputField
         private Integer fieldWithProblematicGetterMethod;
@@ -172,7 +172,7 @@ class UseCaseInputTest {
 
     @Getter
     @Setter
-    private static class SomeUseCaseInputThatImplementsArbitrarilyValidationRules extends UseCaseInput{
+    public static class SomeUseCaseInputThatImplementsArbitrarilyValidationRules extends UseCaseInput{
 
         private Integer someField;
         private Integer someOtherField;

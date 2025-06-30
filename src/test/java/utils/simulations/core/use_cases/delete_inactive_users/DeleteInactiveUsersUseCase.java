@@ -1,6 +1,6 @@
 package utils.simulations.core.use_cases.delete_inactive_users;
 
-import com.cae.autoauth.annotations.ScopeBasedProtection;
+import com.cae.autofeatures.autoauth.annotations.ScopeBasedProtection;
 import com.cae.use_cases.RunnableUseCase;
 
 @ScopeBasedProtection(scope = "delete:user")

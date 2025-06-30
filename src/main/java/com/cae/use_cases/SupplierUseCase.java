@@ -1,10 +1,12 @@
 package com.cae.use_cases;
 
-import com.cae.autolog.StackTraceLogger;
-import com.cae.autonotify.Autonotify;
-import com.cae.trier.Trier;
-import com.cae.autolog.Autolog;
+import com.cae.autofeatures.autolog.Autolog;
+import com.cae.autofeatures.autolog.StackTraceLogger;
+import com.cae.autofeatures.autometrics.Autometrics;
+import com.cae.autofeatures.autometrics.Metric;
+import com.cae.autofeatures.autonotify.Autonotify;
 import com.cae.use_cases.contexts.ExecutionContext;
+import com.cae.trier.Trier;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -45,19 +47,21 @@ public abstract class SupplierUseCase <O> extends UseCase {
     }
 
     private O finallyExecute(ExecutionContext context) {
-        var loggingManager = Autolog.of(this, context);
+        var autolog = Autolog.of(this, context);
         var startingMoment = LocalDateTime.now();
         try {
             var output = this.applyInternalLogic(context);
             var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
             Autonotify.handleNotificationOn(this, null, latency, context);
-            loggingManager.logExecution(context, null, output, null, latency);
+            Autometrics.collect(Metric.of(this.getUseCaseMetadata().getName(), latency, null, true));
+            autolog.logExecution(context, null, output, null, latency);
             return output;
         } catch (Exception anyException){
             var latency = Duration.between(startingMoment, LocalDateTime.now()).toMillis();
             Autonotify.handleNotificationOn(this, anyException, latency, context);
+            Autometrics.collect(Metric.of(this.getUseCaseMetadata().getName(), latency, anyException, true));
             StackTraceLogger.SINGLETON.handleLoggingStackTrace(anyException, context, this.getUseCaseMetadata().getName());
-            loggingManager.logExecution(context, null, null, anyException, latency);
+            autolog.logExecution(context, null, null, anyException, latency);
             throw anyException;
         }
     }

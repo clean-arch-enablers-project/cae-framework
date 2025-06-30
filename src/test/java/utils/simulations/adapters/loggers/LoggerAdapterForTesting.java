@@ -1,6 +1,6 @@
 package utils.simulations.adapters.loggers;
 
-import com.cae.autolog.Logger;
+import com.cae.autofeatures.autolog.Logger;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

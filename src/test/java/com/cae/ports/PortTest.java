@@ -10,7 +10,7 @@ import utils.simulations.assemblers.loggers.MyAppAutologBootstrap;
 @ExtendWith(MockitoExtension.class)
 class PortTest {
 
-    private static class SomePortImplementation extends Port{}
+    private static class SomePortImplementation extends Port {}
 
     @BeforeEach
     void setup(){

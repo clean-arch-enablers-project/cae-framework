@@ -1,10 +1,10 @@
 package utils.simulations.assemblers.autonotify;
 
-import com.cae.autonotify.AutonotifyProvider;
+import com.cae.autofeatures.autonotify.AutonotifyProvider;
 import com.cae.http_client.implementations.exceptions.IORuntimeException;
 import lombok.NoArgsConstructor;
-import utils.simulations.assemblers.autonotify.observers.ObserverOne;
-import utils.simulations.assemblers.autonotify.observers.ObserverTwo;
+import utils.simulations.assemblers.autonotify.observers.SubscriberOne;
+import utils.simulations.assemblers.autonotify.observers.SubscriberTwo;
 
 @NoArgsConstructor
 public class MyAppAutonotifyBootstrap {
@@ -16,8 +16,8 @@ public class MyAppAutonotifyBootstrap {
                 .considerNotFoundMappedExceptions()
                 .considerSpecifically(IORuntimeException.class)
                 .considerLatency(3000)
-                .setProvidedInstance(new ObserverOne())
-                .setProvidedInstance(new ObserverTwo());
+                .setSubscriber(new SubscriberOne())
+                .setSubscriber(new SubscriberTwo());
     }
 
 }
