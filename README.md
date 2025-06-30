@@ -240,7 +240,7 @@ It will look like this:
 ```java
 AutologProvider.SINGLETON
     .setProvidedInstance(LoggerAdapter.SINGLETON)
-    .setIOLoggingMode(IOLoggingMode.CAE_NATIVE)
+    .setIOLoggingMode(IOAutologMode.CAE_NATIVE)
     .structuredFormat(false)
     .setUseCasesLoggingIO(true)
     .setPortsLoggingIO(false)
