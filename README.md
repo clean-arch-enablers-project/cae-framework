@@ -439,6 +439,8 @@ public ResponseEntity<ContentWrapper<CreateNewEnrollmentRequestUseCaseOutput>> e
 }
 ```
 
+In the example above the ```Actor``` will only be authorized to execute the ```UseCase``` if it has the required scopes (considering such use case type uses ```ScopeBasedProtection```).
+
 <br>
 
 ##### ⛑️ Autoauth with RBAC
