@@ -374,17 +374,17 @@ public class Notification{
 
 <br>
 
-##### 🎯 Scope based authorization
-Use Case types annotated with the ```@ProtectedUseCase``` will need to specify, within the annotation, the required scopes for being granted the access to execute the Use Case instance.
+##### 🎯 Autoauth with Scopes
+Use Case types annotated with the ```@ScopeBasedProtection``` will need to specify, within the annotation, the required scopes for being granted the access to execute the Use Case instance.
 
 ```java
-@ProtectedUseCase(scope = "ROOT || MAINTAINER")
+@ScopeBasedProtection(scope = "ROOT || MAINTAINER")
 public abstract class CreateUserAccountUseCase extends FunctionUseCase<
         CreateUserAccountUseCaseInput,
         CreateUserAccountUseCaseOutput> {}
 ```
 
-For the Use Case above (```CreateUserAccountUseCase```), it is necessary to have either the _ROOT_ or the _MAINTAINER_ scope in order to execute it. The way the framework knows whether or not the responsible for the execution has the required scopes is via the ```Actor``` interface.
+For the Use Case above (```CreateUserAccountUseCase```), it is necessary to have either the _ROOT_ or the _MAINTAINER_ scope in order to execute it. The way the framework knows whether the responsible for the execution has the required scopes is via the ```Actor``` interface.
 
 ```java
 public interface Actor {
@@ -392,7 +392,9 @@ public interface Actor {
 }
 ```
 
-An example for an actual implementation of it, on the side of a client application:
+The idea is that, for example, in your REST API you deserialize the Bearer (_access token such as a JWT)_ you receive and decompose its scopes to your own ```Actor``` implementation.
+
+An example of this, on the side of a client application:
 
 ```java
 @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -424,9 +426,11 @@ public class ActorSessionManager implements Actor {
 
 The example above extracts the expected ```scopes``` out of a JWT.
 
-Once a concrete implementation of the ```Actor``` interface is created, the way to provide its instances on each Use Case execution is via the ```ExecutionContext``` object. For Use Case types which aren't annotated with ```@ProtectedUseCase```, the ```ExecutionContext``` instance provided in each execution isn't required to have an instance of the ```Actor``` interface, however, for protected Use Case types, if one is not provided, the execution will be rejected.
+Once you've instantiated a new ```Actor``` implementation object, it is time to pass it to the ```ExecutionContext``` object that will be used in your ```UseCase``` execution.
 
-The way to provide an instance of ```Actor``` to the ```ExecutionContext``` is as follows, considering the example of ```ActorSessionManager``` mentioned lastly as the implementation:
+For Use Case types which aren't annotated with ```@ScopeBasedProtection```, the ```ExecutionContext``` instance provided in each execution isn't required to have an instance of the ```Actor``` interface, however, for protected Use Case types, if one is not provided, the execution will be rejected and an exception will be thrown.
+
+The way to provide an instance of ```Actor``` to the ```ExecutionContext``` is as follows, considering the example of ```ActorSessionManager``` mentioned above:
 
 ```java
 var actor = ActorSessionManager.createOutta(authorization);
@@ -436,7 +440,7 @@ var useCaseOutput = useCase.execute(useCaseInput, executionContext);
 
 <br>
 
-##### ⛑️ Role based authorization
+##### ⛑️ Autoauth with RBAC
 ...
 
 <br>
