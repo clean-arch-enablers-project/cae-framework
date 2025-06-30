@@ -455,19 +455,23 @@ In the example above the ```Actor``` will only be authorized to execute the ```U
 
 All the ```Autofeatures``` mentioned so far are triggered at runtime, during the execution of Use Cases and their respective Ports. In addition, there's another ```Autofeature``` that runs during a different phase of the client application lifecycle: ```Autodoc```. More details below.
 
-<br>
-
 ##### 📖 Autodoc
 During the build phase of your application, metadata from your domain logic is extracted into a file named ```cae-autodoc.json```. This serves as the foundation for the autodocumentation feature, which can be integrated with the upcoming ```CAE Real-Time Domain Catalog``` SaaS. The vision is to keep a live, up-to-date Domain Catalog as part of your CI/CD pipelines, allowing teams across the organization to stay in sync with all the available capabilities.
 
 The ```Autodoc``` feature is fully agnostic to how functionalities are exposed: whether as REST endpoints, Kafka consumers, SQS listeners, CRON jobs, or any other primary adapter flavor. It focuses solely on the domain layer, enabling a unified and seamless way to document your application’s core logic.
 [...]
 
+<br>
+
 ### 🧱 Entities
 [...]
 
+<br>
+
 ### 🔌 Ports
 [...]
+
+<br>
 
 ## 🌐 Other components of the SDK:
 
