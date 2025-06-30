@@ -351,7 +351,7 @@ public class StandaloneAutonotify {
 
 }
 ```
-So any mentioned exceptions being thrown during the execution of any ```UseCase``` or ```Port``` instances, a ```Notification``` object will be delivered to all of your provided NotificationSubscriber instances. That counts for latency threshold as well.
+So any mentioned exceptions being thrown during the execution of any ```UseCase``` or ```Port``` instances, a ```Notification``` object will be delivered to all of your provided ```NotificationSubscriber``` instances. That includes latency threshold as well.
 
 A ```Notification``` has the following schema:
 
