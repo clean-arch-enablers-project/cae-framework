@@ -434,7 +434,7 @@ public ResponseEntity<ContentWrapper<CreateNewEnrollmentRequestUseCaseOutput>> e
       @RequestBody CreateNewEnrollmentRequestUseCaseInput input){
   var actor = ActorAdapter.ofAuthorizationHeader(authorization); // <-- instantiates Actor
   var context = ExecutionContext.of(correlationId, actor); // <-- passes to the ExecutionContext
-  var output = this.useCase.execute(input, context); <-- passes to the UseCase
+  var output = this.useCase.execute(input, context); // <-- passes to the UseCase
   return ResponseEntity.status(201).body(ContentWrapper.of(output));
 }
 ```
