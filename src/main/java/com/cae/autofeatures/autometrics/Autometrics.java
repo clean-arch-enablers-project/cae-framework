@@ -1,14 +1,17 @@
 package com.cae.autofeatures.autometrics;
 
-import java.util.concurrent.CompletableFuture;
+import com.cae.use_cases.contexts.ExecutionContext;
 
 public class Autometrics {
 
-    public static void collect(Metric metric){
-        var executor = AutometricsThreadPoolProvider.SINGLETON.getExecutor();
-        AutometricsProvider.SINGLETON
-                .getSubscribers()
-                .forEach(subscriber -> CompletableFuture.runAsync(() -> subscriber.receiveMetric(metric), executor));
+    public static void runOn(ExecutionContext executionContext) {
+        AutometricsThreadPoolProvider.SINGLETON.getExecutor()
+                .submit(() -> Metric.createNewOnesBasedOn(executionContext).forEach(Autometrics::send));
+    }
+
+    public static void send(Metric metric){
+        AutometricsProvider.SINGLETON.getSubscribers()
+                .forEach(subscriber -> subscriber.receiveMetric(metric));
     }
 
 }

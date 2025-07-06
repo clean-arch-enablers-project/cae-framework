@@ -4,31 +4,20 @@ package com.cae.use_cases.contexts;
 import com.cae.use_cases.contexts.actors.Actor;
 import com.cae.use_cases.contexts.exceptions.CorrelationIdValueFormatException;
 import lombok.Getter;
+import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-/**
- * Meant to be the unique identifier of a specific instance of
- * use case execution. In other words, each execution of any use case
- * is supposed to have a unique identifier, in order to make it easier
- * to track the status of any execution in logs or so.
- */
 @Getter
-public class ExecutionContext {
+public class ExecutionContext extends GenericExecutionManager {
 
-    /**
-     * Its unique ID. UUIDs are pretty much impossible to conceive a
-     * repeated value ever.
-     */
     private final UUID correlationId;
-
     private final Actor actor;
+    private final List<StepInsight> stepInsights = new ArrayList<>();
 
-    /**
-     * Default constructor
-     * @param correlationId receives an instance of UUID to set it directly as the ID
-     */
     public ExecutionContext(UUID correlationId) {
         this.correlationId = correlationId;
         this.actor = null;
@@ -39,11 +28,6 @@ public class ExecutionContext {
         this.actor = actor;
     }
 
-    /**
-     * Constructor for String values as parameter for the ID
-     * @param stringValue string value that must be in UUID format
-     * @return the Correlation instance
-     */
     public static ExecutionContext of(String stringValue){
         try {
             var uuid = UUID.fromString(stringValue);
@@ -62,10 +46,6 @@ public class ExecutionContext {
         }
     }
 
-    /**
-     * Constructor for auto-generating an ID value when it is fit
-     * @return the Correlation instance
-     */
     public static ExecutionContext ofNew(){
         return new ExecutionContext(UUID.randomUUID());
     }
@@ -78,12 +58,35 @@ public class ExecutionContext {
         return Optional.ofNullable(this.actor);
     }
 
-    /**
-     * @return the UUID string value
-     */
+    public StepInsight addStepInsightsOf(String stepName){
+        var newStepInsight = StepInsight.of(stepName);
+        this.stepInsights.add(newStepInsight);
+        return newStepInsight;
+    }
+
     @Override
     public String toString(){
         return this.correlationId.toString();
+    }
+
+    @Getter
+    @Setter
+    public static class StepInsight extends GenericExecutionManager{
+
+        public static StepInsight of(String subject){
+            var newInsight = new StepInsight();
+            newInsight.setSubjectAndStartTracking(subject);
+            return newInsight;
+        }
+
+        @Override
+        public String toString(){
+            return this.getSubject()
+                    + "'s insights: ("
+                    + this.calculateLatency().toString() + "ms) "
+                    + (this.wasSuccessful()? "no exception has been thrown" : ("an exception has been thrown along the way: " + this.getException()));
+        }
+
     }
 
 }

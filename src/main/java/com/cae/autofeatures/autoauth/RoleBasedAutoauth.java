@@ -15,16 +15,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class RoleBasedAuth {
+public class RoleBasedAutoauth {
 
     public static void handle(
             UseCaseInput input,
             ExecutionContext context,
             UseCaseWithInput useCase){
         if (Boolean.TRUE.equals(((UseCase) useCase).getUseCaseMetadata().getRoleProtectionEnabled())){
-            var resourceOwnerId = input.getResourceOwnerIdentifier();
-            if (resourceOwnerId.isPresent()) handleByResourceOwnerId(resourceOwnerId.get(), context, (UseCase) useCase);
-            else handleByResourceId(input, context, useCase);
+            var stepInsight = context.addStepInsightsOf("RoleBasedAutoauth");
+            try{
+                var resourceOwnerId = input.getResourceOwnerIdentifier();
+                if (resourceOwnerId.isPresent()) handleByResourceOwnerId(resourceOwnerId.get(), context, (UseCase) useCase);
+                else handleByResourceId(input, context, useCase);
+                stepInsight.complete();
+            } catch (Exception exception){
+                stepInsight.complete(exception);
+                throw exception;
+            }
         }
     }
 
@@ -50,7 +57,7 @@ public class RoleBasedAuth {
     private static ResourceOwnershipRetriever getResourceOwnershipRetrieverOutta(UseCaseWithInput useCase) {
         return useCase.getResourceOwnershipRetriever().orElseThrow(() -> new InternalMappedException(
                 "Problem trying to get the resource ownership retriever for the use case '" +  ((UseCase) useCase).getUseCaseMetadata().getName() + "'",
-                "This use case instance didn't have in its input object a field annotated with @ResourceOwnerIdentifier, so the retrievement of the resource owner must be done " +
+                "This use case instance didn't have in its input object a field annotated with @ResourceOwnerIdentifier, so the retrieval of the resource owner must be done " +
                         "by the @ResourceIdentifier field. This is done by calling the ResourceOwnershipRetriever API. An instance of it must be provided at the use case constructor level."
         ));
     }

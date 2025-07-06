@@ -34,10 +34,10 @@ public class CreateNewUserUseCaseImplementation extends CreateNewUserUseCase {
                 .legalId(cpf)
                 .userType(UserTypeEnum.ofCode(input.getUserTypeCode()))
                 .build();
-        Autonotify.manuallyNotify(
+        Autonotify.send(
             Notification.builder()
                 .subject(this.getUseCaseMetadata().getName())
-                .executionContext(context)
+                .correlationId(context.getCorrelationId())
                 .reasons(List.of("Because I wanted", "And a test was needed, too"))
                 .build()
         );

@@ -23,7 +23,7 @@ public class UseCaseLogStructuredFormat {
         private Boolean successful;
         private Long latency;
         private String exception;
-        private List<String> portInsights;
+        private List<String> steps;
     }
 
 }
