@@ -18,7 +18,7 @@ public abstract class GenericExecutionManager extends ExecutionTracker{
         if (this.subject != null || this.hasStarted())
             throw new InternalMappedException(
                     "Couldn't set subject and start tracking",
-                    "The execution context you tried to start was already in use"
+                    "The execution context you tried to start was already used"
             );
         this.subject = subject;
         this.startTracking();
