@@ -1,36 +1,42 @@
 package com.cae.use_cases;
 
-import com.cae.use_cases.metadata.UseCaseMetadata;
+import com.cae.http_client.implementations.exceptions.IORuntimeException;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import utils.simulations.assemblers.loggers.MyAppAutologBootstrap;
+import utils.SomeNormalConsumerUseCase;
+import utils.SomeNormalRunnableUseCase;
+
+import java.io.IOException;
 
 @ExtendWith(MockitoExtension.class)
 class UseCaseExecutionExceptionTest {
 
-    @BeforeEach
-    void setup(){
-        MyAppAutologBootstrap.startupDefaultSettings();
-    }
-
     @Test
-    void shouldInstantiateExceptionAsExpected(){
-        var unexpectedException = new RuntimeException("oh no!");
-        var useCaseName = "AwesomeUseCase";
-        var useCase = Mockito.mock(UseCase.class);
-        var useCaseMetadata = Mockito.mock(UseCaseMetadata.class);
-        Mockito.when(useCase.getUseCaseMetadata()).thenReturn(useCaseMetadata);
-        Mockito.when(useCaseMetadata.getName()).thenReturn(useCaseName);
-        var useCaseExecutionException = new UseCaseExecutionException(useCase, unexpectedException);
-        var expectedBriefPublicMessage =  "Something went unexpectedly wrong while executing use case of 'AwesomeUseCase'";
-        Assertions.assertEquals(expectedBriefPublicMessage, useCaseExecutionException.getBriefPublicMessage());
-        Assertions.assertTrue(useCaseExecutionException.getDetails().isPresent());
-        var expectedDetails = "More details on the unexpected problem: " + unexpectedException;
-        Assertions.assertTrue(useCaseExecutionException.getDetails().get().contains(expectedDetails));
+    @DisplayName("Should set message as expected")
+    void shouldSetMessageAsExpected(){
+        var useCaseA = new SomeNormalRunnableUseCase();
+        var useCaseB = new SomeNormalConsumerUseCase();
+        var originalExceptionA = new RuntimeException("Some problem");
+        var originalExceptionB = new IORuntimeException(new IOException("Some other problem"));
+        var unitA = new UseCaseExecutionException(useCaseA, originalExceptionA);
+        var unitB = new UseCaseExecutionException(useCaseB, originalExceptionB);
+        var expectedBriefPublicMessageA = "Something went unexpectedly wrong while executing use case of 'some_normal_runnable'";
+        var expectedDetailedMessageA = "More details on the unexpected problem: " + originalExceptionA;
+        Assertions.assertEquals(expectedBriefPublicMessageA, unitA.getBriefPublicMessage());
+        Assertions.assertTrue(unitA.getDetails().isPresent());
+        Assertions.assertEquals(expectedDetailedMessageA, unitA.getDetails().get());
+        var expectedBriefPublicMessageB = "Something went unexpectedly wrong while executing use case of 'some_normal_consumer'";
+        var expectedDetailedMessageB = "More details on the unexpected problem: " + originalExceptionB;
+        Assertions.assertEquals(expectedBriefPublicMessageB, unitB.getBriefPublicMessage());
+        Assertions.assertTrue(unitB.getDetails().isPresent());
+        Assertions.assertEquals(expectedDetailedMessageB, unitB.getDetails().get());
+        Assertions.assertTrue(unitA.getOriginalException().isPresent());
+        Assertions.assertEquals(originalExceptionA, unitA.getOriginalException().get());
+        Assertions.assertTrue(unitB.getOriginalException().isPresent());
+        Assertions.assertEquals(originalExceptionB, unitB.getOriginalException().get());
     }
 
 }

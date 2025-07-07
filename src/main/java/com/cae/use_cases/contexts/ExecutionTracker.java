@@ -21,10 +21,11 @@ public abstract class ExecutionTracker {
     protected void endTracking(){
         if (this.hasStarted())
             this.endTime = Instant.now();
-        throw new InternalMappedException(
-            "Couldn't end tracking",
-            "It hasn't started yet"
-        );
+        else
+            throw new InternalMappedException(
+                "Couldn't end tracking",
+                "It hasn't started yet"
+            );
     }
 
     protected boolean hasStarted(){
