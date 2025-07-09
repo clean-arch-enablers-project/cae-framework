@@ -15,7 +15,7 @@ public abstract class GenericExecutionManager extends ExecutionTracker{
     protected Object output;
 
     public void setSubjectAndStartTracking(String subject){
-        if (this.subject != null || this.hasStarted())
+        if (this.hasStarted())
             throw new InternalMappedException(
                     "Couldn't set subject and start tracking",
                     "The execution context you tried to start was already used"

@@ -15,6 +15,11 @@ public abstract class ExecutionTracker {
     protected Long latency;
 
     protected void startTracking(){
+        if (this.hasStarted())
+            throw new InternalMappedException(
+                    "Couldn't restart tracking",
+                    "This instance have already started at " + this.startTime
+            );
         this.startTime = Instant.now();
     }
 
