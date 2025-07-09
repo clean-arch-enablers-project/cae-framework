@@ -1,9 +1,12 @@
 package com.cae.use_cases.contexts;
 
 
+import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import com.cae.use_cases.contexts.actors.Actor;
 import com.cae.use_cases.contexts.exceptions.CorrelationIdValueFormatException;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -59,9 +62,15 @@ public class ExecutionContext extends GenericExecutionManager {
     }
 
     public StepInsight addStepInsightsOf(String stepName){
-        var newStepInsight = StepInsight.of(stepName);
-        this.stepInsights.add(newStepInsight);
-        return newStepInsight;
+        if (this.hasStarted()){
+            var newStepInsight = StepInsight.of(stepName);
+            this.stepInsights.add(newStepInsight);
+            return newStepInsight;
+        }
+        throw new InternalMappedException(
+                "Couldn't add step insight",
+                "The execution context hasn't started yet"
+        );
     }
 
     @Override
@@ -71,6 +80,7 @@ public class ExecutionContext extends GenericExecutionManager {
 
     @Getter
     @Setter
+    @NoArgsConstructor(access = AccessLevel.PRIVATE)
     public static class StepInsight extends GenericExecutionManager{
 
         public static StepInsight of(String subject){

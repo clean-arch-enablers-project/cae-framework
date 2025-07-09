@@ -1,4 +1,4 @@
-package utils;
+package utils.normal_use_cases;
 
 import com.cae.use_cases.SupplierUseCase;
 import com.cae.use_cases.contexts.ExecutionContext;

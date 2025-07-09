@@ -9,8 +9,8 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import utils.MockedAutofeaturesRunnerProvider;
-import utils.SomeNormalSupplierUseCase;
-import utils.SomeProblematicSupplierUseCaseWithUnexpectedException;
+import utils.normal_use_cases.SomeNormalSupplierUseCase;
+import utils.problematic_use_cases.SomeProblematicSupplierUseCaseWithUnexpectedException;
 
 @ExtendWith(MockitoExtension.class)
 class SupplierUseCaseTest {

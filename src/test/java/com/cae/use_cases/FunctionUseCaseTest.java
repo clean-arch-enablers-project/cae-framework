@@ -11,8 +11,8 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import utils.MockedAutofeaturesRunnerProvider;
-import utils.SomeNormalFunctionUseCase;
-import utils.SomeProblematicFunctionUseCaseWithUnexpectedException;
+import utils.normal_use_cases.SomeNormalFunctionUseCase;
+import utils.problematic_use_cases.SomeProblematicFunctionUseCaseWithUnexpectedException;
 
 @ExtendWith(MockitoExtension.class)
 class FunctionUseCaseTest {

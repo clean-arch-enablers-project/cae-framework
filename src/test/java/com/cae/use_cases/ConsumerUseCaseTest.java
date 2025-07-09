@@ -11,8 +11,8 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import utils.MockedAutofeaturesRunnerProvider;
-import utils.SomeNormalConsumerUseCase;
-import utils.SomeProblematicConsumerUseCaseWithUnexpectedException;
+import utils.normal_use_cases.SomeNormalConsumerUseCase;
+import utils.problematic_use_cases.SomeProblematicConsumerUseCaseWithUnexpectedException;
 
 @ExtendWith(MockitoExtension.class)
 class ConsumerUseCaseTest {

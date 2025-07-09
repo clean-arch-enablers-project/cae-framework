@@ -9,8 +9,8 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import utils.MockedAutofeaturesRunnerProvider;
-import utils.SomeNormalRunnableUseCase;
-import utils.SomeProblematicRunnableUseCaseWithUnexpectedException;
+import utils.normal_use_cases.SomeNormalRunnableUseCase;
+import utils.problematic_use_cases.SomeProblematicRunnableUseCaseWithUnexpectedException;
 
 @ExtendWith(MockitoExtension.class)
 class RunnableUseCaseTest {

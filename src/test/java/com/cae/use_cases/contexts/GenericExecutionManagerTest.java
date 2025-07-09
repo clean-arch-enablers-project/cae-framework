@@ -55,6 +55,33 @@ class GenericExecutionManagerTest {
         Assertions.assertTrue(newManager.wasSuccessful());
     }
 
+    @Test
+    @DisplayName("Should be able to complete an instance as unsuccessful")
+    void shouldBeAbleToCompleteAnInstanceAsUnsuccessful(){
+        var someProblem = new Exception("something went wrong...");
+        var newManager = new SomeManager();
+        newManager.setSubjectAndStartTracking("and-there-is-another-subject-again");
+        Assertions.assertFalse(newManager.isComplete());
+        newManager.complete(someProblem);
+        Assertions.assertTrue(newManager.isComplete());
+        Assertions.assertNotNull(newManager.exception);
+        Assertions.assertEquals(someProblem, newManager.exception);
+        Assertions.assertFalse(newManager.wasSuccessful());
+    }
+
+    @Test
+    @DisplayName("Should throw InternalMappedException when asking whether successful and it hasn't completed yet")
+    void shouldThrowInternalMappedExceptionWhenAskingWhetherSuccessfulAndItHasNotCompletedYet(){
+        var newManager = new SomeManager();
+        Assertions.assertThrows(InternalMappedException.class, newManager::wasSuccessful);
+    }
+
+    @Test
+    @DisplayName("Should be a subtype of ExecutionTracker")
+    void shouldBeSubtypeOfExecutionTracker(){
+        Assertions.assertInstanceOf(ExecutionTracker.class, new SomeManager());
+    }
+
     public static class SomeManager extends GenericExecutionManager{}
 
 }

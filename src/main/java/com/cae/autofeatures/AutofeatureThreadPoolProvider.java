@@ -12,7 +12,7 @@ public abstract class AutofeatureThreadPoolProvider {
         this.poolName = poolName;
     }
 
-    private void shutdown() {
+    protected void shutdown() {
         if (this.executor != null) {
             this.executor.shutdown();
             try {
@@ -66,7 +66,7 @@ public abstract class AutofeatureThreadPoolProvider {
         return this.executor;
     }
 
-    private ExecutorService autoProvideExecutor() {
+    protected ExecutorService autoProvideExecutor() {
         return new ThreadPoolExecutor(
                 Optional.ofNullable(this.minSize).orElse(5),
                 Optional.ofNullable(this.maxSize).orElse(30),

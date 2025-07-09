@@ -6,8 +6,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import utils.SomeNormalConsumerUseCase;
-import utils.SomeNormalRunnableUseCase;
+import utils.normal_use_cases.SomeNormalConsumerUseCase;
+import utils.normal_use_cases.SomeNormalRunnableUseCase;
 
 import java.io.IOException;
 
