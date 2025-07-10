@@ -90,6 +90,7 @@ When executed, a Use Case can have some side behaviors:
 - ``✔️`` Autolog
 - ``✔️`` Autoverify
 - ``⏳`` Autocache
+- ``⏳`` Autoretry
 - ``✔️`` Autonotify
 - ``✔️`` Autometrics
 - ``✔️`` Autoauth with Scopes
