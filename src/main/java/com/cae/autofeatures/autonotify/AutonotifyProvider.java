@@ -18,11 +18,11 @@ public class AutonotifyProvider {
 
     public static final AutonotifyProvider SINGLETON = new AutonotifyProvider();
 
-    private final List<AutonotifySubscriber> subscribers = new ArrayList<>();
-    private Boolean considerUnexpectedExceptions = false;
-    private final Set<Class<? extends Exception>> exceptionsToConsider = ConcurrentHashMap.newKeySet();
-    private Boolean considerLatency = false;
-    private Integer latencyThreshold;
+    protected List<AutonotifySubscriber> subscribers = new ArrayList<>();
+    protected Boolean considerUnexpectedExceptions = false;
+    protected Set<Class<? extends Exception>> exceptionsToConsider = ConcurrentHashMap.newKeySet();
+    protected Boolean considerLatency = false;
+    protected Integer latencyThreshold;
 
     public AutonotifyProvider setAllSubscribers(List<AutonotifySubscriber> autonotifySubscribers){
         this.subscribers.addAll(autonotifySubscribers);
@@ -85,6 +85,21 @@ public class AutonotifyProvider {
         return this;
     }
 
+    public void flushSubscribers(){
+        this.subscribers = new ArrayList<>();
+    }
+
+    public void flushSpecificExceptions(){
+        this.exceptionsToConsider = ConcurrentHashMap.newKeySet();
+    }
+
+    public void reset(){
+        this.considerLatency = false;
+        this.considerUnexpectedExceptions = false;
+        this.latencyThreshold = null;
+        this.flushSubscribers();
+        this.flushSpecificExceptions();
+    }
 
 
 }

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 @Builder
 @Getter
@@ -45,7 +46,7 @@ public class Notification{
                 .build());
     }
 
-    private static void validateLatencyCriteria(GenericExecutionManager execManager, ArrayList<String> reasons) {
+    protected static void validateLatencyCriteria(GenericExecutionManager execManager, ArrayList<String> reasons) {
         boolean oughtToConsiderLatency = AutonotifyProvider.SINGLETON.getConsiderLatency();
         var latencyThreshold = AutonotifyProvider.SINGLETON.getLatencyThreshold();
         var actualLatency = execManager.calculateLatency();
@@ -53,7 +54,7 @@ public class Notification{
             reasons.add("Latency threshold: " + latencyThreshold + "ms allowed vs. actually " + actualLatency + "ms");
     }
 
-    private static void validateExceptionCriteria(GenericExecutionManager execManager, ArrayList<String> reasons) {
+    protected static void validateExceptionCriteria(GenericExecutionManager execManager, ArrayList<String> reasons) {
         if (!execManager.wasSuccessful()){
             var providedSetup = AutonotifyProvider.SINGLETON;
             var exceptionClass = execManager.getException().getClass();
@@ -67,28 +68,25 @@ public class Notification{
         }
     }
 
-    private static boolean checkWhetherGenericallyMatchesMappedExceptions(AutonotifyProvider providedSetup, Exception exception) {
+    protected static boolean checkWhetherGenericallyMatchesMappedExceptions(
+            AutonotifyProvider providedSetup,
+            Exception exception) {
         var map = providedSetup.getExceptionsToConsider();
-        return
-            (map.contains(InternalMappedException.class) && exception instanceof InternalMappedException)
-            ||
-            (map.contains(InputMappedException.class) && exception instanceof InputMappedException)
-            ||
-            (map.contains(NotFoundMappedException.class) && exception instanceof NotFoundMappedException)
-            ||
-            (map.contains(NotAuthenticatedMappedException.class) && exception instanceof NotAuthenticatedMappedException)
-            ||
-            (map.contains(NotAuthorizedMappedException.class) && exception instanceof NotAuthorizedMappedException)
-            ||
-            (map.contains(NoRetriesLeftException.class) && exception instanceof NoRetriesLeftException)
-            ||
-            (map.contains(MissingEnvVarException.class) && exception instanceof MissingEnvVarException);
+        return Stream.of(
+                InternalMappedException.class,
+                InputMappedException.class,
+                NotFoundMappedException.class,
+                NotAuthenticatedMappedException.class,
+                NotAuthorizedMappedException.class,
+                NoRetriesLeftException.class,
+                MissingEnvVarException.class
+        ).anyMatch(type -> map.contains(type) && type.isInstance(exception));
     }
 
-    private final String subject;
-    private final UUID correlationId;
-    private final Exception exception;
-    private final List<String> reasons;
+    protected final String subject;
+    protected final UUID correlationId;
+    protected final Exception exception;
+    protected final List<String> reasons;
 
     @Override
     public String toString() {
