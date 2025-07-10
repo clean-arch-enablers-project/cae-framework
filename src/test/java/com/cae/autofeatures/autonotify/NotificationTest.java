@@ -1,5 +1,6 @@
 package com.cae.autofeatures.autonotify;
 
+import com.cae.autofeatures.autolog.native_io_extraction_mode.json.SimpleJsonBuilder;
 import com.cae.env_vars.exceptions.MissingEnvVarException;
 import com.cae.http_client.implementations.exceptions.IORuntimeException;
 import com.cae.mapped_exceptions.specifics.*;
@@ -208,8 +209,87 @@ class NotificationTest {
 
     @Test
     @DisplayName("Should create notifications as expected")
-    void shouldCreateNotificationsAsExpected(){
+    void shouldCreateNotificationsAsExpected() throws InterruptedException {
+        var execContext = ExecutionContext.ofNew();
+        execContext.setSubjectAndStartTracking("AutonotifyTests");
+        var stepOne = execContext.addStepInsightsOf("step1");
+        Thread.sleep(50);
+        stepOne.complete();
+        var stepTwo = execContext.addStepInsightsOf("step2");
+        Thread.sleep(100);
+        stepTwo.complete();
+        var slowStepThree = execContext.addStepInsightsOf("slowStep3");
+        Thread.sleep(5000);
+        slowStepThree.complete();
+        execContext.complete(new NotFoundMappedException("ops!"));
+        AutonotifyProvider.SINGLETON.considerNotFoundMappedExceptions().considerLatency(2000);
+        var notifications = Notification.createNewOnesBasedOn(execContext);
+        Assertions.assertEquals(2, notifications.size());
+        var oneNotificationIsForSlowStepThree = notifications.stream()
+                .anyMatch(notification -> notification.getSubject().equals(slowStepThree.getSubject()));
+        var anotherNotificationIsForNotFoundMappedException = notifications
+                .stream()
+                .anyMatch(notification -> notification.getSubject().equals(execContext.getSubject()));
+        Assertions.assertTrue(oneNotificationIsForSlowStepThree);
+        Assertions.assertTrue(anotherNotificationIsForNotFoundMappedException);
+    }
 
+    @Test
+    @DisplayName("Should preserve correlation ID")
+    void shouldPreserveCorrelationId() throws InterruptedException {
+        var execContext = ExecutionContext.ofNew();
+        execContext.setSubjectAndStartTracking("AutonotifyTests");
+        var stepOne = execContext.addStepInsightsOf("step1");
+        Thread.sleep(1000);
+        stepOne.complete();
+        execContext.complete();
+        AutonotifyProvider.SINGLETON.considerLatency(500);
+        var notifications = Notification.createNewOnesBasedOn(execContext);
+        var allNotificationsHaveTheSameCorrelationId = notifications.stream()
+                .allMatch(notification -> notification.getCorrelationId().equals(execContext.getCorrelationId()));
+        Assertions.assertTrue(allNotificationsHaveTheSameCorrelationId);
+    }
+
+    @Test
+    @DisplayName("Should preserve exception")
+    void shouldPreserveException() throws InterruptedException {
+        var execContext = ExecutionContext.ofNew();
+        execContext.setSubjectAndStartTracking("Testing");
+        Thread.sleep(10);
+        execContext.complete(new MissingEnvVarException("ops!"));
+        AutonotifyProvider.SINGLETON.considerMissingEnvVarExceptions();
+        var notifications = Notification.createNewOnesBasedOn(execContext);
+        Assertions.assertEquals(execContext.getException(), notifications.get(0).getException());
+    }
+
+    @Test
+    @DisplayName("Notifications should have their reasons")
+    void notificationsShouldHaveTheirReasons() throws InterruptedException {
+        var execContext = ExecutionContext.ofNew();
+        execContext.setSubjectAndStartTracking("Testing");
+        Thread.sleep(10);
+        execContext.complete(new MissingEnvVarException("ops!"));
+        AutonotifyProvider.SINGLETON.considerMissingEnvVarExceptions().considerLatency(5);
+        var notifications = Notification.createNewOnesBasedOn(execContext);
+        var allNotificationsHaveTheirReasons = notifications.stream()
+                .noneMatch(notification -> notification.getReasons().isEmpty());
+        Assertions.assertTrue(allNotificationsHaveTheirReasons);
+    }
+
+    @Test
+    @DisplayName("toString should be as expected")
+    void toStringShouldBeAsExpected() throws InterruptedException {
+        var execContext = ExecutionContext.ofNew();
+        execContext.setSubjectAndStartTracking("Testing");
+        Thread.sleep(10);
+        execContext.complete(new MissingEnvVarException("ops!"));
+        AutonotifyProvider.SINGLETON.considerMissingEnvVarExceptions();
+        var notification = Notification.createNewOnesBasedOn(execContext).get(0);
+        var expected = "Notification generated on '" +
+                notification.subject +"' during the execution of correlation ID '" +
+                notification.correlationId.toString() + "' because of the following reasons: " +
+                SimpleJsonBuilder.buildFor(notification.reasons);
+        Assertions.assertEquals(expected, notification.toString());
     }
 
     public static class InternalMappedExceptionSubtype extends InternalMappedException{
