@@ -8,8 +8,12 @@ import lombok.NoArgsConstructor;
 public class Autonotify {
 
     public static void runOn(ExecutionContext executionContext) {
-        AutonotifyThreadPoolProvider.SINGLETON.getExecutor()
-                .submit(() -> Notification.createNewOnesBasedOn(executionContext).forEach(Autonotify::send));
+        boolean shouldRunAsynchronously = AutonotifyProvider.SINGLETON.getAsync();
+        Runnable action = () -> Notification.createNewOnesBasedOn(executionContext).forEach(Autonotify::send);
+        if (shouldRunAsynchronously)
+            AutonotifyThreadPoolProvider.SINGLETON.getExecutor().submit(action);
+        else
+            action.run();
     }
 
     public static void send(Notification notification) {

@@ -74,7 +74,7 @@ class AutonotifyProviderTest {
     @DisplayName("When setting one subscriber at a time, they should be available to use afterwards")
     void whenSettingOneSubscriberAtATimeTheyShouldBeAvailableToUseAfterwards(){
         var subscriberOne = Mockito.mock(AutonotifySubscriber.class);
-        var provider = AutonotifyProvider.SINGLETON.setSubscriber(subscriberOne);
+        var provider = AutonotifyProvider.SINGLETON.subscribe(subscriberOne);
         Assertions.assertEquals(AutonotifyProvider.SINGLETON, provider);
         var isPresent = AutonotifyProvider.SINGLETON.getSubscribers()
                 .stream()
@@ -216,6 +216,14 @@ class AutonotifyProviderTest {
         Assertions.assertTrue(runtimeExceptionWasIncludedAfter);
         Assertions.assertTrue(ioExceptionWasIncludedAfter);
         Assertions.assertTrue(illegalStateExceptionWasIncludedAfter);
+    }
+
+    @Test
+    @DisplayName("Should set async as expected")
+    void shouldSetAsyncAsExpected(){
+        var provider = AutonotifyProvider.SINGLETON.setAsync(false);
+        Assertions.assertEquals(AutonotifyProvider.SINGLETON, provider);
+        Assertions.assertFalse(AutonotifyProvider.SINGLETON.getAsync());
     }
 
 }

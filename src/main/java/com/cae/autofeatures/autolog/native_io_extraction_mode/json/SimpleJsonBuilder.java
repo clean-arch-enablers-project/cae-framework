@@ -61,7 +61,7 @@ public class SimpleJsonBuilder {
     public static String buildFor(Object value){
         if (value == null)
             return "null";
-        if (Boolean.TRUE.equals(ValueTypeScanner.isSimpleValue(value)))
+        if (ValueTypeScanner.isSimpleValue(value))
             return String.valueOf(value);
         var builder = value instanceof Collection? SimpleJsonBuilder.ofCollection(value) : SimpleJsonBuilder.ofCommonObject(value);
         return builder.build();
@@ -116,7 +116,7 @@ public class SimpleJsonBuilder {
         var items = new StringBuilder();
         var counter = 1;
         for (var item : (Collection<?>) this.levelZero){
-            if (Boolean.TRUE.equals(ValueTypeScanner.isSimpleValue(item)))
+            if (ValueTypeScanner.isSimpleValue(item))
                 items.append(SimpleJsonBuilder.ofSimpleValue(item).build());
             else
                 items.append(SimpleJsonBuilder.buildFor(item));
@@ -153,12 +153,12 @@ public class SimpleJsonBuilder {
         var value = GetterInvoker.execute(getter, this.levelZero);
         if (value == null)
             this.stringBuilder.append("null");
-        else if (Boolean.TRUE.equals(ValueTypeScanner.isSimpleValue(value)))
+        else if (ValueTypeScanner.isSimpleValue(value))
             this.stringBuilder.append("\"")
-                    .append(Boolean.TRUE.equals(isSensitive)? SensitiveValueHandler.handle(value, field) : value)
+                    .append(isSensitive? SensitiveValueHandler.handle(value, field) : value)
                     .append("\"");
         else
-            this.stringBuilder.append(Boolean.TRUE.equals(isSensitive)? "\"***************\"" : SimpleJsonBuilder.buildFor(value));
+            this.stringBuilder.append(isSensitive? "\"***************\"" : SimpleJsonBuilder.buildFor(value));
     }
 
     @Getter

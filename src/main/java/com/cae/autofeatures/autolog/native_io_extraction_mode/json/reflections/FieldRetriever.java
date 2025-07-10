@@ -31,7 +31,7 @@ public class FieldRetriever {
         } catch (NoSuchFieldException e) {
             throw new InternalMappedException(
                     "Something went wrong while trying to retrieve the field '" + fieldName + "' in '" + foundClass.getSimpleName() + "'",
-                    "We found the class in which the field should be located, but at the retrievement attempt something went unexpectedly wrong. See the exception: " + e
+                    "We found the class in which the field should be located, but at the retrieval attempt something went unexpectedly wrong. See the exception: " + e
             );
         }
     }

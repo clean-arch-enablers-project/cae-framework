@@ -2,28 +2,25 @@ package com.cae.autofeatures.autolog.formats;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.List;
 
 @Getter
-@Setter
 @Builder
 public class UseCaseLogStructuredFormat {
 
     private UseCaseExecutionLogFormat useCaseExecution;
 
     @Getter
-    @Setter
     @Builder
     public static class UseCaseExecutionLogFormat{
-        private String useCase;
-        private String correlationId;
-        private IO io;
-        private Boolean successful;
-        private Long latency;
-        private String exception;
-        private List<String> steps;
+        private final String useCase;
+        private final String correlationId;
+        private final IO io;
+        private final Boolean successful;
+        private final Long latency;
+        private final String exception;
+        private final List<String> steps;
     }
 
 }

@@ -15,29 +15,33 @@ public class Autolog {
     private Autolog(){}
 
     public static void runOn(ExecutionContext executionContext) {
-        AutologThreadPoolProvider.SINGLETON.getExecutor()
-                .submit(() -> {
-                    Autolog.handleStackTraceOn(executionContext);
-                    Autolog.writeBasedOn(executionContext);
-                });
-    }
-
-    private static void handleStackTraceOn(ExecutionContext executionContext) {
-        if (!executionContext.wasSuccessful()) StackTraceAutologAux.SINGLETON.handleLoggingStackTrace(executionContext);
-    }
-
-    private static void writeBasedOn(ExecutionContext executionContext) {
-        boolean isStructuredFormat = AutologProvider.SINGLETON.getStructuredFormat();
         var logger = Autolog.getProvidedLogger();
-        Consumer<String> loggerAction = executionContext.wasSuccessful()? logger::logInfo : logger::logError;
-        loggerAction.accept(isStructuredFormat? Autolog.generateStructuredFormat(executionContext) : Autolog.generateSimpleTextFormat(executionContext));
+        Runnable action = () -> {
+            Autolog.handleStackTraceOn(executionContext, logger);
+            Autolog.writeBasedOn(executionContext, logger);
+        };
+        boolean shouldRunAsynchronously = AutologProvider.SINGLETON.getAsync();
+        if (shouldRunAsynchronously)
+            AutologThreadPoolProvider.SINGLETON.getExecutor().submit(action);
+        else
+            action.run();
     }
 
-    private static Logger getProvidedLogger() {
+    protected static Logger getProvidedLogger() {
         return AutologProvider.SINGLETON.getProvidedInstance().orElseThrow(() -> new InternalMappedException(
                 "Couldn't execute Autolog",
                 "The framework does not provide a default Logger implementation, you must supply one yourself."
         ));
+    }
+
+    private static void handleStackTraceOn(ExecutionContext executionContext, Logger logger) {
+        if (!executionContext.wasSuccessful()) StackTraceAutologAux.SINGLETON.handleLoggingStackTrace(executionContext, logger);
+    }
+
+    protected static void writeBasedOn(ExecutionContext executionContext, Logger logger) {
+        Consumer<String> loggerAction = executionContext.wasSuccessful()? logger::logInfo : logger::logError;
+        boolean isStructuredFormat = AutologProvider.SINGLETON.getStructuredFormat();
+        loggerAction.accept(isStructuredFormat? Autolog.generateStructuredFormat(executionContext) : Autolog.generateSimpleTextFormat(executionContext));
     }
 
     private static String generateStructuredFormat(ExecutionContext executionContext) {
@@ -52,7 +56,7 @@ public class Autolog {
                 .successful(executionContext.wasSuccessful())
                 .exception(executionContext.wasSuccessful()? null : executionContext.getException().toString())
                 .io(io)
-                .steps(executionContext.getStepInsights().stream().map(ExecutionContext.StepInsight::toString).collect(Collectors.toList()))
+                .steps(executionContext.getStepInsights().stream().map(Autolog::createStepRepresentation).collect(Collectors.toList()))
                 .build();
         var structuredFormat = UseCaseLogStructuredFormat.builder()
                 .useCaseExecution(executionData)
@@ -71,12 +75,21 @@ public class Autolog {
                 + "ms and "
                 + (executionContext.wasSuccessful()? "finished successfully." : ("threw an exception: " + executionContext.getException()))
                 + " | Inner steps: "
-                + NativeExtractionMode.executeOn(executionContext.getStepInsights().stream().map(ExecutionContext.StepInsight::toString).collect(Collectors.toList()))
+                + NativeExtractionMode.executeOn(executionContext.getStepInsights().stream().map(Autolog::createStepRepresentation).collect(Collectors.toList()))
                 + (loggingUseCaseIO? Autolog.generateIOLog(executionContext) : "");
     }
 
+    private static String createStepRepresentation(ExecutionContext.StepInsight step) {
+        var toStringRepresentation = step.toString();
+        if (AutologProvider.SINGLETON.getPortsLoggingIO())
+            return toStringRepresentation
+                    + Optional.ofNullable(step.getInput()).map(input -> " | Input: " + NativeExtractionMode.executeOn(input)).orElse("")
+                    + Optional.ofNullable(step.getOutput()).map(output -> " | Output: " + NativeExtractionMode.executeOn(output)).orElse("");
+        return toStringRepresentation;
+    }
+
     private static String generateIOLog(ExecutionContext executionContext) {
-        var ioLoggingMode = AutologProvider.SINGLETON.getIOLoggingMode();
+        var ioLoggingMode = AutologProvider.SINGLETON.getIoAutologMode();
         var nativeExtraction = ioLoggingMode.equals(IOAutologMode.CAE_NATIVE);
         return Autolog.generateInputLog(executionContext, nativeExtraction) + Autolog.generateOutputLog(executionContext, nativeExtraction);
     }

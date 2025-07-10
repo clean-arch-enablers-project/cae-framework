@@ -1,11 +1,15 @@
 package com.cae.use_cases;
 
+import com.cae.autofeatures.autolog.AutologProvider;
+import com.cae.autofeatures.autolog.Logger;
 import com.cae.use_cases.contexts.ExecutionContext;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import utils.MockedAutofeaturesRunnerProvider;
@@ -14,6 +18,14 @@ import utils.problematic_use_cases.SomeProblematicSupplierUseCaseWithUnexpectedE
 
 @ExtendWith(MockitoExtension.class)
 class SupplierUseCaseTest {
+
+    @Mock
+    Logger logger;
+
+    @BeforeEach
+    void setup(){
+        AutologProvider.SINGLETON.setProvidedInstance(this.logger);
+    }
 
     @Test
     @DisplayName("Should initialize ExecutionContext when the execute method is called")

@@ -5,8 +5,12 @@ import com.cae.use_cases.contexts.ExecutionContext;
 public class Autometrics {
 
     public static void runOn(ExecutionContext executionContext) {
-        AutometricsThreadPoolProvider.SINGLETON.getExecutor()
-                .submit(() -> Metric.createNewOnesBasedOn(executionContext).forEach(Autometrics::send));
+        boolean shouldRunAsynchronously = AutometricsProvider.SINGLETON.getAsync();
+        Runnable action = () -> Metric.createNewOnesBasedOn(executionContext).forEach(Autometrics::send);
+        if (shouldRunAsynchronously)
+            AutometricsThreadPoolProvider.SINGLETON.getExecutor().submit(action);
+        else
+            action.run();
     }
 
     public static void send(Metric metric){

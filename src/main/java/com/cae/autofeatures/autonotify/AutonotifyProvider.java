@@ -23,13 +23,19 @@ public class AutonotifyProvider {
     protected Set<Class<? extends Exception>> exceptionsToConsider = ConcurrentHashMap.newKeySet();
     protected Boolean considerLatency = false;
     protected Integer latencyThreshold;
+    protected Boolean async = true;
+
+    public AutonotifyProvider setAsync(Boolean async){
+        this.async = async;
+        return this;
+    }
 
     public AutonotifyProvider setAllSubscribers(List<AutonotifySubscriber> autonotifySubscribers){
         this.subscribers.addAll(autonotifySubscribers);
         return this;
     }
 
-    public AutonotifyProvider setSubscriber(AutonotifySubscriber autonotifySubscriber){
+    public AutonotifyProvider subscribe(AutonotifySubscriber autonotifySubscriber){
         this.subscribers.add(autonotifySubscriber);
         return this;
     }
@@ -95,6 +101,7 @@ public class AutonotifyProvider {
 
     public void reset(){
         this.considerLatency = false;
+        this.async = true;
         this.considerUnexpectedExceptions = false;
         this.latencyThreshold = null;
         this.flushSubscribers();
