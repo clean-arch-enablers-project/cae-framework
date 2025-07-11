@@ -60,6 +60,16 @@ class ScopeBasedAutoauthTest {
         Assertions.assertDoesNotThrow(() -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
     }
 
+    @Test
+    @DisplayName("Should refuse execution for SimpleLogicalAndScopeBasedProtectedUseCase when Actor doesn't have one of the scopes")
+    void shouldRefuseExecutionForSimpleLogicalAndScopeBasedProtectedUseCaseWhenActorDoesNotHaveTheScopes(){
+        var useCase = new SimpleLogicalAndScopeBasedProtectedUseCase();
+        Mockito.when(this.actor.getScopes()).thenReturn(List.of("ANOTHER-SCOPE"));
+        Assertions.assertThrows(NotAllowedMappedException.class, () -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
+        Mockito.when(this.actor.getScopes()).thenReturn(List.of("A-SCOPE"));
+        Assertions.assertThrows(NotAllowedMappedException.class, () -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
+    }
+
     @ScopeBasedProtection(scope = {"A-SCOPE", "ANOTHER-SCOPE"})
     public static class SimpleLogicalAndScopeBasedProtectedUseCase extends RunnableUseCase{
         @Override
