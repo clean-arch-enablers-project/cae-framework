@@ -43,7 +43,7 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
 
     private O run(I input, ExecutionContext context) {
         try {
-            input.autoverify();
+            input.autoverify(context);
             PreExecutionAutofeaturesRunner.run(input, context, this);
             var output = this.applyInternalLogic(input, context);
             context.complete();

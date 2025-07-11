@@ -42,7 +42,7 @@ public abstract class ConsumerUseCase <I extends UseCaseInput> extends UseCase i
 
     private void run(I input, ExecutionContext context) {
         try {
-            input.autoverify();
+            input.autoverify(context);
             PreExecutionAutofeaturesRunner.run(input, context, this);
             this.applyInternalLogic(input, context);
             context.complete();

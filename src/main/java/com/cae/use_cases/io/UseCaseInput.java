@@ -4,6 +4,7 @@ import com.cae.autofeatures.autoauth.annotations.ResourceIdentifier;
 import com.cae.autofeatures.autoauth.annotations.ResourceOwnerIdentifier;
 import com.cae.mapped_exceptions.MappedException;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
+import com.cae.use_cases.contexts.ExecutionContext;
 import com.cae.use_cases.io.annotations.NotBlankInputField;
 import com.cae.use_cases.io.annotations.NotEmptyInputField;
 import com.cae.use_cases.io.annotations.NotNullInputField;
@@ -29,18 +30,22 @@ public class UseCaseInput {
 
     private List<FieldAndGetter> fieldAndGetterList;
 
-    public void autoverify(){
+    public void autoverify(ExecutionContext executionContext){
+        var autoverifyStep = executionContext.addStepInsightsOf(this.getClass().getSimpleName()+"::autoverify");
         try {
             for (var fieldAndGetter : this.getFieldAndGetterList()) {
                 this.handleNotBlankAnnotation(fieldAndGetter);
                 this.handleNotEmptyAnnotation(fieldAndGetter);
                 this.handleNotNullAnnotation(fieldAndGetter);
-                this.handleValidInnerPropertiesAnnotation(fieldAndGetter);
+                this.handleValidInnerPropertiesAnnotation(fieldAndGetter, executionContext);
             }
             this.validatePropertiesArbitrarily();
+            autoverifyStep.complete();
         } catch (MappedException mappedException){
+            autoverifyStep.complete(mappedException);
             throw mappedException;
         } catch (Exception e) {
+            autoverifyStep.complete(e);
             throw new InternalMappedException("Something went wrong while trying to validate properties of use case input object.",  "More details on this: " + e);
         }
     }
@@ -114,14 +119,14 @@ public class UseCaseInput {
         }
     }
 
-    private void handleValidInnerPropertiesAnnotation(FieldAndGetter fieldAndGetter) throws IllegalAccessException, InvocationTargetException {
+    private void handleValidInnerPropertiesAnnotation(FieldAndGetter fieldAndGetter, ExecutionContext executionContext) throws IllegalAccessException, InvocationTargetException {
         if (fieldAndGetter.field.isAnnotationPresent(ValidInnerPropertiesInputField.class)){
             Optional.ofNullable(fieldAndGetter.getter.invoke(this)).ifPresent(value -> {
                 if (value instanceof UseCaseInput)
-                    ((UseCaseInput) value).autoverify();
+                    ((UseCaseInput) value).autoverify(executionContext);
                 else if(value instanceof Collection){
                     for (var item : (Collection<?>) value)
-                        this.handleCollectionItemValidation(item, fieldAndGetter.field);
+                        this.handleCollectionItemValidation(item, fieldAndGetter.field, executionContext);
                 }
                 else
                     throw new ValidInnerPropertiesAnnotationOnWrongTypeException(this.getFullFieldName(fieldAndGetter.field));
@@ -129,9 +134,9 @@ public class UseCaseInput {
         }
     }
 
-    private void handleCollectionItemValidation(Object item, Field field){
+    private void handleCollectionItemValidation(Object item, Field field, ExecutionContext executionContext){
         if (item instanceof UseCaseInput)
-            ((UseCaseInput) item).autoverify();
+            ((UseCaseInput) item).autoverify(executionContext);
         else
             throw new ValidInnerPropertiesAnnotationOnWrongTypeException(this.getFullFieldName(field));
     }
