@@ -10,6 +10,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import utils.MockedAutofeaturesRunnerProvider;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -31,6 +32,7 @@ class AutonotifyTest {
 
     @BeforeEach
     void setup() {
+        MockedAutofeaturesRunnerProvider.flushMockedInstances();
         AutologProvider.SINGLETON.setProvidedInstance(this.logger);
         AutonotifyProvider.SINGLETON
                 .considerLatency(500)
@@ -82,7 +84,7 @@ class AutonotifyTest {
         stepOne.setOutput(new AutologTest.PortOneOutput());
         stepOne.complete();
         var stepTwo = exec.addStepInsightsOf("PortTwo");
-        Thread.sleep(10);
+        Thread.sleep(250);
         stepTwo.complete();
         exec.setOutput(new AutologTest.MainOutput());
         exec.complete();
