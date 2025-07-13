@@ -20,7 +20,8 @@ public class PortExecutionException extends InternalMappedException {
      */
     public PortExecutionException(Exception unexpectedException, String name) {
         super("Something went unexpectedly wrong while trying to execute port '" + name + "'",
-                "More details on the unexpected problem: " + unexpectedException
+                "More details on the unexpected problem: " + unexpectedException,
+                unexpectedException
         );
     }
 

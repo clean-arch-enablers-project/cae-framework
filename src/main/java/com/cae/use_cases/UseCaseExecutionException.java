@@ -10,7 +10,8 @@ public class UseCaseExecutionException extends InternalMappedException {
     public UseCaseExecutionException(UseCase useCase, Exception unexpectedException) {
         super(
                 "Something went unexpectedly wrong while executing use case of '" + useCase.getUseCaseMetadata().getName() + "'",
-                "More details on the unexpected problem: " + unexpectedException
+                "More details on the unexpected problem: " + unexpectedException,
+                unexpectedException
         );
     }
 

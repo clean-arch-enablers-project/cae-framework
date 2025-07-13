@@ -12,24 +12,36 @@ public class AutologProvider {
     public static final AutologProvider SINGLETON = new AutologProvider();
 
     private Logger providedInstance;
+    private Boolean async = true;
     private Boolean useCasesLoggingIO = false;
     private Boolean portsLoggingIO = false;
     private IOAutologMode ioAutologMode = IOAutologMode.CAE_NATIVE;
-    private final Boolean async = false;
     private Boolean structuredFormat = false;
     private Boolean logStackTrace = false;
     private Integer linesOfStackTrace = 5;
+
+    public void reset(){
+        this.providedInstance = null;
+        this.useCasesLoggingIO = false;
+        this.async = true;
+        this.portsLoggingIO = false;
+        this.ioAutologMode = IOAutologMode.CAE_NATIVE;
+        this.structuredFormat = false;
+        this.logStackTrace = false;
+        this.linesOfStackTrace = 5;
+    }
 
     public Optional<Logger> getProvidedInstance(){
         return Optional.ofNullable(this.providedInstance);
     }
 
-    public IOAutologMode getIOLoggingMode(){
-        return this.ioAutologMode;
-    }
-
     public AutologProvider setProvidedInstance(Logger providedInstance){
         this.providedInstance = providedInstance;
+        return this;
+    }
+
+    public AutologProvider setAsync(Boolean async){
+        this.async = async;
         return this;
     }
 
@@ -43,12 +55,12 @@ public class AutologProvider {
         return this;
     }
 
-    public AutologProvider setIOLoggingMode(IOAutologMode ioAutologMode){
+    public AutologProvider setIOAutologMode(IOAutologMode ioAutologMode){
         this.ioAutologMode = ioAutologMode;
         return this;
     }
 
-    public AutologProvider structuredFormat(boolean structuredFormat){
+    public AutologProvider setStructuredFormat(boolean structuredFormat){
         this.structuredFormat = structuredFormat;
         return this;
     }

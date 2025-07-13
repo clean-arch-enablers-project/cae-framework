@@ -156,8 +156,8 @@ public class EntityDocumentation {
         public static EntityBehaviorParameter of(Parameter parameter){
             var isCollection = Collection.class.isAssignableFrom(parameter.getType());
             return new EntityBehaviorParameter(
-                    parameter.getType().getSimpleName(),
                     parameter.getName(),
+                    parameter.getType().getSimpleName(),
                     isCollection? extractInnerItemsType(parameter.getParameterizedType()) : null
             );
         }

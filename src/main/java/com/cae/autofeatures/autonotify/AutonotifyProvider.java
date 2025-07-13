@@ -2,7 +2,7 @@ package com.cae.autofeatures.autonotify;
 
 import com.cae.env_vars.exceptions.MissingEnvVarException;
 import com.cae.mapped_exceptions.specifics.*;
-import com.cae.trier.autoretry.NoRetriesLeftException;
+import com.cae.trier.retry.NoRetriesLeftException;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,18 +18,24 @@ public class AutonotifyProvider {
 
     public static final AutonotifyProvider SINGLETON = new AutonotifyProvider();
 
-    private final List<AutonotifySubscriber> subscribers = new ArrayList<>();
-    private Boolean considerUnexpectedExceptions = false;
-    private final Set<Class<? extends Exception>> exceptionsToConsider = ConcurrentHashMap.newKeySet();
-    private Boolean considerLatency = false;
-    private Integer latencyThreshold;
+    protected List<AutonotifySubscriber> subscribers = new ArrayList<>();
+    protected Boolean considerUnexpectedExceptions = false;
+    protected Set<Class<? extends Exception>> exceptionsToConsider = ConcurrentHashMap.newKeySet();
+    protected Boolean considerLatency = false;
+    protected Integer latencyThreshold;
+    protected Boolean async = true;
+
+    public AutonotifyProvider setAsync(Boolean async){
+        this.async = async;
+        return this;
+    }
 
     public AutonotifyProvider setAllSubscribers(List<AutonotifySubscriber> autonotifySubscribers){
         this.subscribers.addAll(autonotifySubscribers);
         return this;
     }
 
-    public AutonotifyProvider setSubscriber(AutonotifySubscriber autonotifySubscriber){
+    public AutonotifyProvider subscribe(AutonotifySubscriber autonotifySubscriber){
         this.subscribers.add(autonotifySubscriber);
         return this;
     }
@@ -85,6 +91,22 @@ public class AutonotifyProvider {
         return this;
     }
 
+    public void flushSubscribers(){
+        this.subscribers = new ArrayList<>();
+    }
+
+    public void flushSpecificExceptions(){
+        this.exceptionsToConsider = ConcurrentHashMap.newKeySet();
+    }
+
+    public void reset(){
+        this.considerLatency = false;
+        this.async = true;
+        this.considerUnexpectedExceptions = false;
+        this.latencyThreshold = null;
+        this.flushSubscribers();
+        this.flushSpecificExceptions();
+    }
 
 
 }
