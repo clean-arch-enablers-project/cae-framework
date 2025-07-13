@@ -12,7 +12,7 @@ public class RoleRetrieverRegistry {
 
     public static final RoleRetrieverRegistry SINGLETON = new RoleRetrieverRegistry();
 
-    private final Map<String, RoleRetriever> roleRetrieverByUseCaseId = new HashMap<>();
+    private Map<String, RoleRetriever> roleRetrieverByUseCaseId = new HashMap<>();
     private RoleRetriever defaultRoleRetriever;
 
     public RoleRetrieverRegistry setDefaultRoleRetriever(RoleRetriever roleRetriever){
@@ -31,6 +31,11 @@ public class RoleRetrieverRegistry {
 
     public Optional<RoleRetriever> getRoleRetrieverByUseCaseId(String useCaseId){
         return Optional.ofNullable(this.roleRetrieverByUseCaseId.get(useCaseId));
+    }
+
+    public void reset(){
+        this.roleRetrieverByUseCaseId = new HashMap<>();
+        this.defaultRoleRetriever = null;
     }
 
 }
