@@ -11,6 +11,7 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import utils.MockedAutofeaturesRunnerProvider;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -34,6 +35,7 @@ class AutometricsTest {
 
     @BeforeEach
     void setup(){
+        MockedAutofeaturesRunnerProvider.flushMockedInstances();
         AutologProvider.SINGLETON.setProvidedInstance(this.logger);
     }
 
