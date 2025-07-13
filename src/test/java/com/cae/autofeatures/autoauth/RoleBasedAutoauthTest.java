@@ -92,7 +92,8 @@ class RoleBasedAutoauthTest {
     @Test
     @DisplayName("If no default role retriever is provided should throw InternalMappedException")
     void ifNoDefaultRoleRetrieverIsProvidedShouldThrowInternalMappedException(){
-        RoleRetrieverRegistry.SINGLETON.setDefaultRoleRetriever(null);
+        var registry = RoleRetrieverRegistry.SINGLETON.setDefaultRoleRetriever(null);
+        Assertions.assertEquals(RoleRetrieverRegistry.SINGLETON, registry);
         var theInput = new RoleBasedProtectedUseCaseWithResourceOwnerId.Input();
         Assertions.assertThrows(InternalMappedException.class, () -> this.resourceOwnerIdBasedAutoauthUseCase.execute(theInput, this.executionContext));
     }
