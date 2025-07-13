@@ -2,7 +2,7 @@ package com.cae.autofeatures.autonotify;
 
 import com.cae.env_vars.exceptions.MissingEnvVarException;
 import com.cae.mapped_exceptions.specifics.*;
-import com.cae.trier.autoretry.NoRetriesLeftException;
+import com.cae.trier.retry.NoRetriesLeftException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

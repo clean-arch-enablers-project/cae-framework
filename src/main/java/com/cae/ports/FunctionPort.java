@@ -26,7 +26,7 @@ public abstract class FunctionPort <I, O> extends Port {
                 throw anyException;
             }
         })
-        .setUnexpectedExceptionHandler(unexpectedException -> new PortExecutionException(unexpectedException, this.name))
+        .onUnexpectedExceptions(unexpectedException -> new PortExecutionException(unexpectedException, this.name))
         .execute();
     }
 

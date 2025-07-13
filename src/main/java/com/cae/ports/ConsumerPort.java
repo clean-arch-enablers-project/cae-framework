@@ -24,7 +24,7 @@ public abstract class ConsumerPort <I> extends Port {
                 throw anyException;
             }
         })
-        .setUnexpectedExceptionHandler(unexpectedException -> new PortExecutionException(unexpectedException, this.name))
+        .onUnexpectedExceptions(unexpectedException -> new PortExecutionException(unexpectedException, this.name))
         .execute();
     }
 

@@ -3,7 +3,7 @@ package com.cae.autofeatures.autonotify;
 import com.cae.autofeatures.autolog.native_io_extraction_mode.json.SimpleJsonBuilder;
 import com.cae.env_vars.exceptions.MissingEnvVarException;
 import com.cae.mapped_exceptions.specifics.*;
-import com.cae.trier.autoretry.NoRetriesLeftException;
+import com.cae.trier.retry.NoRetriesLeftException;
 import com.cae.use_cases.contexts.ExecutionContext;
 import com.cae.use_cases.contexts.GenericExecutionManager;
 import lombok.Builder;
