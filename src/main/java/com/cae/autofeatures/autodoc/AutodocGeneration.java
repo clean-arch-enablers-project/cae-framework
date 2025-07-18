@@ -1,9 +1,7 @@
 package com.cae.autofeatures.autodoc;
 
-import com.cae.autofeatures.autodoc.components.DomainDocumentation;
-import com.cae.autofeatures.autodoc.components.EntityDocumentation;
-import com.cae.autofeatures.autodoc.components.Responsible;
-import com.cae.autofeatures.autodoc.components.UseCaseDocumentation;
+import com.cae.autofeatures.autodoc.annotations.AutodocArtifact;
+import com.cae.autofeatures.autodoc.components.*;
 import com.cae.entities.BusinessEntity;
 import com.cae.use_cases.ConsumerUseCase;
 import com.cae.use_cases.FunctionUseCase;
@@ -27,17 +25,22 @@ public class AutodocGeneration {
         var allClassesInPackage = getAllClassesIn(projectPackage);
         var allEntityClasses = filterEntities(allClassesInPackage);
         var useCaseImplementations = filterUseCaseImplementations(allClassesInPackage);
+        var allArtifacts = filterArtifacts(allClassesInPackage);
         var allEntityDocs = allEntityClasses.stream()
                 .map(entityClass -> EntityDocumentation.of(entityClass, isKotlin))
                 .collect(Collectors.toList());
         var allUseCaseDocs = useCaseImplementations.stream()
                 .map(useCaseClass -> UseCaseDocumentation.of(useCaseClass, isKotlin))
                 .collect(Collectors.toList());
+        var allArtifactDocs = allArtifacts.stream()
+                .map(artifactClass -> ArtifactDocumentation.of(artifactClass, isKotlin))
+                .collect(Collectors.toList());
         return DomainDocumentation.builder()
                 .domain(domainName)
+                .responsible(responsible)
                 .entities(allEntityDocs)
                 .useCases(allUseCaseDocs)
-                .responsible(responsible)
+                .supportingArtifacts(allArtifactDocs)
                 .build();
     }
 
@@ -99,8 +102,19 @@ public class AutodocGeneration {
     private static boolean isUseCaseImplementation(Class<?> currentClass) {
         if (currentClass == null || currentClass == Object.class) return false;
         if (currentClass.getSuperclass() == null) return false;
-        if (currentClass == FunctionUseCase.class || currentClass == ConsumerUseCase.class || currentClass == SupplierUseCase.class || currentClass == RunnableUseCase.class) return true;
+        var superClass = currentClass.getSuperclass();
+        if (superClass == FunctionUseCase.class || superClass == ConsumerUseCase.class || superClass == SupplierUseCase.class || superClass == RunnableUseCase.class) return true;
         return isUseCaseImplementation(currentClass.getSuperclass());
+    }
+
+    public static List<Class<?>> filterArtifacts(List<Class<?>> allClasses){
+        return allClasses.stream()
+                .filter(AutodocGeneration::isArtifact)
+                .collect(Collectors.toList());
+    }
+
+    private static boolean isArtifact(Class<?> aClass) {
+        return aClass.isAnnotationPresent(AutodocArtifact.class);
     }
 
 }

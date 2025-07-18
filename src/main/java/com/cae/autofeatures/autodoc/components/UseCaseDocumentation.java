@@ -2,13 +2,18 @@ package com.cae.autofeatures.autodoc.components;
 
 import com.cae.autofeatures.autoauth.annotations.RoleBasedProtection;
 import com.cae.autofeatures.autoauth.annotations.ScopeBasedProtection;
+import com.cae.autofeatures.autodoc.AutodocNoteExtractor;
 import com.cae.autofeatures.autodoc.AutodocSourceCodeRetriever;
-import com.cae.use_cases.*;
+import com.cae.use_cases.ConsumerUseCase;
+import com.cae.use_cases.FunctionUseCase;
+import com.cae.use_cases.RunnableUseCase;
+import com.cae.use_cases.SupplierUseCase;
 import lombok.*;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -19,22 +24,33 @@ import java.util.stream.Stream;
 @NoArgsConstructor
 public class UseCaseDocumentation {
 
-    public static UseCaseDocumentation of(UseCase useCase, boolean kotlin){
-        var implementationClass = useCase.getClass();
+    public static UseCaseDocumentation of(Class<?> implementationClass, boolean kotlin){
         var declarationClass = getDeclarationClassOf(implementationClass);
+        var properties = Stream.of(implementationClass.getDeclaredFields())
+                .map(ClassProperty::of)
+                .collect(Collectors.toList());
+        var allBehaviors = Stream.of(implementationClass.getDeclaredMethods())
+                .map(method -> ClassBehavior.of(method, properties))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
         return UseCaseDocumentation.builder()
-                .useCaseDeclaration(declarationClass.getSimpleName())
-                .useCaseDeclarationLocation(declarationClass.getPackageName())
-                .useCaseImplementation(implementationClass.getSimpleName())
-                .useCaseImplementationLocation(implementationClass.getPackageName())
+                .declaration(declarationClass.getSimpleName())
+                .declarationPackage(declarationClass.getPackageName())
+                .implementation(implementationClass.getSimpleName())
+                .implementationPackage(implementationClass.getPackageName())
                 .ioContract(handleIOContractFrom(declarationClass))
                 .isProtected(handleProtectionStatus(implementationClass, declarationClass))
                 .scopes(handleScopes(implementationClass, declarationClass))
+                .actionId(handleActionId(implementationClass, declarationClass))
+                .properties(properties)
+                .behaviors(allBehaviors)
                 .sourceCode(AutodocSourceCodeRetriever.retrieveCodeFor(
                         implementationClass.getPackageName(),
                         implementationClass.getSimpleName(),
                         kotlin
                 ))
+                .note(AutodocNoteExtractor.getNoteFrom(implementationClass))
                 .build();
     }
 
@@ -43,25 +59,6 @@ public class UseCaseDocumentation {
         if (currentSuperClass == FunctionUseCase.class || currentSuperClass == ConsumerUseCase.class || currentSuperClass == SupplierUseCase.class || currentSuperClass == RunnableUseCase.class)
             return useCaseClass;
         return currentSuperClass;
-    }
-
-    public static UseCaseDocumentation of(Class<?> implementationClass, boolean kotlin){
-        var declarationClass = getDeclarationClassOf(implementationClass);
-        return UseCaseDocumentation.builder()
-                .useCaseDeclaration(declarationClass.getSimpleName())
-                .useCaseDeclarationLocation(declarationClass.getPackageName())
-                .useCaseImplementation(implementationClass.getSimpleName())
-                .useCaseImplementationLocation(implementationClass.getPackageName())
-                .ioContract(handleIOContractFrom(declarationClass))
-                .isProtected(handleProtectionStatus(implementationClass, declarationClass))
-                .scopes(handleScopes(implementationClass, declarationClass))
-                .actionId(handleActionId(implementationClass, declarationClass))
-                .sourceCode(AutodocSourceCodeRetriever.retrieveCodeFor(
-                        implementationClass.getPackageName(),
-                        implementationClass.getSimpleName(),
-                        kotlin
-                ))
-                .build();
     }
 
     private static List<IOContractDocumentation> handleIOContractFrom(Class<?> rootUseCaseClass) {
@@ -93,15 +90,17 @@ public class UseCaseDocumentation {
         return null;
     }
 
-    private String useCaseDeclaration;
-    private String useCaseImplementation;
-    private String useCaseDeclarationLocation;
-    private String useCaseImplementationLocation;
+    private String declaration;
+    private String implementation;
+    private String declarationPackage;
+    private String implementationPackage;
     private List<IOContractDocumentation> ioContract;
-    private String description;
     private String sourceCode;
     private Boolean isProtected;
     private List<String> scopes;
     private String actionId;
+    private String note;
+    private List<ClassProperty> properties;
+    private List<ClassBehavior> behaviors;
 
 }

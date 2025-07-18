@@ -14,6 +14,7 @@ public class DomainDocumentation {
     private String domain;
     private List<EntityDocumentation> entities;
     private List<UseCaseDocumentation> useCases;
+    private List<ArtifactDocumentation> supportingArtifacts;
     private Responsible responsible;
 
 }

@@ -1,5 +1,6 @@
 package com.cae.autofeatures.autodoc.components;
 
+import com.cae.use_cases.io.UseCaseInput;
 import lombok.*;
 
 import java.lang.reflect.Type;
@@ -18,7 +19,7 @@ public class IOContractDocumentation {
         var typeAsClass = (Class<?>) ioType;
         return IOContractDocumentation.builder()
                 .className(typeAsClass.getSimpleName())
-                .input(typeAsClass.getSimpleName().contains("Input"))
+                .input(typeAsClass.getSimpleName().contains("Input") || UseCaseInput.class.isAssignableFrom(typeAsClass))
                 .classFields(handleFieldsFrom(typeAsClass))
                 .build();
     }

@@ -12,27 +12,27 @@ import java.util.stream.Stream;
 
 @Builder
 @Getter
-public class EntityDocumentation {
+public class ArtifactDocumentation {
 
-    public static EntityDocumentation of(Class<?> entityClass, boolean kotlin){
-        var properties = Stream.of(entityClass.getDeclaredFields())
+    public static ArtifactDocumentation of(Class<?> artifactClass, boolean kotlin){
+        var properties = Stream.of(artifactClass.getDeclaredFields())
                 .map(ClassProperty::of)
                 .collect(Collectors.toList());
-        var allBehaviors = Stream.of(entityClass.getDeclaredMethods())
+        var allBehaviors = Stream.of(artifactClass.getDeclaredMethods())
                 .map(method -> ClassBehavior.of(method, properties))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
-        return EntityDocumentation.builder()
-                .name(entityClass.getSimpleName())
+        return ArtifactDocumentation.builder()
+                .name(artifactClass.getSimpleName())
                 .properties(properties)
                 .behaviors(allBehaviors)
                 .sourceCode(AutodocSourceCodeRetriever.retrieveCodeFor(
-                        entityClass.getPackageName(),
-                        entityClass.getSimpleName(),
+                        artifactClass.getPackageName(),
+                        artifactClass.getSimpleName(),
                         kotlin
                 ))
-                .note(AutodocNoteExtractor.getNoteFrom(entityClass))
+                .note(AutodocNoteExtractor.getNoteFrom(artifactClass))
                 .build();
     }
 
