@@ -14,8 +14,10 @@ public @interface Autocache {
 
     int ttl();
     TimeUnit ttlTimeUnit();
+    int ttlBasedCleanupFrequency() default 5;
+    TimeUnit ttlBasedCleanupFrequencyTimeout() default TimeUnit.MINUTES;
     int size() default 50;
-    int cleanupFrequency() default 5;
-    TimeUnit cleanupFrequencyTimeout() default TimeUnit.MINUTES;
     AutocacheEvictionTypes evictionType();
+    int evictionBasedCleanupFrequency() default 250;
+    TimeUnit evictionBasedCleanupFrequencyTimeout() default TimeUnit.MILLISECONDS;
 }

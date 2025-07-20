@@ -12,10 +12,12 @@ public abstract class AbstractAutocache<V> implements Cache<V>{
     protected AbstractAutocache(
             Integer ttl,
             TimeUnit ttlTimeUnit,
+            Integer ttlBasedCleanupFrequency,
+            TimeUnit ttlBasedCleanupFrequencyTimeUnit,
             Integer maxSize,
-            Integer cleanupFrequency,
             AutocacheEvictionTypes evictionType,
-            TimeUnit cleanupFrequencyTimeUnit){
+            Integer evictionBasedCleanupFrequency,
+            TimeUnit evictionBasedCleanupFrequencyTimeUnit){
         if (maxSize < 2)
             throw new InternalMappedException(
                 "Couldn't instantiate cache",
@@ -23,45 +25,58 @@ public abstract class AbstractAutocache<V> implements Cache<V>{
             );
         this.ttl = ttl;
         this.ttlTimeUnit = ttlTimeUnit;
+        this.ttlBasedCleanupFrequency = ttlBasedCleanupFrequency;
+        this.ttlBasedCleanupFrequencyTimeUnit = ttlBasedCleanupFrequencyTimeUnit;
+        this.ttlBasedCleanupExecutor = Executors.newSingleThreadScheduledExecutor(new AutofeatureThreadFactory("AutocacheTTLCleanUpThreadPool"));
         this.maxSize = maxSize;
-        this.cleanupFrequency = cleanupFrequency;
-        this.cleanupFrequencyTimeUnit = cleanupFrequencyTimeUnit;
         this.evictionStrategy = AutocacheEvictionStrategyFactory.createNewFor(evictionType);
-        this.executor = Executors.newSingleThreadScheduledExecutor(new AutofeatureThreadFactory("AutocacheCleanUpThreadPool"));
-        this.scheduleCleanUp();
+        this.evictionBasedCleanupFrequency = evictionBasedCleanupFrequency;
+        this.evictionBasedCleanupFrequencyTimeUnit = evictionBasedCleanupFrequencyTimeUnit;
+        this.evictionBasedCleanupExecutor = Executors.newSingleThreadScheduledExecutor(new AutofeatureThreadFactory("AutocacheEvictionCleanUpThreadPool"));
+        this.scheduleTtlBasedCleanup();
+        this.scheduleEvictionBasedCleanup();
     }
 
-    private void scheduleCleanUp() {
-        this.executor.scheduleAtFixedRate(
+    private void scheduleTtlBasedCleanup() {
+        this.ttlBasedCleanupExecutor.scheduleAtFixedRate(
             this::removeExpiredItems,
-            this.cleanupFrequency,
-            this.cleanupFrequency,
-            this.cleanupFrequencyTimeUnit
+            this.ttlBasedCleanupFrequency,
+            this.ttlBasedCleanupFrequency,
+            this.ttlBasedCleanupFrequencyTimeUnit
         );
+        this.addShutdownHookFor(this.ttlBasedCleanupExecutor, "TTLBased");
     }
 
-    private final Object putLock = new Object();
+    private void scheduleEvictionBasedCleanup() {
+        this.evictionBasedCleanupExecutor.scheduleWithFixedDelay(
+            this::removeExceededItems,
+            this.evictionBasedCleanupFrequency,
+            this.evictionBasedCleanupFrequency,
+            this.evictionBasedCleanupFrequencyTimeUnit
+        );
+        this.addShutdownHookFor(this.evictionBasedCleanupExecutor, "EvictionBased");
+    }
+
+    private void addShutdownHookFor(ScheduledExecutorService executor, String scope) {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> this.shutdown(executor), scope+"AutocacheShutdownHook"));
+    }
+
     private final Integer ttl;
     private final TimeUnit ttlTimeUnit;
     private final Integer maxSize;
-    private final Integer cleanupFrequency;
-    private final TimeUnit cleanupFrequencyTimeUnit;
+    private final Integer ttlBasedCleanupFrequency;
+    private final TimeUnit ttlBasedCleanupFrequencyTimeUnit;
     private final AutocacheEvictionStrategy evictionStrategy;
-    private final ScheduledExecutorService executor;
+    private final ScheduledExecutorService ttlBasedCleanupExecutor;
+    private final Integer evictionBasedCleanupFrequency;
+    private final TimeUnit evictionBasedCleanupFrequencyTimeUnit;
+    private final ScheduledExecutorService evictionBasedCleanupExecutor;
     private final ConcurrentMap<String, AutocacheItem<V>> items = new ConcurrentHashMap<>();
+    private final Object removalLock = new Object();
 
     @Override
     public void put(String cacheKey, V cacheValue) {
-        synchronized (this.putLock){
-            if (this.items.containsKey(cacheKey))
-                return;
-            if (this.items.size() >= this.maxSize){
-                var keyToRemove = this.evictionStrategy.getKeyToEvict();
-                this.items.remove(keyToRemove);
-                this.evictionStrategy.forgetKey(keyToRemove);
-            }
-            this.items.put(cacheKey, AutocacheItem.of(cacheValue, this.ttl, this.ttlTimeUnit));
-        }
+        this.items.putIfAbsent(cacheKey, AutocacheItem.of(cacheValue, this.ttl, this.ttlTimeUnit));
     }
 
     @Override
@@ -72,13 +87,44 @@ public abstract class AbstractAutocache<V> implements Cache<V>{
         return value;
     }
 
-    private void removeExpiredItems() {
+    protected void removeExpiredItems() {
         this.items.forEach((key, value) -> {
             if (value.isExpired()){
-                this.items.remove(key);
-                this.evictionStrategy.forgetKey(key);
+                synchronized (this.removalLock){
+                    this.items.remove(key);
+                    this.evictionStrategy.forgetKey(key);
+                }
             }
         });
     }
+
+    protected void removeExceededItems() {
+        while (this.items.size() > this.maxSize){
+            var nextKeyToRemove = this.evictionStrategy.getKeyToEvict();
+            var item = this.items.get(nextKeyToRemove);
+            synchronized (this.removalLock){
+                if (item != null && this.items.remove(nextKeyToRemove, item)) {
+                    this.evictionStrategy.forgetKey(nextKeyToRemove);
+                }
+            }
+        }
+    }
+
+    public void shutdown(){
+        this.shutdown(this.ttlBasedCleanupExecutor);
+        this.shutdown(this.evictionBasedCleanupExecutor);
+    }
+
+    private void shutdown(ScheduledExecutorService executor) {
+        executor.shutdown();
+        try{
+            if (!executor.awaitTermination(3, TimeUnit.SECONDS))
+                executor.shutdownNow();
+        } catch (InterruptedException interruptedException){
+            executor.shutdownNow();
+            Thread.currentThread().interrupt();
+        }
+    }
+
 
 }
