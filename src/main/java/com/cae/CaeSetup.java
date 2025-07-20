@@ -10,7 +10,10 @@ import com.cae.autofeatures.autometrics.AutometricsSubscriber;
 import com.cae.autofeatures.autonotify.AutonotifyProvider;
 import com.cae.autofeatures.autonotify.AutonotifySubscriber;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
+import com.cae.properties.Properties;
+import com.cae.properties.Property;
 import com.cae.use_cases.contexts.SharedContextProvider;
+import lombok.RequiredArgsConstructor;
 
 /**
  * Centralized entry point for configuring the CAE framework.
@@ -81,6 +84,10 @@ public class CaeSetup {
         return new SharedContextSetup();
     }
 
+    public PropertiesSetup properties(){
+        return new PropertiesSetup();
+    }
+
     /**
      * Resets all configuration and stateful providers to their initial state.
      * <p>
@@ -91,6 +98,7 @@ public class CaeSetup {
         AutometricsProvider.SINGLETON.reset();
         AutonotifyProvider.SINGLETON.reset();
         RoleRetrieverRegistry.SINGLETON.reset();
+        Properties.SINGLETON.reset();
     }
 
     /**
@@ -342,7 +350,7 @@ public class CaeSetup {
         /**
          * Overrides the default retriever for a specific Use Case ID.
          */
-        public AutoauthSetup setRetrieverByUseCaseId(RoleRetriever roleRetriever, String useCaseId){
+        public AutoauthSetup setRoleRetrieverByUseCaseId(RoleRetriever roleRetriever, String useCaseId){
             RoleRetrieverRegistry.SINGLETON.putRetrieverByUseCaseId(roleRetriever, useCaseId);
             return this;
         }
@@ -380,6 +388,47 @@ public class CaeSetup {
         public CaeSetup done(){
             SharedContextProvider.SINGLETON.lock();
             return CaeSetup.SINGLETON;
+        }
+
+    }
+
+    public static class PropertiesSetup {
+
+        public PropertyBuilder add(String name){
+            return new PropertyBuilder(this, Property.of(name));
+        }
+
+        public PropertiesSetup add(String name, String singleValueProperty){
+            Properties.SINGLETON.setProperty(Property.ofSingleValue(name, singleValueProperty));
+            return this;
+        }
+
+        public PropertiesSetup add (Property property){
+            Properties.SINGLETON.setProperty(property);
+            return this;
+        }
+
+        public CaeSetup done(String activeProfile){
+            Properties.SINGLETON.setActiveProfile(activeProfile);
+            return CaeSetup.SINGLETON;
+        }
+
+        @RequiredArgsConstructor
+        public static class PropertyBuilder{
+
+            private final PropertiesSetup previousStep;
+            private final Property property;
+
+            public PropertyBuilder put(String profile, String value){
+                this.property.setPair(profile, value);
+                return this;
+            }
+
+            public PropertiesSetup wrapProperty(){
+                Properties.SINGLETON.setProperty(this.property);
+                return this.previousStep;
+            }
+
         }
 
     }

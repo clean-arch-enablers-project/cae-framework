@@ -26,4 +26,10 @@ public interface Logger {
      */
     void logDebug(String info);
 
+    /**
+     * Method for logging warning info
+     * @param warning the text to log
+     */
+    void logWarning(String warning);
+
 }

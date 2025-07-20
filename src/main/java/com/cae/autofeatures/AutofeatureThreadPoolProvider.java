@@ -78,12 +78,12 @@ public abstract class AutofeatureThreadPoolProvider {
         );
     }
 
-    protected static class AutofeatureThreadFactory implements ThreadFactory {
+    public static class AutofeatureThreadFactory implements ThreadFactory {
 
         private final String namePrefix;
         private final AtomicInteger threadNumber = new AtomicInteger(1);
 
-        protected AutofeatureThreadFactory(String namePrefix) {
+        public AutofeatureThreadFactory(String namePrefix) {
             this.namePrefix = namePrefix;
         }
 

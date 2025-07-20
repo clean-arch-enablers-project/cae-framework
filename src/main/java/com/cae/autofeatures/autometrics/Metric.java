@@ -24,6 +24,8 @@ public class Metric {
             executionContext.wasSuccessful(),
             executionContext.getException(),
             true,
+            null,
+            null,
             null
         );
         newMetrics.add(mainMetric);
@@ -38,7 +40,9 @@ public class Metric {
                     step.wasSuccessful(),
                     step.getException(),
                     false,
-                    executionContext.getSubject()
+                    executionContext.getSubject(),
+                    executionContext.getStartTime(),
+                    executionContext.getEndTime()
                 ))
                 .forEach(newMetrics::add);
         return newMetrics;
@@ -53,4 +57,6 @@ public class Metric {
     private final Exception exception;
     private final Boolean inbound;
     private final String parentName;
+    private final Instant parentStartingTime;
+    private final Instant parentEndingTime;
 }
