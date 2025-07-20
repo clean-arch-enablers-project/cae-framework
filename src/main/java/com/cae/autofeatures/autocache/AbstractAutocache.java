@@ -1,6 +1,8 @@
 package com.cae.autofeatures.autocache;
 
+import com.cae.autofeatures.PostExecutionAutofeaturesRunner;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
+import com.cae.use_cases.contexts.ExecutionContext;
 
 import java.util.Optional;
 import java.util.concurrent.*;
@@ -10,6 +12,7 @@ import static com.cae.autofeatures.AutofeatureThreadPoolProvider.AutofeatureThre
 public abstract class AbstractAutocache<V> implements Cache<V>{
 
     protected AbstractAutocache(
+            String name,
             Integer ttl,
             TimeUnit ttlTimeUnit,
             Integer ttlBasedCleanupFrequency,
@@ -23,13 +26,14 @@ public abstract class AbstractAutocache<V> implements Cache<V>{
                 "Couldn't instantiate cache",
                 "Max size was lesser than 2"
             );
+        this.name = name;
         this.ttl = ttl;
         this.ttlTimeUnit = ttlTimeUnit;
         this.ttlBasedCleanupFrequency = ttlBasedCleanupFrequency;
         this.ttlBasedCleanupFrequencyTimeUnit = ttlBasedCleanupFrequencyTimeUnit;
         this.ttlBasedCleanupExecutor = Executors.newSingleThreadScheduledExecutor(new AutofeatureThreadFactory("AutocacheTTLCleanUpThreadPool"));
         this.maxSize = maxSize;
-        this.evictionStrategy = AutocacheEvictionStrategyFactory.createNewFor(evictionType);
+        this.evictionStrategy = AutocacheEvictionStrategyFactory.createNewFor(evictionType, maxSize);
         this.evictionBasedCleanupFrequency = evictionBasedCleanupFrequency;
         this.evictionBasedCleanupFrequencyTimeUnit = evictionBasedCleanupFrequencyTimeUnit;
         this.evictionBasedCleanupExecutor = Executors.newSingleThreadScheduledExecutor(new AutofeatureThreadFactory("AutocacheEvictionCleanUpThreadPool"));
@@ -58,9 +62,13 @@ public abstract class AbstractAutocache<V> implements Cache<V>{
     }
 
     private void addShutdownHookFor(ScheduledExecutorService executor, String scope) {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> this.shutdown(executor), scope+"AutocacheShutdownHook"));
+        Runtime.getRuntime().addShutdownHook(
+                new Thread(() -> this.shutdown(executor),
+                this.name + scope + "AutocacheShutdownHook")
+        );
     }
 
+    private final String name;
     private final Integer ttl;
     private final TimeUnit ttlTimeUnit;
     private final Integer maxSize;
@@ -88,26 +96,67 @@ public abstract class AbstractAutocache<V> implements Cache<V>{
     }
 
     protected void removeExpiredItems() {
+        var execContext = ExecutionContext.ofNew();
+        execContext.setSubjectAndStartTracking(this.name + "::autocacheTTLBasedCleanup");
         this.items.forEach((key, value) -> {
             if (value.isExpired()){
                 synchronized (this.removalLock){
-                    this.items.remove(key);
-                    this.evictionStrategy.forgetKey(key);
+                    this.removeItemBasedOnTTL(key, execContext);
+                    this.forgetKeyAtTheEvictionStrategyLevel(key, execContext);
                 }
             }
         });
+        execContext.complete();
+        PostExecutionAutofeaturesRunner.runOn(execContext);
+    }
+
+    private void removeItemBasedOnTTL(String key, ExecutionContext execContext) {
+        var removalStep = execContext.addStepInsightsOf("TTLBasedCacheKeyRemoval");
+        removalStep.setInput(key);
+        var removed = this.items.remove(key);
+        removalStep.setOutput(removed);
+        removalStep.complete();
     }
 
     protected void removeExceededItems() {
+        var execContext = ExecutionContext.ofNew();
+        execContext.setSubjectAndStartTracking(this.name + "::autocacheEvictionBasedCleanup");
         while (this.items.size() > this.maxSize){
-            var nextKeyToRemove = this.evictionStrategy.getKeyToEvict();
-            var item = this.items.get(nextKeyToRemove);
+            var nextKeyToRemove = this.findNextKeyToRemoveBasedOnEviction(execContext);
             synchronized (this.removalLock){
-                if (item != null && this.items.remove(nextKeyToRemove, item)) {
-                    this.evictionStrategy.forgetKey(nextKeyToRemove);
+                var item = this.items.get(nextKeyToRemove);
+                var removed = this.removeItemBasedOnEviction(nextKeyToRemove, item, execContext);
+                if (item != null && removed) {
+                    this.forgetKeyAtTheEvictionStrategyLevel(nextKeyToRemove, execContext);
                 }
             }
         }
+        execContext.complete();
+        PostExecutionAutofeaturesRunner.runOn(execContext);
+    }
+
+    private String findNextKeyToRemoveBasedOnEviction(ExecutionContext execContext) {
+        var findingKeyToEvictStep = execContext.addStepInsightsOf("EvictionBasedCacheKeyToRemoveRetrieval");
+        var nextKeyToRemove = this.evictionStrategy.getKeyToEvict();
+        findingKeyToEvictStep.setOutput(nextKeyToRemove);
+        findingKeyToEvictStep.complete();
+        return nextKeyToRemove;
+    }
+
+    private boolean removeItemBasedOnEviction(String nextKeyToRemove, AutocacheItem<V> item, ExecutionContext execContext) {
+        var keyRemoval = execContext.addStepInsightsOf("EvictionBasedCacheKeyRemoval");
+        keyRemoval.setInput(nextKeyToRemove);
+        var removed = this.items.remove(nextKeyToRemove, item);
+        keyRemoval.setOutput(removed);
+        keyRemoval.complete();
+        return removed;
+    }
+
+    private void forgetKeyAtTheEvictionStrategyLevel(String key, ExecutionContext execContext) {
+        var keyForgivenessStep = execContext.addStepInsightsOf("CacheKeyForgiveness");
+        keyForgivenessStep.setInput(key);
+        this.evictionStrategy.forgetKey(key);
+        keyForgivenessStep.complete();
     }
 
     public void shutdown(){

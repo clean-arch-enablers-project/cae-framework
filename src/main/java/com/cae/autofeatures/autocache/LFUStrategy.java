@@ -10,8 +10,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@RequiredArgsConstructor
 public class LFUStrategy implements AutocacheEvictionStrategy {
 
+    @Getter
+    private final Integer maxSize;
     private final ConcurrentMap<String, Item> registry = new ConcurrentHashMap<>();
 
     @Override
