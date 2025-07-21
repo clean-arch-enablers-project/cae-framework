@@ -15,6 +15,8 @@ import java.util.stream.Stream;
 public class AutocacheKeyExtractor {
 
     public static String runOn(Object object){
+        if (object instanceof String)
+            return (String) object;
         var objectClass = object.getClass();
         return getAnnotatedFieldOutta(objectClass)
                 .map(field -> getValueOuttaField(field, object))
