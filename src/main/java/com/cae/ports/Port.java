@@ -1,5 +1,9 @@
 package com.cae.ports;
 
+import com.cae.autofeatures.autocache.Cacheable;
+import com.cae.autofeatures.autocache.annotations.Autocache;
+import com.cae.autofeatures.autocache.metadata.AutocacheMetadata;
+import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import lombok.Getter;
 
 /**
@@ -20,10 +24,26 @@ public abstract class Port {
      * itself.
      */
     protected final String name;
+    protected final AutocacheMetadata autocacheMetadata;
 
     protected Port() {
-        this.name = this.getClass().getSimpleName();
+        var clazz = this.getClass();
+        this.name = clazz.getSimpleName();
+        this.autocacheMetadata = isAutocacheAnnotated(clazz)? AutocacheMetadata.of(clazz.getAnnotation(Autocache.class)) : null;
     }
 
+    private static boolean isAutocacheAnnotated(Class<?> portType) {
+        var isAnnotated = portType.isAnnotationPresent(Autocache.class);
+        if (isAnnotated && Cacheable.class.isAssignableFrom(portType))
+            return true;
+        else if (isAnnotated && !(Cacheable.class.isAssignableFrom(portType)))
+            throw new InternalMappedException(
+                    "Autocache annotation used on wrong type of Port",
+                    "Autocache is only allowed on port instances that extend the Cacheable interface"
+            );
+        if (portType == Port.class)
+            return false;
+        return Port.isAutocacheAnnotated(portType.getSuperclass());
+    }
 
 }

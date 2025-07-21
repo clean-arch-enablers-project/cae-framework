@@ -3,10 +3,11 @@ package com.cae.use_cases.metadata;
 import com.cae.autofeatures.autoauth.annotations.RoleBasedProtection;
 import com.cae.autofeatures.autoauth.annotations.ScopeBasedProtection;
 import com.cae.autofeatures.autocache.annotations.Autocache;
+import com.cae.autofeatures.autocache.metadata.AutocacheMetadata;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
+import com.cae.autofeatures.autocache.Cacheable;
 import com.cae.use_cases.UseCase;
 import com.cae.use_cases.UseCaseAsAction;
-import com.cae.use_cases.UseCaseWithInput;
 import lombok.Getter;
 
 @Getter
@@ -16,8 +17,8 @@ public class UseCaseMetadata {
     private final String name;
     private final boolean isProtected;
     private final String[] scope;
-    private final boolean roleProtectionEnabled;
-    private final boolean isCached;
+    private final boolean isRoleProtectionEnabled;
+    private final AutocacheMetadata autocacheMetadata;
 
     public static <U extends UseCase> UseCaseMetadata of(U useCase) {
         var type = useCase.getClass();
@@ -52,12 +53,12 @@ public class UseCaseMetadata {
 
     private static boolean findOutWhetherOrNotCached(Class<?> useCaseType) {
         var isAnnotated = useCaseType.isAnnotationPresent(Autocache.class);
-        if (isAnnotated && UseCaseWithInput.class.isAssignableFrom(useCaseType))
+        if (isAnnotated && Cacheable.class.isAssignableFrom(useCaseType))
             return true;
-        else if (isAnnotated && !(UseCaseWithInput.class.isAssignableFrom(useCaseType)))
+        else if (isAnnotated && !(Cacheable.class.isAssignableFrom(useCaseType)))
             throw new InternalMappedException(
                 "Autocache annotation used on wrong type of UseCase",
-                "Autocache is only allowed on FunctionUseCase and ConsumerUseCase instances (types with input)"
+                "Autocache is only allowed on use case instances that extend the Cacheable interface"
             );
         if (useCaseType == UseCase.class)
             return false;
@@ -68,14 +69,14 @@ public class UseCaseMetadata {
             Class<U> useCaseType,
             boolean isProtected,
             String[] scope,
-            boolean roleProtectionEnabled,
+            boolean isRoleProtectionEnabled,
             boolean isCached) {
-        this.id = UseCaseMetadata.getIdOutta(useCaseType, roleProtectionEnabled);
+        this.id = UseCaseMetadata.getIdOutta(useCaseType, isRoleProtectionEnabled);
         this.name = useCaseType.getSimpleName();
         this.isProtected = isProtected;
         this.scope = scope;
-        this.roleProtectionEnabled = roleProtectionEnabled;
-        this.isCached = isCached;
+        this.isRoleProtectionEnabled = isRoleProtectionEnabled;
+        this.autocacheMetadata = isCached? AutocacheMetadata.of(useCaseType.getAnnotation(Autocache.class)) : null;
     }
 
     protected static <U extends UseCase> String getIdOutta(
@@ -127,6 +128,10 @@ public class UseCaseMetadata {
 
     public Boolean isProtected() {
         return isProtected;
+    }
+
+    public boolean usesAutocache(){
+        return this.autocacheMetadata != null;
     }
 
 }

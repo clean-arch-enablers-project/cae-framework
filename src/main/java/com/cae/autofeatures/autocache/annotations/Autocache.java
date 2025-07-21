@@ -1,6 +1,6 @@
 package com.cae.autofeatures.autocache.annotations;
 
-import com.cae.autofeatures.autocache.AutocacheEvictionTypes;
+import com.cae.autofeatures.autocache.eviction.AutocacheEvictionTypes;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -15,9 +15,9 @@ public @interface Autocache {
     int ttl();
     TimeUnit ttlTimeUnit();
     int ttlBasedCleanupFrequency() default 5;
-    TimeUnit ttlBasedCleanupFrequencyTimeout() default TimeUnit.MINUTES;
+    TimeUnit ttlBasedCleanupFrequencyTimeUnit() default TimeUnit.MINUTES;
     int size() default 50;
     AutocacheEvictionTypes evictionType();
     int evictionBasedCleanupFrequency() default 250;
-    TimeUnit evictionBasedCleanupFrequencyTimeout() default TimeUnit.MILLISECONDS;
+    TimeUnit evictionBasedCleanupFrequencyTimeUnit() default TimeUnit.MILLISECONDS;
 }

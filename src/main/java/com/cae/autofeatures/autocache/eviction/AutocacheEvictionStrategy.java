@@ -1,4 +1,4 @@
-package com.cae.autofeatures.autocache;
+package com.cae.autofeatures.autocache.eviction;
 
 public interface AutocacheEvictionStrategy {
 

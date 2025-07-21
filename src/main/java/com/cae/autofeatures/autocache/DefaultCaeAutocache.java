@@ -1,30 +1,20 @@
 package com.cae.autofeatures.autocache;
 
-import java.util.concurrent.TimeUnit;
+import com.cae.autofeatures.autocache.metadata.AutocacheMetadata;
 
 public class DefaultCaeAutocache<V> extends AbstractAutocache<V> {
 
-    public DefaultCaeAutocache(
-            String name,
-            Integer ttl,
-            TimeUnit ttlTimeUnit,
-            Integer ttlBasedCleanupFrequency,
-            TimeUnit ttlBasedCleanupFrequencyTimeUnit,
-            Integer maxSize,
-            AutocacheEvictionTypes evictionType,
-            Integer evictionBasedCleanupFrequency,
-            TimeUnit evictionBasedCleanupFrequencyTimeUnit
-            ) {
+    public DefaultCaeAutocache(String name, AutocacheMetadata autocacheMetadata) {
         super(
-                name,
-                ttl,
-                ttlTimeUnit,
-                ttlBasedCleanupFrequency,
-                ttlBasedCleanupFrequencyTimeUnit,
-                maxSize,
-                evictionType,
-                evictionBasedCleanupFrequency,
-                evictionBasedCleanupFrequencyTimeUnit
+            name,
+            autocacheMetadata.getTtl(),
+            autocacheMetadata.getTtlTimeUnit(),
+            autocacheMetadata.getTtlBasedCleanupFrequency(),
+            autocacheMetadata.getTtlBasedCleanupFrequencyTimeUnit(),
+            autocacheMetadata.getSize(),
+            autocacheMetadata.getEvictionType(),
+            autocacheMetadata.getEvictionBasedCleanupFrequency(),
+            autocacheMetadata.getEvictionBasedCleanupFrequencyTimeUnit()
         );
     }
 

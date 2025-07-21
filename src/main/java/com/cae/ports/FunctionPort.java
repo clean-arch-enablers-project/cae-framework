@@ -1,5 +1,8 @@
 package com.cae.ports;
 
+import com.cae.autofeatures.autocache.Cache;
+import com.cae.autofeatures.autocache.Cacheable;
+import com.cae.autofeatures.autocache.DefaultCaeAutocache;
 import com.cae.ports.exceptions.PortExecutionException;
 import com.cae.trier.Trier;
 import com.cae.use_cases.contexts.ExecutionContext;
@@ -10,7 +13,14 @@ import com.cae.use_cases.contexts.ExecutionContext;
  * @param <I> the input type
  * @param <O> the output type
  */
-public abstract class FunctionPort <I, O> extends Port {
+public abstract class FunctionPort <I, O> extends Port implements Cacheable {
+
+    protected FunctionPort(){
+        super();
+        this.cache = this.isCached()? new DefaultCaeAutocache<>(this.name, this.getAutocacheMetadata()) : null;
+    }
+
+    private final Cache<O> cache;
 
     public O executePortOn(I input, ExecutionContext context){
         return Trier.of(() -> {
@@ -31,5 +41,9 @@ public abstract class FunctionPort <I, O> extends Port {
     }
 
     protected abstract O executeLogic(I input, ExecutionContext correlation);
+
+    protected boolean isCached(){
+        return this.autocacheMetadata != null;
+    }
 
 }

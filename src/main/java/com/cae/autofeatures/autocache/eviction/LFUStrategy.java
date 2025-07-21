@@ -1,4 +1,4 @@
-package com.cae.autofeatures.autocache;
+package com.cae.autofeatures.autocache.eviction;
 
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import lombok.AccessLevel;

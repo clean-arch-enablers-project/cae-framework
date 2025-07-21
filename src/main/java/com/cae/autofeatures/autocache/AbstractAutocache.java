@@ -1,5 +1,8 @@
 package com.cae.autofeatures.autocache;
 
+import com.cae.autofeatures.autocache.eviction.AutocacheEvictionStrategy;
+import com.cae.autofeatures.autocache.eviction.AutocacheEvictionStrategyFactory;
+import com.cae.autofeatures.autocache.eviction.AutocacheEvictionTypes;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import com.cae.use_cases.contexts.ExecutionContext;
 import com.cae.workflows.Workflows;

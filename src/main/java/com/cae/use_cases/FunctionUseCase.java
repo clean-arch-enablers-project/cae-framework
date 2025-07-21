@@ -3,6 +3,10 @@ package com.cae.use_cases;
 import com.cae.autofeatures.PostExecutionAutofeaturesRunner;
 import com.cae.autofeatures.PreExecutionAutofeaturesRunner;
 import com.cae.autofeatures.autoauth.ResourceOwnershipRetriever;
+import com.cae.autofeatures.autocache.AutocacheKeyExtractor;
+import com.cae.autofeatures.autocache.Cache;
+import com.cae.autofeatures.autocache.Cacheable;
+import com.cae.autofeatures.autocache.DefaultCaeAutocache;
 import com.cae.trier.Trier;
 import com.cae.use_cases.contexts.ExecutionContext;
 import com.cae.use_cases.io.UseCaseInput;
@@ -20,7 +24,7 @@ import java.util.Optional;
  * @param <I> the input type, which must implement {@link UseCaseInput}
  * @param <O> the output type returned by the use case
  */
-public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCase implements UseCaseWithInput {
+public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCase implements UseCaseWithInput, Cacheable {
 
     /**
      * Creates a {@code FunctionUseCase} without an associated {@link ResourceOwnershipRetriever}.
@@ -31,6 +35,10 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
     protected FunctionUseCase() {
         super();
         this.resourceOwnershipRetriever = null;
+        this.cache = this.useCaseMetadata.usesAutocache()?
+                new DefaultCaeAutocache<>(this.getUseCaseMetadata().getName(), this.getUseCaseMetadata().getAutocacheMetadata())
+                :
+                null;
     }
 
     /**
@@ -43,9 +51,14 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
     protected FunctionUseCase(ResourceOwnershipRetriever resourceOwnershipRetriever){
         super();
         this.resourceOwnershipRetriever = resourceOwnershipRetriever;
+        this.cache = this.useCaseMetadata.usesAutocache()?
+                new DefaultCaeAutocache<>(this.getUseCaseMetadata().getName(), this.getUseCaseMetadata().getAutocacheMetadata())
+                :
+                null;
     }
 
     protected final ResourceOwnershipRetriever resourceOwnershipRetriever;
+    protected final Cache<O> cache;
 
     /**
      * Retrieves the optional {@link ResourceOwnershipRetriever} associated with this use case.
@@ -77,6 +90,14 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
     public O execute(I input, ExecutionContext context){
         return Trier.of(() -> {
             context.setSubjectAndStartTracking(this.getUseCaseMetadata().getName(), true);
+            if (this.getUseCaseMetadata().usesAutocache()){
+                var cacheKey = AutocacheKeyExtractor.runOn(input);
+                return this.cache.get(cacheKey, context).orElseGet(() -> {
+                    var output = this.run(input, context);
+                    this.cache.put(cacheKey, output, context);
+                    return output;
+                });
+            }
             return this.run(input, context);
         })
         .onUnexpectedExceptions(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
