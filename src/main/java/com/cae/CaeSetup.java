@@ -9,6 +9,7 @@ import com.cae.autofeatures.autometrics.AutometricsProvider;
 import com.cae.autofeatures.autometrics.AutometricsSubscriber;
 import com.cae.autofeatures.autonotify.AutonotifyProvider;
 import com.cae.autofeatures.autonotify.AutonotifySubscriber;
+import com.cae.initializers.Lazy;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import com.cae.properties.Properties;
 import com.cae.properties.Property;
@@ -212,6 +213,14 @@ public class CaeSetup {
         }
 
         /**
+         * Registers a lazy-initialized subscriber to receive emitted metrics.
+         */
+        public AutometricsSetup subscribe(Lazy<AutometricsSubscriber> subscriber){
+            AutometricsProvider.SINGLETON.subscribe(subscriber);
+            return this;
+        }
+
+        /**
          * Completes the autometrics setup and returns to the main CAE setup chain.
          */
         public CaeSetup done(){
@@ -239,6 +248,14 @@ public class CaeSetup {
          * Registers a subscriber to receive notifications.
          */
         public AutonotifySetup subscribe(AutonotifySubscriber subscriber){
+            AutonotifyProvider.SINGLETON.subscribe(subscriber);
+            return this;
+        }
+
+        /**
+         * Registers a lazy-initialized subscriber to receive notifications.
+         */
+        public AutonotifySetup subscribe(Lazy<AutonotifySubscriber> subscriber){
             AutonotifyProvider.SINGLETON.subscribe(subscriber);
             return this;
         }

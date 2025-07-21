@@ -1,5 +1,6 @@
 package com.cae.autofeatures.autometrics;
 
+import com.cae.initializers.Lazy;
 import com.cae.use_cases.contexts.ExecutionContext;
 
 public class Autometrics {
@@ -16,6 +17,10 @@ public class Autometrics {
     public static void send(Metric metric){
         AutometricsProvider.SINGLETON.getSubscribers()
                 .forEach(subscriber -> subscriber.receiveMetric(metric));
+        AutometricsProvider.SINGLETON.getLazySubscribers()
+                .stream()
+                .map(Lazy::get)
+                .forEach(lazySubscriber -> lazySubscriber.receiveMetric(metric));
     }
 
 }

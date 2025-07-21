@@ -1,6 +1,7 @@
 package com.cae.autofeatures.autonotify;
 
 import com.cae.env_vars.exceptions.MissingEnvVarException;
+import com.cae.initializers.Lazy;
 import com.cae.mapped_exceptions.specifics.*;
 import com.cae.trier.retry.NoRetriesLeftException;
 import lombok.AccessLevel;
@@ -19,6 +20,7 @@ public class AutonotifyProvider {
     public static final AutonotifyProvider SINGLETON = new AutonotifyProvider();
 
     protected List<AutonotifySubscriber> subscribers = new ArrayList<>();
+    protected List<Lazy<AutonotifySubscriber>> lazySubscribers = new ArrayList<>();
     protected Boolean considerUnexpectedExceptions = false;
     protected Set<Class<? extends Exception>> exceptionsToConsider = ConcurrentHashMap.newKeySet();
     protected Boolean considerLatency = false;
@@ -37,6 +39,16 @@ public class AutonotifyProvider {
 
     public AutonotifyProvider subscribe(AutonotifySubscriber autonotifySubscriber){
         this.subscribers.add(autonotifySubscriber);
+        return this;
+    }
+
+    public AutonotifyProvider setAllLazySubscribers(List<Lazy<AutonotifySubscriber>> autonotifySubscribers){
+        this.lazySubscribers.addAll(autonotifySubscribers);
+        return this;
+    }
+
+    public AutonotifyProvider subscribe(Lazy<AutonotifySubscriber> autonotifySubscriber){
+        this.lazySubscribers.add(autonotifySubscriber);
         return this;
     }
 
@@ -93,6 +105,7 @@ public class AutonotifyProvider {
 
     public void flushSubscribers(){
         this.subscribers = new ArrayList<>();
+        this.lazySubscribers = new ArrayList<>();
     }
 
     public void flushSpecificExceptions(){

@@ -1,5 +1,6 @@
 package com.cae.initializers;
 
+import com.cae.initializers.exceptions.LazyInitializationMappedException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 
@@ -15,13 +16,18 @@ public class Lazy<T> {
     private final Supplier<T> lazySupplier;
     private volatile T instance;
 
+
     public T get(){
         T result = this.instance;
         if (result == null) {
             synchronized (this) {
                 result = this.instance;
                 if (result == null) {
-                    result = this.lazySupplier.get();
+                    try{
+                        result = this.lazySupplier.get();
+                    } catch (Exception exception){
+                        throw new LazyInitializationMappedException(exception);
+                    }
                     this.instance = result;
                 }
             }

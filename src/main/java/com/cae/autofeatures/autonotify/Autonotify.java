@@ -1,5 +1,6 @@
 package com.cae.autofeatures.autonotify;
 
+import com.cae.initializers.Lazy;
 import com.cae.use_cases.contexts.ExecutionContext;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -19,5 +20,9 @@ public class Autonotify {
     public static void send(Notification notification) {
         AutonotifyProvider.SINGLETON.getSubscribers()
                 .forEach(subscriber -> subscriber.receiveNotification(notification));
+        AutonotifyProvider.SINGLETON.getLazySubscribers()
+                .stream()
+                .map(Lazy::get)
+                .forEach(lazySubscriber -> lazySubscriber.receiveNotification(notification));
     }
 }
