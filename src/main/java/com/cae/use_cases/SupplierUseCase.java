@@ -2,6 +2,9 @@ package com.cae.use_cases;
 
 import com.cae.autofeatures.PostExecutionAutofeaturesRunner;
 import com.cae.autofeatures.PreExecutionAutofeaturesRunner;
+import com.cae.autofeatures.autocache.Cache;
+import com.cae.autofeatures.autocache.Cacheable;
+import com.cae.autofeatures.autocache.DefaultCaeAutocache;
 import com.cae.trier.Trier;
 import com.cae.use_cases.contexts.ExecutionContext;
 
@@ -14,14 +17,20 @@ import com.cae.use_cases.contexts.ExecutionContext;
  *
  * @param <O> the type of output produced by the use case
  */
-public abstract class SupplierUseCase <O> extends UseCase {
+public abstract class SupplierUseCase <O> extends UseCase implements Cacheable {
 
     /**
      * Creates a new {@code SupplierUseCase} instance.
      */
     protected SupplierUseCase() {
         super();
+        this.cache = this.useCaseMetadata.usesAutocache()?
+                new DefaultCaeAutocache<>(this.getUseCaseMetadata().getName(), this.getUseCaseMetadata().getAutocacheMetadata())
+                :
+                null;
     }
+
+    protected final Cache<O> cache;
 
     /**
      * Executes the use case using the given {@link ExecutionContext} and returns its output.
@@ -65,7 +74,7 @@ public abstract class SupplierUseCase <O> extends UseCase {
     private O run(ExecutionContext context) {
         try {
             PreExecutionAutofeaturesRunner.run(context, this);
-            var output = this.applyInternalLogic(context);
+            var output = this.getOutputFor(context);
             context.complete();
             context.setOutput(output);
             PostExecutionAutofeaturesRunner.runOn(context);
@@ -75,6 +84,18 @@ public abstract class SupplierUseCase <O> extends UseCase {
             PostExecutionAutofeaturesRunner.runOn(context);
             throw anyException;
         }
+    }
+
+    private O getOutputFor(ExecutionContext context) {
+        if (this.getUseCaseMetadata().usesAutocache()){
+            var autocacheKey = this.getUseCaseMetadata().getName();
+            return this.cache.get(autocacheKey, context).orElseGet(() -> {
+                var output = this.applyInternalLogic(context);
+                this.cache.put(autocacheKey, output, context);
+                return output;
+            });
+        }
+        return this.applyInternalLogic(context);
     }
 
     /**

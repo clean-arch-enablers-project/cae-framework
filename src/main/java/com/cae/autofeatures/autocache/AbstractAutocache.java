@@ -90,19 +90,19 @@ public abstract class AbstractAutocache<V> implements Cache<V>{
     @Override
     public void put(String cacheKey, V cacheValue, ExecutionContext executionContext) {
         Runnable action = () -> this.items.putIfAbsent(cacheKey, AutocacheItem.of(cacheValue, this.ttl, this.ttlTimeUnit));
-        Workflows.of(executionContext).runStepOf(this.ownerName+"::autocachePut", action);
+        Workflows.of(executionContext).runStepOf("Autocache::put", action);
     }
 
     @Override
     public Optional<V> get(String cacheKey, ExecutionContext executionContext) {
         var workflow = Workflows.of(executionContext);
         var value = workflow.runStepOf(
-                this.ownerName+"::autocacheGet",
+                "Autocache::get",
                 () -> Optional.ofNullable(this.items.get(cacheKey)).map(AutocacheItem::getValue)
         );
-        workflow.runStepOf(
-                this.ownerName+"::autocacheKeyUsageRegistry",
-                () -> value.ifPresent(actualItem -> this.evictionStrategy.registerKeyUsage(cacheKey))
+        value.ifPresent(actualItem -> workflow.runStepOf(
+                "Autocache::keyUsageUpdate",
+                () -> this.evictionStrategy.registerKeyUsage(cacheKey))
         );
         return value;
     }
@@ -114,7 +114,7 @@ public abstract class AbstractAutocache<V> implements Cache<V>{
                 if (value.isExpired()){
                     synchronized (this.removalLock){
                         workflow.runStepOf("TTLBasedItemRemoval", () -> this.items.remove(key));
-                        workflow.runStepOf("ItemKeyPurge", () -> this.evictionStrategy.forgetKey(key));
+                        workflow.runStepOf("TTLBasedKeyPurge", () -> this.evictionStrategy.forgetKey(key));
                     }
                 }
             });
@@ -132,7 +132,7 @@ public abstract class AbstractAutocache<V> implements Cache<V>{
                     var item = workflow.runStepOf("ItemToEvictRetrieval", this.items::get, nextKeyToRemove);
                     var removed = workflow.runStepOf("EvictionBasedItemRemoval", () -> this.items.remove(nextKeyToRemove, item));
                     if (item != null && removed)
-                        workflow.runStepOf("ItemKeyPurge", () -> this.evictionStrategy.forgetKey(nextKeyToRemove));
+                        workflow.runStepOf("EvictionBasedKeyPurge", () -> this.evictionStrategy.forgetKey(nextKeyToRemove));
                 }
             }
         } finally {

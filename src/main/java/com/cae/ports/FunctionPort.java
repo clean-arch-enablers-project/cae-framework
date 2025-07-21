@@ -1,5 +1,6 @@
 package com.cae.ports;
 
+import com.cae.autofeatures.autocache.AutocacheKeyExtractor;
 import com.cae.autofeatures.autocache.Cache;
 import com.cae.autofeatures.autocache.Cacheable;
 import com.cae.autofeatures.autocache.DefaultCaeAutocache;
@@ -17,17 +18,17 @@ public abstract class FunctionPort <I, O> extends Port implements Cacheable {
 
     protected FunctionPort(){
         super();
-        this.cache = this.isCached()? new DefaultCaeAutocache<>(this.name, this.getAutocacheMetadata()) : null;
+        this.cache = this.usesAutocache()? new DefaultCaeAutocache<>(this.name, this.getAutocacheMetadata()) : null;
     }
 
-    private final Cache<O> cache;
+    protected final Cache<O> cache;
 
     public O executePortOn(I input, ExecutionContext context){
         return Trier.of(() -> {
             var stepInsights = context.addStepInsightsOf(this.getName());
             stepInsights.setInput(input);
             try {
-                var output = this.executeLogic(input, context);
+                var output = this.getOutputFor(input, context);
                 stepInsights.complete();
                 stepInsights.setOutput(output);
                 return output;
@@ -40,10 +41,18 @@ public abstract class FunctionPort <I, O> extends Port implements Cacheable {
         .execute();
     }
 
-    protected abstract O executeLogic(I input, ExecutionContext correlation);
-
-    protected boolean isCached(){
-        return this.autocacheMetadata != null;
+    private O getOutputFor(I input, ExecutionContext context) {
+        if (this.usesAutocache()){
+            var autocacheKey = AutocacheKeyExtractor.runOn(input);
+            return this.cache.get(autocacheKey, context).orElseGet(() -> {
+                var output = this.executeLogic(input, context);
+                this.cache.put(autocacheKey, output, context);
+                return output;
+            });
+        }
+        return this.executeLogic(input, context);
     }
+
+    protected abstract O executeLogic(I input, ExecutionContext correlation);
 
 }

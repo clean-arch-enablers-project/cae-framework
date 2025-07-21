@@ -46,4 +46,8 @@ public abstract class Port {
         return Port.isAutocacheAnnotated(portType.getSuperclass());
     }
 
+    protected boolean usesAutocache(){
+        return this.autocacheMetadata != null;
+    }
+
 }

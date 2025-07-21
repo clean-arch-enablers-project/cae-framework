@@ -90,14 +90,6 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
     public O execute(I input, ExecutionContext context){
         return Trier.of(() -> {
             context.setSubjectAndStartTracking(this.getUseCaseMetadata().getName(), true);
-            if (this.getUseCaseMetadata().usesAutocache()){
-                var cacheKey = AutocacheKeyExtractor.runOn(input);
-                return this.cache.get(cacheKey, context).orElseGet(() -> {
-                    var output = this.run(input, context);
-                    this.cache.put(cacheKey, output, context);
-                    return output;
-                });
-            }
             return this.run(input, context);
         })
         .onUnexpectedExceptions(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))
@@ -125,7 +117,7 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
         try {
             input.autoverify(context);
             PreExecutionAutofeaturesRunner.run(input, context, this);
-            var output = this.applyInternalLogic(input, context);
+            var output = this.getOutputFor(input, context);
             context.complete();
             context.setInput(input);
             context.setOutput(output);
@@ -137,6 +129,18 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
             PostExecutionAutofeaturesRunner.runOn(context);
             throw anyException;
         }
+    }
+
+    private O getOutputFor(I input, ExecutionContext context) {
+        if (this.getUseCaseMetadata().usesAutocache()){
+            var cacheKey = AutocacheKeyExtractor.runOn(input);
+            return this.cache.get(cacheKey, context).orElseGet(() -> {
+                var output = this.applyInternalLogic(input, context);
+                this.cache.put(cacheKey, output, context);
+                return output;
+            });
+        }
+        return this.applyInternalLogic(input, context);
     }
 
     /**

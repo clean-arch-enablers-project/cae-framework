@@ -69,8 +69,7 @@ public class Autolog {
         boolean loggingSubjectIO = provider.getSubjectsLoggingIO();
         return "Subject '"
                 + executionContext.getSubject()
-                + "' " + (executionContext.isInbound()? "inbound " : "outbound ")
-                + "execution with correlation ID of '"
+                + "' execution with correlation ID of '"
                 + executionContext + "' took about "
                 + executionContext.calculateLatency()
                 + "ms and "
