@@ -23,12 +23,12 @@ class UseCaseExecutionExceptionTest {
         var originalExceptionB = new IORuntimeException(new IOException("Some other problem"));
         var unitA = new UseCaseExecutionException(useCaseA, originalExceptionA);
         var unitB = new UseCaseExecutionException(useCaseB, originalExceptionB);
-        var expectedBriefPublicMessageA = "Something went unexpectedly wrong while executing use case of 'some_normal_runnable'";
+        var expectedBriefPublicMessageA = "Something went unexpectedly wrong while executing use case of 'SomeNormalRunnableUseCase'";
         var expectedDetailedMessageA = "More details on the unexpected problem: " + originalExceptionA;
         Assertions.assertEquals(expectedBriefPublicMessageA, unitA.getBriefPublicMessage());
         Assertions.assertTrue(unitA.getDetails().isPresent());
         Assertions.assertEquals(expectedDetailedMessageA, unitA.getDetails().get());
-        var expectedBriefPublicMessageB = "Something went unexpectedly wrong while executing use case of 'some_normal_consumer'";
+        var expectedBriefPublicMessageB = "Something went unexpectedly wrong while executing use case of 'SomeNormalConsumerUseCase'";
         var expectedDetailedMessageB = "More details on the unexpected problem: " + originalExceptionB;
         Assertions.assertEquals(expectedBriefPublicMessageB, unitB.getBriefPublicMessage());
         Assertions.assertTrue(unitB.getDetails().isPresent());

@@ -19,7 +19,7 @@ public class ConsumerPortTest {
     @BeforeEach
     void setup(){
         this.executionContext = ExecutionContext.ofNew();
-        this.executionContext.setSubjectAndStartTracking("SupplierPortTests");
+        this.executionContext.setSubjectAndStartTracking("SupplierPortTests", true);
     }
 
     @Test

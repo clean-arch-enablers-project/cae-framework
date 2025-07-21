@@ -76,7 +76,7 @@ public abstract class FunctionUseCase <I extends UseCaseInput, O> extends UseCas
      */
     public O execute(I input, ExecutionContext context){
         return Trier.of(() -> {
-            context.setSubjectAndStartTracking(this.getUseCaseMetadata().getName());
+            context.setSubjectAndStartTracking(this.getUseCaseMetadata().getName(), true);
             return this.run(input, context);
         })
         .onUnexpectedExceptions(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))

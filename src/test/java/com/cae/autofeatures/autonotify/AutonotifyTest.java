@@ -75,7 +75,7 @@ class AutonotifyTest {
 
     static ExecutionContext setupSuccessfulExecution() throws InterruptedException {
         var exec = ExecutionContext.ofNew();
-        exec.setSubjectAndStartTracking("AutologTesting");
+        exec.setSubjectAndStartTracking("AutologTesting", true);
         exec.setInput(new AutologTest.MainInput());
         Thread.sleep(250);
         var stepOne = exec.addStepInsightsOf("PortOne");

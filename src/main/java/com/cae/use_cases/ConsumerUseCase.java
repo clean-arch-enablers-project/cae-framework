@@ -73,7 +73,7 @@ public abstract class ConsumerUseCase <I extends UseCaseInput> extends UseCase i
      */
     public void execute(I input, ExecutionContext context){
         Trier.of(() -> {
-            context.setSubjectAndStartTracking(this.getUseCaseMetadata().getName());
+            context.setSubjectAndStartTracking(this.getUseCaseMetadata().getName(), true);
             this.run(input, context);
         })
         .onUnexpectedExceptions(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))

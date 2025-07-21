@@ -211,7 +211,7 @@ class NotificationTest {
     @DisplayName("Should create notifications as expected")
     void shouldCreateNotificationsAsExpected() throws InterruptedException {
         var execContext = ExecutionContext.ofNew();
-        execContext.setSubjectAndStartTracking("AutonotifyTests");
+        execContext.setSubjectAndStartTracking("AutonotifyTests", true);
         var stepOne = execContext.addStepInsightsOf("step1");
         Thread.sleep(50);
         stepOne.complete();
@@ -238,7 +238,7 @@ class NotificationTest {
     @DisplayName("Should preserve correlation ID")
     void shouldPreserveCorrelationId() throws InterruptedException {
         var execContext = ExecutionContext.ofNew();
-        execContext.setSubjectAndStartTracking("AutonotifyTests");
+        execContext.setSubjectAndStartTracking("AutonotifyTests", true);
         var stepOne = execContext.addStepInsightsOf("step1");
         Thread.sleep(1000);
         stepOne.complete();
@@ -254,7 +254,7 @@ class NotificationTest {
     @DisplayName("Should preserve exception")
     void shouldPreserveException() throws InterruptedException {
         var execContext = ExecutionContext.ofNew();
-        execContext.setSubjectAndStartTracking("Testing");
+        execContext.setSubjectAndStartTracking("Testing", true);
         Thread.sleep(10);
         execContext.complete(new MissingEnvVarException("ops!"));
         AutonotifyProvider.SINGLETON.considerMissingEnvVarExceptions();
@@ -266,7 +266,7 @@ class NotificationTest {
     @DisplayName("Notifications should have their reasons")
     void notificationsShouldHaveTheirReasons() throws InterruptedException {
         var execContext = ExecutionContext.ofNew();
-        execContext.setSubjectAndStartTracking("Testing");
+        execContext.setSubjectAndStartTracking("Testing", true);
         Thread.sleep(10);
         execContext.complete(new MissingEnvVarException("ops!"));
         AutonotifyProvider.SINGLETON.considerMissingEnvVarExceptions().considerLatency(5);
@@ -280,7 +280,7 @@ class NotificationTest {
     @DisplayName("toString should be as expected")
     void toStringShouldBeAsExpected() throws InterruptedException {
         var execContext = ExecutionContext.ofNew();
-        execContext.setSubjectAndStartTracking("Testing");
+        execContext.setSubjectAndStartTracking("Testing", true);
         Thread.sleep(10);
         execContext.complete(new MissingEnvVarException("ops!"));
         AutonotifyProvider.SINGLETON.considerMissingEnvVarExceptions();

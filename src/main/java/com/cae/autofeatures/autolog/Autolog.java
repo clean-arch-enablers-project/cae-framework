@@ -1,7 +1,7 @@
 package com.cae.autofeatures.autolog;
 
 import com.cae.autofeatures.autolog.formats.IO;
-import com.cae.autofeatures.autolog.formats.UseCaseLogStructuredFormat;
+import com.cae.autofeatures.autolog.formats.SubjectLogStructuredFormat;
 import com.cae.autofeatures.autolog.native_io_extraction_mode.NativeExtractionMode;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import com.cae.use_cases.contexts.ExecutionContext;
@@ -45,12 +45,12 @@ public class Autolog {
     }
 
     private static String generateStructuredFormat(ExecutionContext executionContext) {
-        var io = Boolean.FALSE.equals(AutologProvider.SINGLETON.getUseCasesLoggingIO())? null : IO.builder()
+        var io = Boolean.FALSE.equals(AutologProvider.SINGLETON.getSubjectsLoggingIO())? null : IO.builder()
                 .input(executionContext.getInput())
                 .output(executionContext.getOutput())
                 .build();
-        var executionData = UseCaseLogStructuredFormat.UseCaseExecutionLogFormat.builder()
-                .useCase(executionContext.getSubject())
+        var executionData = SubjectLogStructuredFormat.SubjectExecutionLogFormat.builder()
+                .subject(executionContext.getSubject())
                 .correlationId(executionContext.toString())
                 .latency(executionContext.calculateLatency())
                 .successful(executionContext.wasSuccessful())
@@ -58,30 +58,31 @@ public class Autolog {
                 .io(io)
                 .steps(executionContext.getStepInsights().stream().map(Autolog::createStepRepresentation).collect(Collectors.toList()))
                 .build();
-        var structuredFormat = UseCaseLogStructuredFormat.builder()
-                .useCaseExecution(executionData)
+        var structuredFormat = SubjectLogStructuredFormat.builder()
+                .execution(executionData)
                 .build();
         return NativeExtractionMode.executeOn(structuredFormat);
     }
 
     private static String generateSimpleTextFormat(ExecutionContext executionContext) {
         var provider = AutologProvider.SINGLETON;
-        boolean loggingUseCaseIO = provider.getUseCasesLoggingIO();
-        return "Use case '"
+        boolean loggingSubjectIO = provider.getSubjectsLoggingIO();
+        return "Subject '"
                 + executionContext.getSubject()
-                + "' execution with correlation ID of '"
+                + "' " + (executionContext.isInbound()? "inbound " : "outbound ")
+                + "execution with correlation ID of '"
                 + executionContext + "' took about "
                 + executionContext.calculateLatency()
                 + "ms and "
                 + (executionContext.wasSuccessful()? "finished successfully." : ("threw an exception: " + executionContext.getException()))
                 + " | Inner steps: "
                 + NativeExtractionMode.executeOn(executionContext.getStepInsights().stream().map(Autolog::createStepRepresentation).collect(Collectors.toList()))
-                + (loggingUseCaseIO? Autolog.generateIOLog(executionContext) : "");
+                + (loggingSubjectIO? Autolog.generateIOLog(executionContext) : "");
     }
 
     private static String createStepRepresentation(ExecutionContext.StepInsight step) {
         var toStringRepresentation = step.toString();
-        if (AutologProvider.SINGLETON.getPortsLoggingIO())
+        if (AutologProvider.SINGLETON.getInnerStepsLoggingIO())
             return toStringRepresentation
                     + Optional.ofNullable(step.getInput()).map(input -> " | Input: " + NativeExtractionMode.executeOn(input)).orElse("")
                     + Optional.ofNullable(step.getOutput()).map(output -> " | Output: " + NativeExtractionMode.executeOn(output)).orElse("");

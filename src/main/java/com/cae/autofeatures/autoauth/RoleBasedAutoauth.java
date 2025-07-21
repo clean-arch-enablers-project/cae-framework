@@ -21,7 +21,7 @@ public class RoleBasedAutoauth {
             UseCaseInput input,
             ExecutionContext context,
             UseCaseWithInput useCase){
-        if (Boolean.TRUE.equals(((UseCase) useCase).getUseCaseMetadata().getRoleProtectionEnabled())){
+        if (((UseCase) useCase).getUseCaseMetadata().isRoleProtectionEnabled()){
             var stepInsight = context.addStepInsightsOf("RoleBasedAutoauth");
             try{
                 var resourceOwnerId = input.getResourceOwnerIdentifier();

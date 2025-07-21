@@ -30,7 +30,7 @@ class UseCaseInputTest {
     @BeforeEach
     void setup(){
         this.context = ExecutionContext.ofNew();
-        this.context.setSubjectAndStartTracking("UseCaseInputTesting");
+        this.context.setSubjectAndStartTracking("UseCaseInputTesting", true);
         this.input = SomeUseCaseInput.builder()
             .someNotNullField("Abcd")
             .someNotBlankField("Efgh")

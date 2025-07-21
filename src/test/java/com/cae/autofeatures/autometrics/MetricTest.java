@@ -15,7 +15,7 @@ class MetricTest {
     @DisplayName("Should create metrics as expected")
     void shouldCreateMetricsAsExpected() throws InterruptedException {
         var execContext = ExecutionContext.ofNew();
-        execContext.setSubjectAndStartTracking("some-use-case");
+        execContext.setSubjectAndStartTracking("some-use-case", true);
         var stepOne = execContext.addStepInsightsOf("port-one");
         Thread.sleep(40);
         stepOne.complete();
@@ -72,7 +72,7 @@ class MetricTest {
     @DisplayName("When execution fails must include exception into the metric")
     void whenExecutionFailsMustIncludeExceptionIntoTheMetric() throws InterruptedException {
         var execContext = ExecutionContext.ofNew();
-        execContext.setSubjectAndStartTracking("some-other-use-case");
+        execContext.setSubjectAndStartTracking("some-other-use-case", true);
         Thread.sleep(30);
         execContext.complete(new NotFoundMappedException("ops!"));
         var metrics = Metric.createNewOnesBasedOn(execContext);

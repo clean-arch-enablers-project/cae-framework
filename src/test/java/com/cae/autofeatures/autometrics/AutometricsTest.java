@@ -75,7 +75,7 @@ class AutometricsTest {
 
     static ExecutionContext setupSuccessfulExecution() throws InterruptedException {
         var exec = ExecutionContext.ofNew();
-        exec.setSubjectAndStartTracking("AutologTesting");
+        exec.setSubjectAndStartTracking("AutologTesting", true);
         exec.setInput(new AutologTest.MainInput());
         Thread.sleep(50);
         var stepOne = exec.addStepInsightsOf("PortOne");
@@ -93,7 +93,7 @@ class AutometricsTest {
 
     static ExecutionContext setupUnsuccessfulExecution() throws InterruptedException {
         var exec = ExecutionContext.ofNew();
-        exec.setSubjectAndStartTracking("AutologTesting");
+        exec.setSubjectAndStartTracking("AutologTesting", true);
         Thread.sleep(50);
         var stepOne = exec.addStepInsightsOf("PortOne");
         Thread.sleep(50);

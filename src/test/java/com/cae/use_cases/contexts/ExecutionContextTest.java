@@ -82,7 +82,7 @@ class ExecutionContextTest {
     @DisplayName("Should be able to add step insights as expected")
     void shouldBeAbleToAddStepInsightsAsExpected(){
         var execContext = ExecutionContext.ofNew();
-        execContext.setSubjectAndStartTracking("some-test");
+        execContext.setSubjectAndStartTracking("some-test", true);
         var firstStepName = "first-step";
         var secondStepName = "second-step";
         Assertions.assertTrue(execContext.getStepInsights().isEmpty());

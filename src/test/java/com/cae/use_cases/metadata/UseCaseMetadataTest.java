@@ -106,10 +106,10 @@ class UseCaseMetadataTest {
     void shouldInstantiateUseCaseMetadataObjectAsExpected(){
         var someFunctionUseCase = new SomeNormalFunctionUseCase();
         var metadata = UseCaseMetadata.of(someFunctionUseCase);
-        Assertions.assertEquals("some_normal_function", metadata.getName());
-        Assertions.assertFalse(metadata.getIsProtected());
+        Assertions.assertEquals("SomeNormalFunctionUseCase", metadata.getName());
+        Assertions.assertFalse(metadata.isProtected());
         Assertions.assertEquals(0, metadata.getScope().length);
-        Assertions.assertFalse(metadata.getRoleProtectionEnabled());
+        Assertions.assertFalse(metadata.isRoleProtectionEnabled());
         Assertions.assertTrue(metadata.getId().isEmpty());
     }
 

@@ -130,7 +130,7 @@ public class CaeSetup {
          * Enables or disables logging input/output data for Use Cases.
          */
         public AutologSetup setUseCasesLoggingIO(boolean useCasesLoggingIO){
-            AutologProvider.SINGLETON.setUseCasesLoggingIO(useCasesLoggingIO);
+            AutologProvider.SINGLETON.setSubjectsLoggingIO(useCasesLoggingIO);
             return this;
         }
 
@@ -138,7 +138,7 @@ public class CaeSetup {
          * Enables or disables logging input/output data for Ports.
          */
         public AutologSetup setPortsLoggingIO(boolean portsLoggingIO){
-            AutologProvider.SINGLETON.setPortsLoggingIO(portsLoggingIO);
+            AutologProvider.SINGLETON.setInnerStepsLoggingIO(portsLoggingIO);
             return this;
         }
 

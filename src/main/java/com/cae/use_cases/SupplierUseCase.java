@@ -40,7 +40,7 @@ public abstract class SupplierUseCase <O> extends UseCase {
      */
     public O execute(ExecutionContext context){
         return Trier.of(() -> {
-            context.setSubjectAndStartTracking(this.getUseCaseMetadata().getName());
+            context.setSubjectAndStartTracking(this.getUseCaseMetadata().getName(), true);
             return this.run(context);
         })
         .onUnexpectedExceptions(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))

@@ -23,7 +23,7 @@ public class Metric {
             executionContext.getEndTime(),
             executionContext.wasSuccessful(),
             executionContext.getException(),
-            true,
+            executionContext.isInbound(),
             null,
             null,
             null

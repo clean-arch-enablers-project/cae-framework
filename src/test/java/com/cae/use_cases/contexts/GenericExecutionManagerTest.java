@@ -27,7 +27,7 @@ class GenericExecutionManagerTest {
         Assertions.assertNull(newManager.subject);
         Assertions.assertFalse(newManager.hasStarted());
         var subject = "some-subject";
-        newManager.setSubjectAndStartTracking(subject);
+        newManager.setSubjectAndStartTracking(subject, true);
         Assertions.assertEquals(subject, newManager.subject);
         Assertions.assertTrue(newManager.hasStarted());
     }
@@ -36,10 +36,10 @@ class GenericExecutionManagerTest {
     @DisplayName("Should throw InternalMappedException if the instance has already been initialized and there is a reinitialization attempt")
     void shouldThrowInternalMappedExceptionIfTheInstanceHasAlreadyBeenInitializedAndThereIsAReinitializationAttempt(){
         var newManager = new SomeManager();
-        newManager.setSubjectAndStartTracking("some-subject-again");
+        newManager.setSubjectAndStartTracking("some-subject-again", true);
         Assertions.assertThrows(
                 InternalMappedException.class,
-                () -> newManager.setSubjectAndStartTracking("once-again-some-subject")
+                () -> newManager.setSubjectAndStartTracking("once-again-some-subject", true)
         );
     }
 
@@ -47,7 +47,7 @@ class GenericExecutionManagerTest {
     @DisplayName("Should be able to complete an instance as successful")
     void shouldBeAbleToCompleteAnInstanceAsSuccessful(){
         var newManager = new SomeManager();
-        newManager.setSubjectAndStartTracking("another-subject");
+        newManager.setSubjectAndStartTracking("another-subject", true);
         Assertions.assertFalse(newManager.isComplete());
         newManager.complete();
         Assertions.assertTrue(newManager.isComplete());
@@ -60,7 +60,7 @@ class GenericExecutionManagerTest {
     void shouldBeAbleToCompleteAnInstanceAsUnsuccessful(){
         var someProblem = new Exception("something went wrong...");
         var newManager = new SomeManager();
-        newManager.setSubjectAndStartTracking("and-there-is-another-subject-again");
+        newManager.setSubjectAndStartTracking("and-there-is-another-subject-again", true);
         Assertions.assertFalse(newManager.isComplete());
         newManager.complete(someProblem);
         Assertions.assertTrue(newManager.isComplete());

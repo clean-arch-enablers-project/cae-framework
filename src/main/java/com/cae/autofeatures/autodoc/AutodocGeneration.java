@@ -1,6 +1,6 @@
 package com.cae.autofeatures.autodoc;
 
-import com.cae.autofeatures.autodoc.annotations.AutodocArtifact;
+import com.cae.autofeatures.autodoc.annotations.AutodocSubject;
 import com.cae.autofeatures.autodoc.components.*;
 import com.cae.entities.BusinessEntity;
 import com.cae.use_cases.ConsumerUseCase;
@@ -33,14 +33,14 @@ public class AutodocGeneration {
                 .map(useCaseClass -> UseCaseDocumentation.of(useCaseClass, isKotlin))
                 .collect(Collectors.toList());
         var allArtifactDocs = allArtifacts.stream()
-                .map(artifactClass -> ArtifactDocumentation.of(artifactClass, isKotlin))
+                .map(artifactClass -> ArbitrarySubjectDocumentation.of(artifactClass, isKotlin))
                 .collect(Collectors.toList());
         return DomainDocumentation.builder()
                 .domain(domainName)
                 .responsible(responsible)
                 .entities(allEntityDocs)
                 .useCases(allUseCaseDocs)
-                .supportingArtifacts(allArtifactDocs)
+                .otherSubjects(allArtifactDocs)
                 .build();
     }
 
@@ -114,7 +114,7 @@ public class AutodocGeneration {
     }
 
     private static boolean isArtifact(Class<?> aClass) {
-        return aClass.isAnnotationPresent(AutodocArtifact.class);
+        return aClass.isAnnotationPresent(AutodocSubject.class);
     }
 
 }

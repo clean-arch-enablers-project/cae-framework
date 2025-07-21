@@ -12,9 +12,9 @@ import java.util.stream.Stream;
 
 @Builder
 @Getter
-public class ArtifactDocumentation {
+public class ArbitrarySubjectDocumentation {
 
-    public static ArtifactDocumentation of(Class<?> artifactClass, boolean kotlin){
+    public static ArbitrarySubjectDocumentation of(Class<?> artifactClass, boolean kotlin){
         var properties = Stream.of(artifactClass.getDeclaredFields())
                 .map(ClassProperty::of)
                 .collect(Collectors.toList());
@@ -23,7 +23,7 @@ public class ArtifactDocumentation {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
-        return ArtifactDocumentation.builder()
+        return ArbitrarySubjectDocumentation.builder()
                 .name(artifactClass.getSimpleName())
                 .properties(properties)
                 .behaviors(allBehaviors)

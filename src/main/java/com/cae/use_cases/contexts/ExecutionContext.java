@@ -176,7 +176,7 @@ public class ExecutionContext extends GenericExecutionManager {
          */
         public static StepInsight of(String subject){
             var newInsight = new StepInsight();
-            newInsight.setSubjectAndStartTracking(subject);
+            newInsight.setSubjectAndStartTracking(subject, false);
             return newInsight;
         }
 

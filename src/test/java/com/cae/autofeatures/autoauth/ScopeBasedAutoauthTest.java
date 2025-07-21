@@ -27,7 +27,7 @@ class ScopeBasedAutoauthTest {
     @BeforeEach
     void setup(){
         this.executionContext = ExecutionContext.ofNew(this.actor);
-        this.executionContext.setSubjectAndStartTracking("ScopeBasedAutoauthTesting");
+        this.executionContext.setSubjectAndStartTracking("ScopeBasedAutoauthTesting", true);
     }
 
     @Test

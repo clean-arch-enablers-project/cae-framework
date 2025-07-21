@@ -49,7 +49,7 @@ class UseCaseTest {
             unit.getLogger();
         } catch (Exception exception){
             Assertions.assertInstanceOf(InternalMappedException.class, exception);
-            var expectedBriefPublicMessage = "No logger instance provided for the use case \"some_basic\"";
+            var expectedBriefPublicMessage = "No logger instance provided for the use case \"SomeBasicUseCase\"";
             var expectedDetails = "Please provide an instance via the AutologProvider singleton instance";
             var internalMappedException = (InternalMappedException) exception;
             Assertions.assertEquals(expectedBriefPublicMessage, internalMappedException.getBriefPublicMessage());

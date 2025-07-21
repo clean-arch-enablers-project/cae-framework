@@ -7,14 +7,14 @@ import java.util.List;
 
 @Getter
 @Builder
-public class UseCaseLogStructuredFormat {
+public class SubjectLogStructuredFormat {
 
-    private UseCaseExecutionLogFormat useCaseExecution;
+    private SubjectExecutionLogFormat execution;
 
     @Getter
     @Builder
-    public static class UseCaseExecutionLogFormat{
-        private final String useCase;
+    public static class SubjectExecutionLogFormat {
+        private final String subject;
         private final String correlationId;
         private final IO io;
         private final Boolean successful;

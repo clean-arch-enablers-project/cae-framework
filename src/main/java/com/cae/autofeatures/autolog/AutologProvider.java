@@ -13,8 +13,8 @@ public class AutologProvider {
 
     private Logger providedInstance;
     private Boolean async = true;
-    private Boolean useCasesLoggingIO = false;
-    private Boolean portsLoggingIO = false;
+    private Boolean subjectsLoggingIO = false;
+    private Boolean innerStepsLoggingIO = false;
     private IOAutologMode ioAutologMode = IOAutologMode.CAE_NATIVE;
     private Boolean structuredFormat = false;
     private Boolean logStackTrace = false;
@@ -22,9 +22,9 @@ public class AutologProvider {
 
     public void reset(){
         this.providedInstance = null;
-        this.useCasesLoggingIO = false;
+        this.subjectsLoggingIO = false;
         this.async = true;
-        this.portsLoggingIO = false;
+        this.innerStepsLoggingIO = false;
         this.ioAutologMode = IOAutologMode.CAE_NATIVE;
         this.structuredFormat = false;
         this.logStackTrace = false;
@@ -45,13 +45,13 @@ public class AutologProvider {
         return this;
     }
 
-    public AutologProvider setUseCasesLoggingIO(Boolean useCasesLoggingIO){
-        this.useCasesLoggingIO = useCasesLoggingIO;
+    public AutologProvider setSubjectsLoggingIO(Boolean subjectsLoggingIO){
+        this.subjectsLoggingIO = subjectsLoggingIO;
         return this;
     }
 
-    public AutologProvider setPortsLoggingIO(Boolean portsLoggingIO){
-        this.portsLoggingIO = portsLoggingIO;
+    public AutologProvider setInnerStepsLoggingIO(Boolean innerStepsLoggingIO){
+        this.innerStepsLoggingIO = innerStepsLoggingIO;
         return this;
     }
 

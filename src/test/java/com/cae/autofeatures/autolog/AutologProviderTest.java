@@ -21,8 +21,8 @@ class AutologProviderTest {
     void defaultValuesShouldBeAsExpected(){
         var provider = AutologProvider.SINGLETON;
         Assertions.assertTrue(provider.getProvidedInstance().isEmpty());
-        Assertions.assertFalse(provider.getUseCasesLoggingIO());
-        Assertions.assertFalse(provider.getPortsLoggingIO());
+        Assertions.assertFalse(provider.getSubjectsLoggingIO());
+        Assertions.assertFalse(provider.getInnerStepsLoggingIO());
         Assertions.assertEquals(IOAutologMode.CAE_NATIVE, provider.getIoAutologMode());
         Assertions.assertFalse(provider.getStructuredFormat());
         Assertions.assertFalse(provider.getLogStackTrace());
@@ -43,17 +43,17 @@ class AutologProviderTest {
     @Test
     @DisplayName("Should set use cases logging IO as expected")
     void shouldSetUseCasesLoggingIOAsExpected(){
-        var provider = AutologProvider.SINGLETON.setUseCasesLoggingIO(true);
+        var provider = AutologProvider.SINGLETON.setSubjectsLoggingIO(true);
         Assertions.assertEquals(AutologProvider.SINGLETON, provider);
-        Assertions.assertTrue(AutologProvider.SINGLETON.getUseCasesLoggingIO());
+        Assertions.assertTrue(AutologProvider.SINGLETON.getSubjectsLoggingIO());
     }
 
     @Test
     @DisplayName("Should set ports logging IO as expected")
     void shouldSetPortsLoggingIOAsExpected(){
-        var provider = AutologProvider.SINGLETON.setPortsLoggingIO(true);
+        var provider = AutologProvider.SINGLETON.setInnerStepsLoggingIO(true);
         Assertions.assertEquals(AutologProvider.SINGLETON, provider);
-        Assertions.assertTrue(AutologProvider.SINGLETON.getPortsLoggingIO());
+        Assertions.assertTrue(AutologProvider.SINGLETON.getInnerStepsLoggingIO());
     }
 
     @Test

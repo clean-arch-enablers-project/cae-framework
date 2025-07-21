@@ -37,7 +37,7 @@ public abstract class RunnableUseCase extends UseCase {
      */
     public void execute(ExecutionContext context){
         Trier.of(() -> {
-            context.setSubjectAndStartTracking(this.getUseCaseMetadata().getName());
+            context.setSubjectAndStartTracking(this.getUseCaseMetadata().getName(), true);
             this.run(context);
         })
         .onUnexpectedExceptions(unexpectedException -> new UseCaseExecutionException(this, unexpectedException))

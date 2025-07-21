@@ -75,7 +75,7 @@ public class AutologTest {
     @Test
     @DisplayName("When structured format logging use case IO is ON should run without throwing")
     void whenStructuredFormatLoggingUseCaseIOIsONShouldRunWithoutThrowing() {
-        AutologProvider.SINGLETON.setStructuredFormat(true).setUseCasesLoggingIO(true);
+        AutologProvider.SINGLETON.setStructuredFormat(true).setSubjectsLoggingIO(true);
         Assertions.assertDoesNotThrow(() -> Autolog.writeBasedOn(successfulExec, this.logger));
         Assertions.assertDoesNotThrow(() -> Autolog.writeBasedOn(unsuccessfulExec, this.logger));
         Mockito.verify(this.logger, Mockito.times(1)).logInfo(ArgumentMatchers.anyString());
@@ -85,7 +85,7 @@ public class AutologTest {
     @Test
     @DisplayName("When structured format logging port IO is ON should run without throwing")
     void whenStructuredFormatLoggingPortIOIsONShouldRunWithoutThrowing() {
-        AutologProvider.SINGLETON.setStructuredFormat(true).setPortsLoggingIO(true);
+        AutologProvider.SINGLETON.setStructuredFormat(true).setInnerStepsLoggingIO(true);
         Assertions.assertDoesNotThrow(() -> Autolog.writeBasedOn(successfulExec, this.logger));
         Assertions.assertDoesNotThrow(() -> Autolog.writeBasedOn(unsuccessfulExec, this.logger));
         Mockito.verify(this.logger, Mockito.times(1)).logInfo(ArgumentMatchers.anyString());
@@ -105,7 +105,7 @@ public class AutologTest {
     @Test
     @DisplayName("When simple text format logging use case IO is ON should run without throwing")
     void whenSimpleTextFormatLoggingUseCaseIOIsONShouldRunWithoutThrowing() {
-        AutologProvider.SINGLETON.setStructuredFormat(false).setUseCasesLoggingIO(true);
+        AutologProvider.SINGLETON.setStructuredFormat(false).setSubjectsLoggingIO(true);
         Assertions.assertDoesNotThrow(() -> Autolog.writeBasedOn(successfulExec, this.logger));
         Assertions.assertDoesNotThrow(() -> Autolog.writeBasedOn(unsuccessfulExec, this.logger));
         Mockito.verify(this.logger, Mockito.times(1)).logInfo(ArgumentMatchers.anyString());
@@ -115,7 +115,7 @@ public class AutologTest {
     @Test
     @DisplayName("When simple text format logging port IO is ON should run without throwing")
     void whenSimpleTextFormatLoggingPortIOIsONShouldRunWithoutThrowing() {
-        AutologProvider.SINGLETON.setStructuredFormat(false).setPortsLoggingIO(true);
+        AutologProvider.SINGLETON.setStructuredFormat(false).setInnerStepsLoggingIO(true);
         Assertions.assertDoesNotThrow(() -> Autolog.writeBasedOn(successfulExec, this.logger));
         Assertions.assertDoesNotThrow(() -> Autolog.writeBasedOn(unsuccessfulExec, this.logger));
         Mockito.verify(this.logger, Mockito.times(1)).logInfo(ArgumentMatchers.anyString());
@@ -132,7 +132,7 @@ public class AutologTest {
 
     static ExecutionContext setupSuccessfulExecution() throws InterruptedException {
         var exec = ExecutionContext.ofNew();
-        exec.setSubjectAndStartTracking("AutologTesting");
+        exec.setSubjectAndStartTracking("AutologTesting", true);
         exec.setInput(new MainInput());
         Thread.sleep(50);
         var stepOne = exec.addStepInsightsOf("PortOne");
@@ -150,7 +150,7 @@ public class AutologTest {
 
     static ExecutionContext setupUnsuccessfulExecution() throws InterruptedException {
         var exec = ExecutionContext.ofNew();
-        exec.setSubjectAndStartTracking("AutologTesting");
+        exec.setSubjectAndStartTracking("AutologTesting", true);
         Thread.sleep(50);
         var stepOne = exec.addStepInsightsOf("PortOne");
         Thread.sleep(50);
