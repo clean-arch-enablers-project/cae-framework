@@ -29,7 +29,14 @@ public abstract class Port {
     protected Port() {
         var clazz = this.getClass();
         this.name = clazz.getSimpleName();
-        this.autocacheMetadata = isAutocacheAnnotated(clazz)? AutocacheMetadata.of(clazz.getAnnotation(Autocache.class)) : null;
+        this.autocacheMetadata = isAutocacheAnnotated(clazz)? AutocacheMetadata.of(Port.getAutocacheAnnotationFrom(clazz)) : null;
+    }
+
+    private static Autocache getAutocacheAnnotationFrom(Class<?> clazz) {
+        var annotation = clazz.getAnnotation(Autocache.class);
+        if (annotation == null && clazz != Port.class)
+            return Port.getAutocacheAnnotationFrom(clazz.getSuperclass());
+        return annotation;
     }
 
     private static boolean isAutocacheAnnotated(Class<?> portType) {
