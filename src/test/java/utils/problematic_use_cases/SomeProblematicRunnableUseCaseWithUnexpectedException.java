@@ -1,7 +1,7 @@
 package utils.problematic_use_cases;
 
-import com.cae.use_cases.RunnableUseCase;
-import com.cae.use_cases.contexts.ExecutionContext;
+import com.cae.context.ExecutionContext;
+import com.cae.framework.use_cases.RunnableUseCase;
 
 public class SomeProblematicRunnableUseCaseWithUnexpectedException extends RunnableUseCase {
 

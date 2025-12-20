@@ -1,7 +1,7 @@
 package utils.problematic_use_cases;
 
-import com.cae.use_cases.SupplierUseCase;
-import com.cae.use_cases.contexts.ExecutionContext;
+import com.cae.context.ExecutionContext;
+import com.cae.framework.use_cases.SupplierUseCase;
 
 public class SomeProblematicSupplierUseCaseWithUnexpectedException extends SupplierUseCase<SomeProblematicSupplierUseCaseWithUnexpectedException.Output> {
 

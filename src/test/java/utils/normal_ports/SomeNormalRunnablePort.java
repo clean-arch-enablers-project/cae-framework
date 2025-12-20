@@ -1,7 +1,7 @@
 package utils.normal_ports;
 
-import com.cae.ports.RunnablePort;
-import com.cae.use_cases.contexts.ExecutionContext;
+import com.cae.context.ExecutionContext;
+import com.cae.framework.ports.RunnablePort;
 
 public class SomeNormalRunnablePort extends RunnablePort {
 

@@ -1,7 +1,7 @@
 package utils.normal_ports;
 
-import com.cae.ports.ConsumerPort;
-import com.cae.use_cases.contexts.ExecutionContext;
+import com.cae.context.ExecutionContext;
+import com.cae.framework.ports.ConsumerPort;
 
 public class SomeNormalConsumerPort extends ConsumerPort<String> {
     @Override

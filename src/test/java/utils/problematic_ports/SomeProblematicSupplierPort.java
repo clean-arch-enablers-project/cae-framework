@@ -1,7 +1,7 @@
 package utils.problematic_ports;
 
-import com.cae.ports.SupplierPort;
-import com.cae.use_cases.contexts.ExecutionContext;
+import com.cae.context.ExecutionContext;
+import com.cae.framework.ports.SupplierPort;
 
 public class SomeProblematicSupplierPort extends SupplierPort<String> {
 

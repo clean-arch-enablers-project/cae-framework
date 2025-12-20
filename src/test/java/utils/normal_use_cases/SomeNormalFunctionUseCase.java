@@ -1,10 +1,10 @@
 package utils.normal_use_cases;
 
-import com.cae.autofeatures.autoauth.ResourceOwnershipRetriever;
-import com.cae.use_cases.FunctionUseCase;
-import com.cae.use_cases.contexts.ExecutionContext;
-import com.cae.use_cases.io.UseCaseInput;
-import com.cae.use_cases.io.annotations.NotNullInputField;
+import com.cae.context.ExecutionContext;
+import com.cae.framework.autofeatures.autoauth.ResourceOwnershipRetriever;
+import com.cae.framework.use_cases.FunctionUseCase;
+import com.cae.framework.use_cases.io.UseCaseInput;
+import com.cae.framework.use_cases.io.annotations.NotNullInputField;
 import lombok.Getter;
 import lombok.Setter;
 

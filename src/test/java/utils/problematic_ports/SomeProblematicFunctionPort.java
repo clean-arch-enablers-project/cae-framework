@@ -1,7 +1,7 @@
 package utils.problematic_ports;
 
-import com.cae.ports.FunctionPort;
-import com.cae.use_cases.contexts.ExecutionContext;
+import com.cae.context.ExecutionContext;
+import com.cae.framework.ports.FunctionPort;
 
 public class SomeProblematicFunctionPort extends FunctionPort<String, String> {
     @Override

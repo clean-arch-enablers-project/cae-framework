@@ -1,8 +1,8 @@
 package utils;
 
-import com.cae.autofeatures.autolog.AutologThreadPoolProvider;
-import com.cae.autofeatures.autometrics.AutometricsThreadPoolProvider;
-import com.cae.autofeatures.autonotify.AutonotifyThreadPoolProvider;
+import com.cae.framework.autofeatures.autolog.AutologThreadPoolProvider;
+import com.cae.framework.autofeatures.autometrics.AutometricsThreadPoolProvider;
+import com.cae.framework.autofeatures.autonotify.AutonotifyThreadPoolProvider;
 import org.mockito.Mockito;
 
 import java.util.concurrent.ExecutorService;

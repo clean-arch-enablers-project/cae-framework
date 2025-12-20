@@ -1,7 +1,7 @@
 package utils.problematic_ports;
 
-import com.cae.ports.ConsumerPort;
-import com.cae.use_cases.contexts.ExecutionContext;
+import com.cae.context.ExecutionContext;
+import com.cae.framework.ports.ConsumerPort;
 
 public class SomeProblematicConsumerPort extends ConsumerPort<String> {
     @Override

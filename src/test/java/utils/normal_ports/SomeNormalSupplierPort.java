@@ -1,7 +1,7 @@
 package utils.normal_ports;
 
-import com.cae.ports.SupplierPort;
-import com.cae.use_cases.contexts.ExecutionContext;
+import com.cae.framework.ports.SupplierPort;
+import com.cae.context.ExecutionContext;
 
 public class SomeNormalSupplierPort extends SupplierPort<String> {
 

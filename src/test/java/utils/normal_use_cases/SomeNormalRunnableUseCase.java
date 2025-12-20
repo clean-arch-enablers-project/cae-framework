@@ -1,9 +1,9 @@
 package utils.normal_use_cases;
 
-import com.cae.use_cases.RunnableUseCase;
-import com.cae.use_cases.contexts.ExecutionContext;
-import com.cae.use_cases.io.UseCaseInput;
-import com.cae.use_cases.io.annotations.NotNullInputField;
+import com.cae.context.ExecutionContext;
+import com.cae.framework.use_cases.RunnableUseCase;
+import com.cae.framework.use_cases.io.UseCaseInput;
+import com.cae.framework.use_cases.io.annotations.NotNullInputField;
 import lombok.Getter;
 import lombok.Setter;
 
