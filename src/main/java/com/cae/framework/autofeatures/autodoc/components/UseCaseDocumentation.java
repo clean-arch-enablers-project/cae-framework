@@ -1,8 +1,8 @@
 package com.cae.framework.autofeatures.autodoc.components;
 
 import com.cae.framework.autofeatures.autoauth.AutoauthModes;
-import com.cae.framework.autofeatures.autoauth.annotations.Edge;
-import com.cae.framework.autofeatures.autoauth.annotations.Internal;
+import com.cae.framework.use_cases.boundaries.Edge;
+import com.cae.framework.use_cases.boundaries.Internal;
 import com.cae.framework.autofeatures.autodoc.AutodocNoteExtractor;
 import com.cae.framework.autofeatures.autodoc.AutodocSourceCodeRetriever;
 import com.cae.framework.use_cases.ConsumerUseCase;

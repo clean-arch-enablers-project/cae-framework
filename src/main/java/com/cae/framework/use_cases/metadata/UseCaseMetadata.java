@@ -1,12 +1,12 @@
 package com.cae.framework.use_cases.metadata;
 
 import com.cae.framework.autofeatures.autoauth.AutoauthModes;
-import com.cae.framework.autofeatures.autoauth.annotations.Edge;
-import com.cae.framework.autofeatures.autoauth.annotations.Internal;
 import com.cae.framework.autofeatures.autocache.Cacheable;
 import com.cae.framework.autofeatures.autocache.annotations.Autocache;
 import com.cae.framework.autofeatures.autocache.metadata.AutocacheMetadata;
 import com.cae.framework.use_cases.UseCase;
+import com.cae.framework.use_cases.boundaries.Edge;
+import com.cae.framework.use_cases.boundaries.Internal;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import lombok.Getter;
 
@@ -44,6 +44,11 @@ public class UseCaseMetadata {
         if (annotatedWithEdge){
             foundNothing = false;
             var annotation = useCaseClass.getAnnotation(Edge.class);
+            if (annotation.scopes().length> 0 && !(annotation.actionId().isBlank()))
+                throw new InternalMappedException(
+                    "Couldn't instantiate '" + useCaseClass.getSimpleName() + "'",
+                    "Its type is annotated with @Edge and had both 'scopes' and 'actionId' setups. Pick one of them."
+                );
             if (annotation.scopes().length > 0)
                 requiredScopes = annotation.scopes();
             if (!annotation.actionId().isBlank()){

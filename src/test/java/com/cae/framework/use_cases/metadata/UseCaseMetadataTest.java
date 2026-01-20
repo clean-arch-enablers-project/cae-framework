@@ -2,7 +2,7 @@ package com.cae.framework.use_cases.metadata;
 
 import com.cae.context.ExecutionContext;
 import com.cae.framework.autofeatures.autoauth.AutoauthModes;
-import com.cae.framework.autofeatures.autoauth.annotations.Edge;
+import com.cae.framework.use_cases.boundaries.Edge;
 import com.cae.framework.use_cases.ConsumerUseCase;
 import com.cae.framework.use_cases.RunnableUseCase;
 import com.cae.framework.use_cases.io.UseCaseInput;

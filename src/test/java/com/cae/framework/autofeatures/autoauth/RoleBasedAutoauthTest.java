@@ -2,7 +2,7 @@ package com.cae.framework.autofeatures.autoauth;
 
 import com.cae.context.ExecutionContext;
 import com.cae.context.actors.Actor;
-import com.cae.framework.autofeatures.autoauth.annotations.Edge;
+import com.cae.framework.use_cases.boundaries.Edge;
 import com.cae.framework.autofeatures.autoauth.annotations.ResourceIdentifier;
 import com.cae.framework.autofeatures.autoauth.annotations.ResourceOwnerIdentifier;
 import com.cae.framework.autofeatures.autolog.AutologProvider;

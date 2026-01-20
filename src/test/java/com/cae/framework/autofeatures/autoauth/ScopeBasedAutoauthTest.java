@@ -2,7 +2,7 @@ package com.cae.framework.autofeatures.autoauth;
 
 import com.cae.context.ExecutionContext;
 import com.cae.context.actors.Actor;
-import com.cae.framework.autofeatures.autoauth.annotations.Internal;
+import com.cae.framework.use_cases.boundaries.Internal;
 import com.cae.framework.autofeatures.autoauth.exceptions.NotAllowedMappedException;
 import com.cae.framework.use_cases.RunnableUseCase;
 import org.junit.jupiter.api.Assertions;

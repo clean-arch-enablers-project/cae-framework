@@ -1,5 +1,6 @@
 package com.cae.framework;
 
+import com.cae.context.ExecutionContext;
 import com.cae.context.SharedContextProvider;
 import com.cae.framework.autofeatures.autoauth.RoleRetriever;
 import com.cae.framework.autofeatures.autoauth.RoleRetrieverRegistry;
@@ -13,6 +14,9 @@ import com.cae.framework.autofeatures.autonotify.AutonotifySubscriber;
 import com.cae.framework.initializers.Lazy;
 import com.cae.framework.properties.Properties;
 import com.cae.framework.properties.Property;
+import com.cae.framework.use_cases.RunnableUseCase;
+import com.cae.framework.use_cases.boundaries.Edge;
+import com.cae.framework.use_cases.boundaries.Internal;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import lombok.RequiredArgsConstructor;
 
