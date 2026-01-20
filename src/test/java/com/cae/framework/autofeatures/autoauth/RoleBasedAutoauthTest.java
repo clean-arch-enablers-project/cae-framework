@@ -1,13 +1,13 @@
 package com.cae.framework.autofeatures.autoauth;
 
+import com.cae.context.ExecutionContext;
+import com.cae.context.actors.Actor;
+import com.cae.framework.autofeatures.autoauth.annotations.Edge;
 import com.cae.framework.autofeatures.autoauth.annotations.ResourceIdentifier;
 import com.cae.framework.autofeatures.autoauth.annotations.ResourceOwnerIdentifier;
-import com.cae.framework.autofeatures.autoauth.annotations.RoleBasedProtection;
 import com.cae.framework.autofeatures.autolog.AutologProvider;
 import com.cae.framework.autofeatures.autolog.Logger;
 import com.cae.framework.use_cases.FunctionUseCase;
-import com.cae.context.ExecutionContext;
-import com.cae.context.actors.Actor;
 import com.cae.framework.use_cases.io.UseCaseInput;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import com.cae.mapped_exceptions.specifics.NotAuthorizedMappedException;
@@ -161,7 +161,7 @@ class RoleBasedAutoauthTest {
         Assertions.assertThrows(InternalMappedException.class, () -> wrongUseCase.execute(input, this.executionContext));
     }
 
-    @RoleBasedProtection(actionId = "some_action_id")
+    @Edge(actionId = "some_action_id")
     public static class RoleBasedProtectedUseCaseWithResourceOwnerId
             extends FunctionUseCase<RoleBasedProtectedUseCaseWithResourceOwnerId.Input, RoleBasedProtectedUseCaseWithResourceOwnerId.Output>{
 
@@ -180,7 +180,7 @@ class RoleBasedAutoauthTest {
 
     }
 
-    @RoleBasedProtection(actionId = "other_action_id")
+    @Edge(actionId = "other_action_id")
     public static class RoleBasedProtectedUseCaseWithResourceIdButNoOwnershipRetriever
             extends FunctionUseCase<RoleBasedProtectedUseCaseWithResourceIdButNoOwnershipRetriever.Input, RoleBasedProtectedUseCaseWithResourceIdButNoOwnershipRetriever.Output>{
 
@@ -199,7 +199,7 @@ class RoleBasedAutoauthTest {
 
     }
 
-    @RoleBasedProtection(actionId = "other_action_id")
+    @Edge(actionId = "other_action_id")
     public static class RoleBasedProtectedUseCaseWithResourceIdWithOwnershipRetriever
             extends FunctionUseCase<RoleBasedProtectedUseCaseWithResourceIdWithOwnershipRetriever.Input, RoleBasedProtectedUseCaseWithResourceIdWithOwnershipRetriever.Output>{
 
@@ -222,7 +222,7 @@ class RoleBasedAutoauthTest {
 
     }
 
-    @RoleBasedProtection(actionId = "other_action_id")
+    @Edge(actionId = "other_action_id")
     public static class SomeWrongRoleProtectedUseCase
             extends FunctionUseCase<SomeWrongRoleProtectedUseCase.Input, SomeWrongRoleProtectedUseCase.Output>{
 

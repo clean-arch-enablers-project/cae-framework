@@ -13,9 +13,9 @@ public class ScopeBasedAutoauth {
 
     public static void handle(ExecutionContext executionContext, UseCase useCase){
         var useCaseMetadata = useCase.getUseCaseMetadata();
-        if (Boolean.TRUE.equals(useCaseMetadata.isProtected()) && useCaseMetadata.getScope().length > 0){
+        if (Boolean.TRUE.equals(useCaseMetadata.isProtected()) && useCaseMetadata.getScopes().length > 0){
             var stepInsight = executionContext.addStepInsightsOf("ScopeBasedAutoauth");
-            var notAllowed = !allows(getActorOutta(executionContext), useCaseMetadata.getScope());
+            var notAllowed = !allows(getActorOutta(executionContext), useCaseMetadata.getScopes());
             if (notAllowed){
                 var notAllowedException = new NotAllowedMappedException(useCase);
                 stepInsight.complete(notAllowedException);

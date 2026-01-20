@@ -1,14 +1,16 @@
 package com.cae.framework.use_cases.metadata;
 
-import com.cae.framework.autofeatures.autoauth.annotations.RoleBasedProtection;
-import com.cae.framework.autofeatures.autoauth.annotations.ScopeBasedProtection;
+import com.cae.framework.autofeatures.autoauth.AutoauthModes;
+import com.cae.framework.autofeatures.autoauth.annotations.Edge;
+import com.cae.framework.autofeatures.autoauth.annotations.Internal;
 import com.cae.framework.autofeatures.autocache.Cacheable;
 import com.cae.framework.autofeatures.autocache.annotations.Autocache;
 import com.cae.framework.autofeatures.autocache.metadata.AutocacheMetadata;
-import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import com.cae.framework.use_cases.UseCase;
-import com.cae.framework.use_cases.UseCaseAsAction;
+import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import lombok.Getter;
+
+import java.util.Optional;
 
 @Getter
 public class UseCaseMetadata {
@@ -16,38 +18,79 @@ public class UseCaseMetadata {
     private final String id;
     private final String name;
     private final boolean isProtected;
-    private final String[] scope;
+    private final String[] scopes;
     private final boolean isRoleProtectionEnabled;
     private final AutocacheMetadata autocacheMetadata;
 
+
     public static <U extends UseCase> UseCaseMetadata of(U useCase) {
         var type = useCase.getClass();
-        var requiredScope = UseCaseMetadata.getRequiredScopesOutta(type);
-        var isRoleProtected = UseCaseMetadata.findOutWhetherOrNotRoleProtected(type);
         UseCaseMetadata.findOutWhetherOrNotCached(type);
+        return UseCaseMetadata.validateBoundaryAndAutoauth(type, type.getSimpleName());
+    }
+
+    private static UseCaseMetadata validateBoundaryAndAutoauth(Class<?> useCaseClass, String name) {
+        var foundNothing = true;
+        var id = "";
+        var requiredScopes = new String[]{};
+        var rbac = false;
+        var annotatedWithEdge = useCaseClass.isAnnotationPresent(Edge.class);
+        var annotatedWithInternal = useCaseClass.isAnnotationPresent(Internal.class);
+        if (annotatedWithEdge && annotatedWithInternal)
+            throw new InternalMappedException(
+                "Couldn't instantiate '" + useCaseClass.getSimpleName() + "'",
+                "Its type is annotated with both @Edge and @Internal. Pick one of them."
+            );
+        if (annotatedWithEdge){
+            foundNothing = false;
+            var annotation = useCaseClass.getAnnotation(Edge.class);
+            if (annotation.scopes().length > 0)
+                requiredScopes = annotation.scopes();
+            if (!annotation.actionId().isBlank()){
+                rbac = true;
+                id = annotation.actionId();
+            }
+            var autoauthMode = annotation.autoauth();
+            if (autoauthMode == AutoauthModes.SCOPES){
+                if (annotation.scopes().length == 0)
+                    throw new InternalMappedException(
+                        "Unable to instantiate '" + useCaseClass.getSimpleName() + "'",
+                        "Its type is annotated with @Edge(autoauth = AutoauthModes.SCOPES) but had no scopes. " +
+                        "Either provide some or remove the autoauth modification."
+                    );
+                requiredScopes = annotation.scopes();
+            }
+            else if (autoauthMode == AutoauthModes.RBAC){
+                if (annotation.scopes().length > 0)
+                    throw new InternalMappedException(
+                        "Couldn't instantiate '" + useCaseClass.getSimpleName() + "'",
+                        "Its type is annotated with @Edge(autoauth = AutoauthModes.RBAC) but declares scopes. " +
+                        "Either remove the scopes or set the autoauth as AutoauthModes.SCOPES (or just omit the autoauth modification)"
+                    );
+                if (annotation.actionId().isBlank())
+                    throw new InternalMappedException(
+                        "Could not instantiate '" + useCaseClass.getSimpleName() + "'",
+                        "Its type is annotated with @Edge(autoauth = AutoauthModes.RBAC) but declares no ID. " +
+                        "Make sure an ID is provided to have your UseCase represented as an action for the RBAC evaluation."
+                    );
+                rbac = true;
+                id = annotation.actionId();
+            }
+        }
+        if (annotatedWithInternal){
+            foundNothing = false;
+            var annotation = useCaseClass.getAnnotation(Internal.class);
+            requiredScopes = Optional.ofNullable(annotation.scopes()).orElse(new String[]{});
+        }
+        if (foundNothing && useCaseClass != UseCase.class)
+            return UseCaseMetadata.validateBoundaryAndAutoauth(useCaseClass.getSuperclass(), name);
         return new UseCaseMetadata(
-                type,
-                (requiredScope.length > 0 || isRoleProtected),
-                requiredScope,
-                isRoleProtected);
-    }
-
-    protected static String[] getRequiredScopesOutta(Class<?> useCaseType) {
-        var typeIsAnnotated = useCaseType.isAnnotationPresent(ScopeBasedProtection.class);
-        if (typeIsAnnotated)
-            return useCaseType.getAnnotation(ScopeBasedProtection.class).scope();
-        if (useCaseType == UseCase.class)
-            return new String[]{};
-        return UseCaseMetadata.getRequiredScopesOutta(useCaseType.getSuperclass());
-    }
-
-    protected static boolean findOutWhetherOrNotRoleProtected(Class<?> useCaseType) {
-        var isAnnotated = useCaseType.isAnnotationPresent(RoleBasedProtection.class);
-        if (isAnnotated)
-            return true;
-        if (useCaseType == UseCase.class)
-            return false;
-        return UseCaseMetadata.findOutWhetherOrNotRoleProtected(useCaseType.getSuperclass());
+            useCaseClass,
+            id,
+            name,
+            (requiredScopes.length > 0 || rbac),
+            requiredScopes,
+            rbac);
     }
 
     private static boolean findOutWhetherOrNotCached(Class<?> useCaseType) {
@@ -64,15 +107,17 @@ public class UseCaseMetadata {
         return UseCaseMetadata.findOutWhetherOrNotCached(useCaseType.getSuperclass());
     }
 
-    protected <U extends UseCase> UseCaseMetadata(
-            Class<U> useCaseType,
+    protected UseCaseMetadata(
+            Class<?> useCaseType,
+            String id,
+            String name,
             boolean isProtected,
-            String[] scope,
+            String[] scopes,
             boolean isRoleProtectionEnabled) {
-        this.id = UseCaseMetadata.getIdOutta(useCaseType, isRoleProtectionEnabled);
-        this.name = useCaseType.getSimpleName();
+        this.id = id;
+        this.name = name;
         this.isProtected = isProtected;
-        this.scope = scope;
+        this.scopes = scopes;
         this.isRoleProtectionEnabled = isRoleProtectionEnabled;
         this.autocacheMetadata = AutocacheMetadata.of(this.getAutocacheAnnotationOutta(useCaseType));
     }
@@ -84,44 +129,6 @@ public class UseCaseMetadata {
         if (useCaseType != UseCase.class)
             return this.getAutocacheAnnotationOutta(useCaseType.getSuperclass());
         return null;
-    }
-
-    protected static <U extends UseCase> String getIdOutta(
-            Class<U> useCaseType,
-            Boolean roleProtection) {
-        var idFromUseCaseIdAnnotation = UseCaseMetadata.getIdByUseCaseIdAnnotation(useCaseType);
-        var idFromRoleBasedProtectedAnnotation = "";
-        if (Boolean.TRUE.equals(roleProtection)){
-            idFromRoleBasedProtectedAnnotation = UseCaseMetadata.getIdByRoleBasedProtectedUseCaseAnnotation(useCaseType);
-            if (idFromRoleBasedProtectedAnnotation.isBlank() && idFromUseCaseIdAnnotation.isBlank())
-                throw new InternalMappedException(
-                        "Problem during the extraction of use case ID",
-                        "The use case type '" + useCaseType.getSimpleName() + "' doesn't have an ID provided neither by the UseCaseAsAction nor the RoleBasedProtection annotations. Please provide an ID by either one of the annotations."
-                );
-        }
-        return idFromUseCaseIdAnnotation.isBlank()? idFromRoleBasedProtectedAnnotation : idFromUseCaseIdAnnotation;
-    }
-
-    protected static String getIdByUseCaseIdAnnotation(Class<?> useCaseType){
-        var isAnnotated = useCaseType.isAnnotationPresent(UseCaseAsAction.class);
-        if (isAnnotated)
-            return useCaseType.getAnnotation(UseCaseAsAction.class).actionId();
-        if (useCaseType == UseCase.class)
-            return "";
-        return UseCaseMetadata.getIdByUseCaseIdAnnotation(useCaseType.getSuperclass());
-    }
-
-    protected static String getIdByRoleBasedProtectedUseCaseAnnotation(Class<?> useCaseType) {
-        var isAnnotated = useCaseType.isAnnotationPresent(RoleBasedProtection.class);
-        if (isAnnotated)
-            return useCaseType.getAnnotation(RoleBasedProtection.class).actionId();
-        if (useCaseType == UseCase.class)
-            return "";
-        return UseCaseMetadata.getIdByRoleBasedProtectedUseCaseAnnotation(useCaseType.getSuperclass());
-    }
-
-    public Boolean isProtected() {
-        return isProtected;
     }
 
     public boolean usesAutocache(){

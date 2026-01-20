@@ -1,10 +1,10 @@
 package com.cae.framework.autofeatures.autoauth;
 
-import com.cae.framework.autofeatures.autoauth.annotations.ScopeBasedProtection;
-import com.cae.framework.autofeatures.autoauth.exceptions.NotAllowedMappedException;
-import com.cae.framework.use_cases.RunnableUseCase;
 import com.cae.context.ExecutionContext;
 import com.cae.context.actors.Actor;
+import com.cae.framework.autofeatures.autoauth.annotations.Internal;
+import com.cae.framework.autofeatures.autoauth.exceptions.NotAllowedMappedException;
+import com.cae.framework.use_cases.RunnableUseCase;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,7 +46,7 @@ class ScopeBasedAutoauthTest {
         Assertions.assertThrows(NotAllowedMappedException.class, () -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
     }
 
-    @ScopeBasedProtection(scope = "SINGLE-SCOPE")
+    @Internal(scopes = "SINGLE-SCOPE")
     public static class SimpleScopeBasedProtectedUseCase extends RunnableUseCase{
         @Override
         protected void applyInternalLogic(ExecutionContext context) {}
@@ -70,7 +70,7 @@ class ScopeBasedAutoauthTest {
         Assertions.assertThrows(NotAllowedMappedException.class, () -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
     }
 
-    @ScopeBasedProtection(scope = {"A-SCOPE", "ANOTHER-SCOPE"})
+    @Internal(scopes = {"A-SCOPE", "ANOTHER-SCOPE"})
     public static class SimpleLogicalAndScopeBasedProtectedUseCase extends RunnableUseCase{
         @Override
         protected void applyInternalLogic(ExecutionContext context) {}
@@ -86,7 +86,7 @@ class ScopeBasedAutoauthTest {
         Assertions.assertDoesNotThrow(() -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
     }
 
-    @ScopeBasedProtection(scope = "ONE || OR-ANOTHER")
+    @Internal(scopes = "ONE || OR-ANOTHER")
     public static class SimpleLogicalOrScopeBasedProtectedUseCase extends RunnableUseCase{
         @Override
         protected void applyInternalLogic(ExecutionContext context) {}
@@ -102,7 +102,7 @@ class ScopeBasedAutoauthTest {
         Assertions.assertDoesNotThrow(() -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
     }
 
-    @ScopeBasedProtection(scope = {"A-SCOPE", "ANOTHER-SCOPE", "AND-AGAIN", "ONE-MORE || OR-THIS"})
+    @Internal(scopes = {"A-SCOPE", "ANOTHER-SCOPE", "AND-AGAIN", "ONE-MORE || OR-THIS"})
     public static class ComplexLogicalAndScopeBasedProtectedUseCase extends RunnableUseCase{
         @Override
         protected void applyInternalLogic(ExecutionContext context) {}
@@ -122,7 +122,7 @@ class ScopeBasedAutoauthTest {
         Assertions.assertDoesNotThrow(() -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
     }
 
-    @ScopeBasedProtection(scope = {"ONE || OR-ANOTHER || OR-THIS || OR-THAT", "AND-THIS"})
+    @Internal(scopes = {"ONE || OR-ANOTHER || OR-THIS || OR-THAT", "AND-THIS"})
     public static class ComplexLogicalOrScopeBasedProtectedUseCase extends RunnableUseCase{
         @Override
         protected void applyInternalLogic(ExecutionContext context) {}

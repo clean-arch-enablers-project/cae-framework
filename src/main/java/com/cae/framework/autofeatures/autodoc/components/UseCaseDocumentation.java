@@ -1,7 +1,8 @@
 package com.cae.framework.autofeatures.autodoc.components;
 
-import com.cae.framework.autofeatures.autoauth.annotations.RoleBasedProtection;
-import com.cae.framework.autofeatures.autoauth.annotations.ScopeBasedProtection;
+import com.cae.framework.autofeatures.autoauth.AutoauthModes;
+import com.cae.framework.autofeatures.autoauth.annotations.Edge;
+import com.cae.framework.autofeatures.autoauth.annotations.Internal;
 import com.cae.framework.autofeatures.autodoc.AutodocNoteExtractor;
 import com.cae.framework.autofeatures.autodoc.AutodocSourceCodeRetriever;
 import com.cae.framework.use_cases.ConsumerUseCase;
@@ -71,22 +72,60 @@ public class UseCaseDocumentation {
     }
 
     private static Boolean handleProtectionStatus(Class<?> useCaseClass, Class<?> rootUseCaseClass) {
-        return useCaseClass.isAnnotationPresent(ScopeBasedProtection.class) || rootUseCaseClass.isAnnotationPresent(ScopeBasedProtection.class);
+        return (
+            (useCaseClass.isAnnotationPresent(Internal.class) &&
+            useCaseClass.getAnnotation(Internal.class).scopes() != null &&
+            useCaseClass.getAnnotation(Internal.class).scopes().length > 0)
+            ||
+            (useCaseClass.isAnnotationPresent(Edge.class) &&
+            useCaseClass.getAnnotation(Edge.class).scopes() != null &&
+            useCaseClass.getAnnotation(Edge.class).scopes().length > 0)
+            ||
+            (useCaseClass.isAnnotationPresent(Edge.class) &&
+            useCaseClass.getAnnotation(Edge.class).autoauth() != null &&
+            useCaseClass.getAnnotation(Edge.class).autoauth() == AutoauthModes.RBAC)
+        )
+        ||
+        (
+            (rootUseCaseClass.isAnnotationPresent(Internal.class) &&
+            rootUseCaseClass.getAnnotation(Internal.class).scopes() != null &&
+            rootUseCaseClass.getAnnotation(Internal.class).scopes().length > 0)
+            ||
+            (rootUseCaseClass.isAnnotationPresent(Edge.class) &&
+            rootUseCaseClass.getAnnotation(Edge.class).scopes() != null &&
+            rootUseCaseClass.getAnnotation(Edge.class).scopes().length > 0)
+            ||
+            (rootUseCaseClass.isAnnotationPresent(Edge.class) &&
+            rootUseCaseClass.getAnnotation(Edge.class).autoauth() != null &&
+            rootUseCaseClass.getAnnotation(Edge.class).autoauth() == AutoauthModes.RBAC)
+        );
     }
 
     private static List<String> handleScopes(Class<?> useCaseClass, Class<?> rootUseCaseClass) {
-        if (useCaseClass.isAnnotationPresent(ScopeBasedProtection.class))
-            return List.of(useCaseClass.getAnnotation(ScopeBasedProtection.class).scope());
-        if (rootUseCaseClass.isAnnotationPresent(ScopeBasedProtection.class))
-            return List.of(rootUseCaseClass.getAnnotation(ScopeBasedProtection.class).scope());
+        if (useCaseClass.isAnnotationPresent(Internal.class))
+            return Optional.ofNullable(useCaseClass.getAnnotation(Internal.class).scopes())
+                    .map(List::of)
+                    .orElse(new ArrayList<>());
+        if (rootUseCaseClass.isAnnotationPresent(Internal.class))
+            return Optional.ofNullable(rootUseCaseClass.getAnnotation(Internal.class).scopes())
+                    .map(List::of)
+                    .orElse(new ArrayList<>());
+        if (useCaseClass.isAnnotationPresent(Edge.class))
+            return Optional.ofNullable(useCaseClass.getAnnotation(Edge.class).scopes())
+                    .map(List::of)
+                    .orElse(new ArrayList<>());
+        if (rootUseCaseClass.isAnnotationPresent(Edge.class))
+            return Optional.ofNullable(rootUseCaseClass.getAnnotation(Edge.class).scopes())
+                    .map(List::of)
+                    .orElse(new ArrayList<>());
         return new ArrayList<>();
     }
 
     private static String handleActionId(Class<?> useCaseClass, Class<?> rootUseCaseClass) {
-        if (useCaseClass.isAnnotationPresent(RoleBasedProtection.class))
-            return useCaseClass.getAnnotation(RoleBasedProtection.class).actionId();
-        if (rootUseCaseClass.isAnnotationPresent(RoleBasedProtection.class))
-            return rootUseCaseClass.getAnnotation(RoleBasedProtection.class).actionId();
+        if (useCaseClass.isAnnotationPresent(Edge.class))
+            return useCaseClass.getAnnotation(Edge.class).actionId();
+        if (rootUseCaseClass.isAnnotationPresent(Edge.class))
+            return rootUseCaseClass.getAnnotation(Edge.class).actionId();
         return null;
     }
 
