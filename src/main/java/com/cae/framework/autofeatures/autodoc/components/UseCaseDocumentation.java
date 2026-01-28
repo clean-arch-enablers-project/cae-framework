@@ -1,14 +1,14 @@
 package com.cae.framework.autofeatures.autodoc.components;
 
 import com.cae.framework.autofeatures.autoauth.AutoauthModes;
-import com.cae.framework.use_cases.boundaries.Edge;
-import com.cae.framework.use_cases.boundaries.Internal;
 import com.cae.framework.autofeatures.autodoc.AutodocNoteExtractor;
 import com.cae.framework.autofeatures.autodoc.AutodocSourceCodeRetriever;
 import com.cae.framework.use_cases.ConsumerUseCase;
 import com.cae.framework.use_cases.FunctionUseCase;
 import com.cae.framework.use_cases.RunnableUseCase;
 import com.cae.framework.use_cases.SupplierUseCase;
+import com.cae.framework.use_cases.boundaries.Edge;
+import com.cae.framework.use_cases.boundaries.Internal;
 import lombok.*;
 
 import java.lang.reflect.ParameterizedType;
@@ -44,6 +44,8 @@ public class UseCaseDocumentation {
                 .isProtected(handleProtectionStatus(implementationClass, declarationClass))
                 .scopes(handleScopes(implementationClass, declarationClass))
                 .actionId(handleActionId(implementationClass, declarationClass))
+                .edge(isEdge(implementationClass, declarationClass))
+                .usesRoleBasedProtection(isRoleBasedProtected(implementationClass, declarationClass))
                 .properties(properties)
                 .behaviors(allBehaviors)
                 .sourceCode(AutodocSourceCodeRetriever.retrieveCodeFor(
@@ -53,6 +55,17 @@ public class UseCaseDocumentation {
                 ))
                 .note(AutodocNoteExtractor.getNoteFrom(implementationClass))
                 .build();
+    }
+
+    private static Boolean isEdge(Class<?> implementationClass, Class<?> declarationClass) {
+        return implementationClass.isAnnotationPresent(Edge.class) || declarationClass.isAnnotationPresent(Edge.class);
+    }
+
+    private static Boolean isRoleBasedProtected(Class<?> implementationClass, Class<?> declarationClass) {
+        return Optional.ofNullable(implementationClass.getAnnotation(Edge.class))
+                .or(() -> Optional.ofNullable(declarationClass.getAnnotation(Edge.class)))
+                .map(annotation -> annotation.autoauth() == AutoauthModes.RBAC || !annotation.actionId().isBlank())
+                .orElse(false);
     }
 
     private static Class<?> getDeclarationClassOf(Class<?> useCaseClass) {
@@ -139,6 +152,8 @@ public class UseCaseDocumentation {
     private List<String> scopes;
     private String actionId;
     private String note;
+    private Boolean edge;
+    private Boolean usesRoleBasedProtection;
     private List<ClassProperty> properties;
     private List<ClassBehavior> behaviors;
 
