@@ -28,7 +28,7 @@ public class Autodoc {
         }
     }
 
-    public static void run(
+    public static DomainDocumentation run(
             String domainName,
             String projectPackage,
             Responsible responsible,
@@ -37,6 +37,7 @@ public class Autodoc {
         var fullDocumentation = AutodocGeneration.generateFor(domainName, projectPackage, responsible, isKotlin);
         registerer.startExternalization(fullDocumentation);
         registerer.endExternalization();
+        return fullDocumentation;
     }
 
     private void startExternalization(DomainDocumentation fullDocumentation) {
