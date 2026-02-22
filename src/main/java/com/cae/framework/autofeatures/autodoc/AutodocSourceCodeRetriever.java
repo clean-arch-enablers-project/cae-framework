@@ -17,16 +17,16 @@ public class AutodocSourceCodeRetriever {
     public static String retrieveCodeFor(
             String implementationLocation,
             String implementationName,
-            boolean kotlin) {
+            boolean java) {
         var currentPath = System.getProperty("user.dir");
         if (!Files.exists(Paths.get(currentPath + File.separator + "cae-settings.json"))) throw new InternalMappedException(
                 "Couldn't retrieve source code for " + implementationName,
                 "Make sure you run this process in the root of your project structure and it has the cae-settings.json file"
         );
         var location = currentPath +
-                File.separator + "src" + File.separator + "main" + File.separator + (kotlin? "kotlin" : "java") + File.separator +
+                File.separator + "src" + File.separator + "main" + File.separator + (java? "java" : "kotlin") + File.separator +
                 implementationLocation.replace(".", File.separator) + File.separator +
-                implementationName + (kotlin? ".kt" : ".java");
+                implementationName + (java? ".java" : ".kt");
         var path = Paths.get(location);
         if (Files.exists(path)){
             return AutodocSourceCodeRetriever.getCodeFrom(path);

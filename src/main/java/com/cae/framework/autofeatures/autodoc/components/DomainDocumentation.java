@@ -12,7 +12,7 @@ import java.util.List;
 public class DomainDocumentation {
 
     private String domain;
-    private List<EntityDocumentation> entities;
+    private List<BusinessEntityDocumentation> entities;
     private List<UseCaseDocumentation> useCases;
     private List<ArbitrarySubjectDocumentation> otherSubjects;
     private Responsible responsible;

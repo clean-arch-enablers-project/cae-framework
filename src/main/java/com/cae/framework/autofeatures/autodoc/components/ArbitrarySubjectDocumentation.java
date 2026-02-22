@@ -12,9 +12,9 @@ import java.util.stream.Stream;
 
 @Builder
 @Getter
-public class ArbitrarySubjectDocumentation {
+public class ArbitrarySubjectDocumentation implements Documentation{
 
-    public static ArbitrarySubjectDocumentation of(Class<?> artifactClass, boolean kotlin){
+    public static ArbitrarySubjectDocumentation of(Class<?> artifactClass, boolean java){
         var properties = Stream.of(artifactClass.getDeclaredFields())
                 .map(ClassProperty::of)
                 .collect(Collectors.toList());
@@ -30,7 +30,7 @@ public class ArbitrarySubjectDocumentation {
                 .sourceCode(AutodocSourceCodeRetriever.retrieveCodeFor(
                         artifactClass.getPackageName(),
                         artifactClass.getSimpleName(),
-                        kotlin
+                        java
                 ))
                 .note(AutodocNoteExtractor.getNoteFrom(artifactClass))
                 .build();
@@ -39,7 +39,11 @@ public class ArbitrarySubjectDocumentation {
     private final String name;
     private final List<ClassProperty> properties;
     private final List<ClassBehavior> behaviors;
-    private final String sourceCode;
+    private String sourceCode;
     private final String note;
 
+    @Override
+    public void cleanSourceCode() {
+        this.sourceCode = null;
+    }
 }

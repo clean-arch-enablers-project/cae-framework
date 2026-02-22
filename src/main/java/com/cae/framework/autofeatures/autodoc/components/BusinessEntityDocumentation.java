@@ -12,9 +12,9 @@ import java.util.stream.Stream;
 
 @Builder
 @Getter
-public class EntityDocumentation {
+public class BusinessEntityDocumentation implements Documentation {
 
-    public static EntityDocumentation of(Class<?> entityClass, boolean kotlin){
+    public static BusinessEntityDocumentation of(Class<?> entityClass, boolean java){
         var properties = Stream.of(entityClass.getDeclaredFields())
                 .map(ClassProperty::of)
                 .collect(Collectors.toList());
@@ -23,14 +23,14 @@ public class EntityDocumentation {
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.toList());
-        return EntityDocumentation.builder()
+        return BusinessEntityDocumentation.builder()
                 .name(entityClass.getSimpleName())
                 .properties(properties)
                 .behaviors(allBehaviors)
                 .sourceCode(AutodocSourceCodeRetriever.retrieveCodeFor(
                         entityClass.getPackageName(),
                         entityClass.getSimpleName(),
-                        kotlin
+                        java
                 ))
                 .note(AutodocNoteExtractor.getNoteFrom(entityClass))
                 .build();
@@ -39,7 +39,12 @@ public class EntityDocumentation {
     private final String name;
     private final List<ClassProperty> properties;
     private final List<ClassBehavior> behaviors;
-    private final String sourceCode;
+    private String sourceCode;
     private final String note;
 
+
+    @Override
+    public void cleanSourceCode() {
+        this.sourceCode = null;
+    }
 }

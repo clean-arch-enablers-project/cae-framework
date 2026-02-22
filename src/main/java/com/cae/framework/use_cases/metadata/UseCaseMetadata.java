@@ -25,6 +25,10 @@ public class UseCaseMetadata {
 
     public static <U extends UseCase> UseCaseMetadata of(U useCase) {
         var type = useCase.getClass();
+        return UseCaseMetadata.of(type);
+    }
+
+    public static <U extends UseCase> UseCaseMetadata of(Class<U> type) {
         UseCaseMetadata.findOutWhetherOrNotCached(type);
         return UseCaseMetadata.validateBoundaryAndAutoauth(type, type.getSimpleName());
     }

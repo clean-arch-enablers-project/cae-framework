@@ -23,9 +23,9 @@ import java.util.stream.Stream;
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
-public class UseCaseDocumentation {
+public class UseCaseDocumentation implements Documentation {
 
-    public static UseCaseDocumentation of(Class<?> implementationClass, boolean kotlin){
+    public static UseCaseDocumentation of(Class<?> implementationClass, boolean java){
         var declarationClass = getDeclarationClassOf(implementationClass);
         var properties = Stream.of(implementationClass.getDeclaredFields())
                 .map(ClassProperty::of)
@@ -41,17 +41,17 @@ public class UseCaseDocumentation {
                 .implementation(implementationClass.getSimpleName())
                 .implementationPackage(implementationClass.getPackageName())
                 .ioContract(handleIOContractFrom(declarationClass))
+                .edge(isEdge(implementationClass, declarationClass))
                 .isProtected(handleProtectionStatus(implementationClass, declarationClass))
                 .scopes(handleScopes(implementationClass, declarationClass))
                 .actionId(handleActionId(implementationClass, declarationClass))
-                .edge(isEdge(implementationClass, declarationClass))
                 .usesRoleBasedProtection(isRoleBasedProtected(implementationClass, declarationClass))
                 .properties(properties)
                 .behaviors(allBehaviors)
                 .sourceCode(AutodocSourceCodeRetriever.retrieveCodeFor(
                         implementationClass.getPackageName(),
                         implementationClass.getSimpleName(),
-                        kotlin
+                        java
                 ))
                 .note(AutodocNoteExtractor.getNoteFrom(implementationClass))
                 .build();
@@ -157,4 +157,8 @@ public class UseCaseDocumentation {
     private List<ClassProperty> properties;
     private List<ClassBehavior> behaviors;
 
+    @Override
+    public void cleanSourceCode() {
+        this.sourceCode = null;
+    }
 }
