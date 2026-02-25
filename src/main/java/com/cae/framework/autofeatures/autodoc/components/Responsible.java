@@ -1,10 +1,12 @@
 package com.cae.framework.autofeatures.autodoc.components;
 
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 @Builder
 @Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Responsible {
 
     public static Responsible of(String name, String email){
@@ -14,7 +16,7 @@ public class Responsible {
                .build();
     }
 
-    private final String name;
-    private final String email;
+    private String name;
+    private String email;
 
 }

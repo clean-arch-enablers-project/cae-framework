@@ -1,9 +1,7 @@
 package com.cae.framework.autofeatures.autodoc.components;
 
 import com.cae.framework.autofeatures.autodoc.AutodocNoteExtractor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 import java.lang.reflect.*;
 import java.util.Collection;
@@ -14,6 +12,9 @@ import java.util.stream.Stream;
 
 @Builder
 @Getter
+@AllArgsConstructor
+@Setter
+@NoArgsConstructor
 public class ClassBehavior {
 
     public static Optional<ClassBehavior> of(Method method, List<ClassProperty> properties){
@@ -70,16 +71,19 @@ public class ClassBehavior {
         return null;
     }
 
-    private final String name;
-    private final Boolean isPublic;
-    private final Boolean isStatic;
-    private final List<ClassBehaviorParameter> parameters;
-    private final String returns;
-    private final String returnInnerItemsType;
-    private final String note;
+    private String name;
+    private Boolean isPublic;
+    private Boolean isStatic;
+    private List<ClassBehaviorParameter> parameters;
+    private String returns;
+    private String returnInnerItemsType;
+    private String note;
 
-    @RequiredArgsConstructor
     @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
     public static class ClassBehaviorParameter{
 
         public static ClassBehaviorParameter of(Parameter parameter){
@@ -102,10 +106,10 @@ public class ClassBehavior {
             return null;
         }
 
-        private final String name;
-        private final String type;
-        private final String innerItemsType;
-        private final String note;
+        private String name;
+        private String type;
+        private String innerItemsType;
+        private String note;
     }
 
 }

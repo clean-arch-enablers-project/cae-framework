@@ -2,8 +2,7 @@ package com.cae.framework.autofeatures.autodoc.components;
 
 import com.cae.framework.autofeatures.autodoc.AutodocNoteExtractor;
 import com.cae.framework.autofeatures.autodoc.AutodocSourceCodeRetriever;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,6 +11,9 @@ import java.util.stream.Stream;
 
 @Builder
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Setter
 public class BusinessEntityDocumentation implements Documentation {
 
     public static BusinessEntityDocumentation of(Class<?> entityClass, boolean java){
@@ -36,11 +38,11 @@ public class BusinessEntityDocumentation implements Documentation {
                 .build();
     }
 
-    private final String name;
-    private final List<ClassProperty> properties;
-    private final List<ClassBehavior> behaviors;
+    private String name;
+    private List<ClassProperty> properties;
+    private List<ClassBehavior> behaviors;
     private String sourceCode;
-    private final String note;
+    private String note;
 
 
     @Override

@@ -1,9 +1,7 @@
 package com.cae.framework.autofeatures.autodoc.components;
 
 import com.cae.framework.autofeatures.autodoc.AutodocNoteExtractor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -13,6 +11,8 @@ import java.util.Collection;
 @Builder
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class ClassProperty{
 
     public static ClassProperty of(Field field){
@@ -40,13 +40,13 @@ public class ClassProperty{
         return null;
     }
 
-    private final String name;
-    private final String type;
-    private final Boolean isStatic;
-    private final Boolean isPublic;
-    private final Boolean isCollection;
-    private final String innerItemsType;
-    private final String note;
+    private String name;
+    private String type;
+    private Boolean isStatic;
+    private Boolean isPublic;
+    private Boolean isCollection;
+    private String innerItemsType;
+    private String note;
     private Boolean hasGetter;
     private Boolean isGetterPublic;
     private Boolean hasSetter;
