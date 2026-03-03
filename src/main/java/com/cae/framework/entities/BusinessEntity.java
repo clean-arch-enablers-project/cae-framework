@@ -8,4 +8,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface BusinessEntity {
+
+    Ontology[] ontology() default {};
+    String[] canonicalName() default {};
+    boolean groupsCanonicalEntities() default false;
+
 }

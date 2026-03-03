@@ -1,6 +1,7 @@
 package com.cae.framework.use_cases.boundaries;
 
 import com.cae.framework.autofeatures.autoauth.AutoauthModes;
+import com.cae.framework.use_cases.metadata.OperationTypes;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -14,5 +15,7 @@ public @interface Edge {
     AutoauthModes autoauth() default AutoauthModes.NOT_EXPLICITLY_INFORMED;
     String[] scopes() default {};
     String actionId() default "";
+    String[] affectedOwners() default {};
+    OperationTypes operationType() default OperationTypes.NOT_SPECIFIED;
 
 }

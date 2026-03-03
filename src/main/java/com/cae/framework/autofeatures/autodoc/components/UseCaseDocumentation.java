@@ -9,6 +9,7 @@ import com.cae.framework.use_cases.RunnableUseCase;
 import com.cae.framework.use_cases.SupplierUseCase;
 import com.cae.framework.use_cases.boundaries.Edge;
 import com.cae.framework.use_cases.boundaries.Internal;
+import com.cae.framework.use_cases.metadata.OperationTypes;
 import lombok.*;
 
 import java.lang.reflect.ParameterizedType;
@@ -46,6 +47,8 @@ public class UseCaseDocumentation implements Documentation {
                 .scopes(handleScopes(implementationClass, declarationClass))
                 .actionId(handleActionId(implementationClass, declarationClass))
                 .usesRoleBasedProtection(isRoleBasedProtected(implementationClass, declarationClass))
+                .affectedOwners(extractAffectedOwners(implementationClass, declarationClass))
+                .operationType(extractOperationType(implementationClass, declarationClass))
                 .properties(properties)
                 .behaviors(allBehaviors)
                 .sourceCode(AutodocSourceCodeRetriever.retrieveCodeFor(
@@ -55,6 +58,30 @@ public class UseCaseDocumentation implements Documentation {
                 ))
                 .note(AutodocNoteExtractor.getNoteFrom(implementationClass))
                 .build();
+    }
+
+    private static List<String> extractAffectedOwners(Class<?> implementationClass, Class<?> declarationClass) {
+        var edgeAnnotation = implementationClass.isAnnotationPresent(Edge.class)?
+                (implementationClass.getAnnotation(Edge.class)) : (declarationClass.getAnnotation(Edge.class));
+        if (edgeAnnotation != null)
+            return List.of(edgeAnnotation.affectedOwners());
+        var internalAnnotation = implementationClass.isAnnotationPresent(Internal.class)?
+                (implementationClass.getAnnotation(Internal.class)) : (declarationClass.getAnnotation(Internal.class));
+        if (internalAnnotation != null)
+            return List.of(internalAnnotation.affectedOwners());
+        return new ArrayList<>();
+    }
+
+    private static String extractOperationType(Class<?> implementationClass, Class<?> declarationClass) {
+        var edgeAnnotation = implementationClass.isAnnotationPresent(Edge.class)?
+                (implementationClass.getAnnotation(Edge.class)) : (declarationClass.getAnnotation(Edge.class));
+        if (edgeAnnotation != null)
+            return edgeAnnotation.operationType().name();
+        var internalAnnotation = implementationClass.isAnnotationPresent(Internal.class)?
+                (implementationClass.getAnnotation(Internal.class)) : (declarationClass.getAnnotation(Internal.class));
+        if (internalAnnotation != null)
+            return internalAnnotation.operationType().name();
+        return OperationTypes.NOT_SPECIFIED.name();
     }
 
     private static Boolean isEdge(Class<?> implementationClass, Class<?> declarationClass) {
@@ -154,6 +181,8 @@ public class UseCaseDocumentation implements Documentation {
     private String note;
     private Boolean edge;
     private Boolean usesRoleBasedProtection;
+    private String operationType;
+    private List<String> affectedOwners;
     private List<ClassProperty> properties;
     private List<ClassBehavior> behaviors;
 
