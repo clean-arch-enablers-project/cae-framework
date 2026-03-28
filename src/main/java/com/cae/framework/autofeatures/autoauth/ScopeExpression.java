@@ -2,7 +2,6 @@ package com.cae.framework.autofeatures.autoauth;
 
 import com.cae.framework.autofeatures.autoauth.scope_expression.ScopeExpressionNode;
 import com.cae.framework.autofeatures.autoauth.scope_expression.ScopeExpressionParser;
-import com.cae.mapped_exceptions.specifics.InternalMappedException;
 
 import java.util.HashSet;
 import java.util.List;
@@ -20,16 +19,8 @@ public final class ScopeExpression {
 
     public static ScopeExpression compile(String expression, String useCaseName) {
         var name = useCaseName != null ? useCaseName : "unknown";
-        if (expression == null || expression.isBlank())
-            throw invalidExpression(name, "The expression is blank.");
-        try {
-            var parser = new ScopeExpressionParser(expression);
-            return new ScopeExpression(expression, parser.parse());
-        } catch (InternalMappedException e) {
-            throw e;
-        } catch (RuntimeException e) {
-            throw invalidExpression(name, "Unexpected parser error: " + e.getMessage());
-        }
+        var parser = new ScopeExpressionParser(expression, name);
+        return new ScopeExpression(expression, parser.parse());
     }
 
     public String getRawExpression() {
@@ -45,12 +36,5 @@ public final class ScopeExpression {
             }
         }
         return this.root.evaluate(provided);
-    }
-
-    private static InternalMappedException invalidExpression(String useCaseName, String details) {
-        return new InternalMappedException(
-            "Couldn't instantiate '" + useCaseName + "'",
-            "Invalid scope expression. " + details
-        );
     }
 }
