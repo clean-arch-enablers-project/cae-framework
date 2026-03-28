@@ -1,22 +1,34 @@
 package com.cae.framework.autofeatures.autoauth.scope_expression;
 
+import com.cae.mapped_exceptions.specifics.InternalMappedException;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ScopeExpressionParser {
 
+    private final String useCaseName;
     private final List<ScopeExpressionToken> tokens;
     private int index = 0;
     private int parenthesisDepth = 0;
 
-    public ScopeExpressionParser(String expression) {
+    public ScopeExpressionParser(String expression, String useCaseName) {
+        this.useCaseName = useCaseName;
+        if (expression == null || expression.isBlank())
+            throw new InternalMappedException(
+                "Couldn't instantiate '" + useCaseName + "'",
+                "Invalid scope expression. The expression is blank."
+            );
         this.tokens = tokenize(expression);
     }
 
     public ScopeExpressionNode parse() {
         var node = parseOr();
         if (!isAtEnd())
-            throw invalid("Unexpected token '" + peek().value + "'.");
+            throw new InternalMappedException(
+                "Couldn't instantiate '" + this.useCaseName + "'",
+                "Invalid scope expression. Unexpected token '" + peek().value + "'."
+            );
         return node;
     }
 
@@ -47,19 +59,31 @@ public class ScopeExpressionParser {
     private ScopeExpressionNode parsePrimary() {
         if (match(ScopeExpressionToken.TokenType.OPEN_PAREN)) {
             if (this.parenthesisDepth > 0)
-                throw invalid("Nested parentheses are not allowed.");
+                throw new InternalMappedException(
+                    "Couldn't instantiate '" + this.useCaseName + "'",
+                    "Invalid scope expression. Nested parentheses are not allowed."
+                );
             this.parenthesisDepth++;
             var node = parseOr();
             if (!match(ScopeExpressionToken.TokenType.CLOSE_PAREN))
-                throw invalid("Missing closing parenthesis.");
+                throw new InternalMappedException(
+                    "Couldn't instantiate '" + this.useCaseName + "'",
+                    "Invalid scope expression. Missing closing parenthesis."
+                );
             this.parenthesisDepth--;
             return node;
         }
         if (match(ScopeExpressionToken.TokenType.SCOPE))
             return new ScopeNode(previous().value);
         if (isAtEnd())
-            throw invalid("Expression ended unexpectedly.");
-        throw invalid("Unexpected token '" + peek().value + "'.");
+            throw new InternalMappedException(
+                "Couldn't instantiate '" + this.useCaseName + "'",
+                "Invalid scope expression. Expression ended unexpectedly."
+            );
+        throw new InternalMappedException(
+            "Couldn't instantiate '" + this.useCaseName + "'",
+            "Invalid scope expression. Unexpected token '" + peek().value + "'."
+        );
     }
 
     private boolean match(ScopeExpressionToken.TokenType type) {
@@ -88,11 +112,7 @@ public class ScopeExpressionParser {
         return this.tokens.get(this.index - 1);
     }
 
-    private IllegalArgumentException invalid(String details) {
-        return new IllegalArgumentException(details);
-    }
-
-    private static List<ScopeExpressionToken> tokenize(String expression) {
+    private List<ScopeExpressionToken> tokenize(String expression) {
         var tokens = new ArrayList<ScopeExpressionToken>();
         var cursor = 0;
         while (cursor < expression.length()) {
@@ -122,7 +142,10 @@ public class ScopeExpressionParser {
                     cursor = cursor + 2;
                     continue;
                 }
-                throw new IllegalArgumentException("Invalid operator '&'. Use '&&'.");
+                throw new InternalMappedException(
+                    "Couldn't instantiate '" + this.useCaseName + "'",
+                    "Invalid scope expression. Invalid operator '&'. Use '&&'."
+                );
             }
             if (current == '|') {
                 if (cursor + 1 < expression.length() && expression.charAt(cursor + 1) == '|') {
@@ -130,7 +153,10 @@ public class ScopeExpressionParser {
                     cursor = cursor + 2;
                     continue;
                 }
-                throw new IllegalArgumentException("Invalid operator '|'. Use '||'.");
+                throw new InternalMappedException(
+                    "Couldn't instantiate '" + this.useCaseName + "'",
+                    "Invalid scope expression. Invalid operator '|'. Use '||'."
+                );
             }
             var start = cursor;
             while (cursor < expression.length()) {
@@ -140,14 +166,23 @@ public class ScopeExpressionParser {
                 cursor++;
             }
             if (start == cursor)
-                throw new IllegalArgumentException("Invalid token around '" + current + "'.");
+                throw new InternalMappedException(
+                    "Couldn't instantiate '" + this.useCaseName + "'",
+                    "Invalid scope expression. Invalid token around '" + current + "'."
+                );
             var scope = expression.substring(start, cursor);
             if (scope.isEmpty())
-                throw new IllegalArgumentException("Invalid empty scope token.");
+                throw new InternalMappedException(
+                    "Couldn't instantiate '" + this.useCaseName + "'",
+                    "Invalid scope expression. Invalid empty scope token."
+                );
             tokens.add(new ScopeExpressionToken(ScopeExpressionToken.TokenType.SCOPE, scope));
         }
         if (tokens.isEmpty())
-            throw new IllegalArgumentException("Expression has no tokens.");
+            throw new InternalMappedException(
+                "Couldn't instantiate '" + this.useCaseName + "'",
+                "Invalid scope expression. Expression has no tokens."
+            );
         return tokens;
     }
 }
