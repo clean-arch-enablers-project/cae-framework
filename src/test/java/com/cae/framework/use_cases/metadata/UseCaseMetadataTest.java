@@ -16,8 +16,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import utils.normal_use_cases.SomeNormalFunctionUseCase;
 
-import java.util.stream.Stream;
-
 @ExtendWith(MockitoExtension.class)
 class UseCaseMetadataTest {
 
@@ -30,13 +28,15 @@ class UseCaseMetadataTest {
     void shouldBeAbleToCorrectlyExtractTheScopesSetToTheUseCase(){
         var metadata = UseCaseMetadata.of(new SomeScopeBasedProtectedUseCase());
         var extractedScopes = metadata.getScopes();
-        Assertions.assertEquals(2, extractedScopes.length);
-        var containsScopeOne = Stream.of(extractedScopes)
-                        .anyMatch(scope -> scope.equalsIgnoreCase(SCOPE_ONE));
-        var containsScopeTwo = Stream.of(extractedScopes)
-                .anyMatch(scope -> scope.equalsIgnoreCase(SCOPE_TWO));
-        Assertions.assertTrue(containsScopeOne);
-        Assertions.assertTrue(containsScopeTwo);
+        Assertions.assertEquals(1, extractedScopes.length);
+        Assertions.assertEquals("(" + SCOPE_ONE + " || EXTRA-ROLE) && " + SCOPE_TWO, extractedScopes[0]);
+        Assertions.assertNotNull(metadata.getScopeExpression());
+    }
+
+    @Test
+    @DisplayName("Should throw InternalMappedException when @Edge scope expression is malformed")
+    void shouldThrowInternalMappedExceptionWhenEdgeScopeExpressionIsMalformed(){
+        Assertions.assertThrows(InternalMappedException.class, SomeProblematicScopeExpressionUseCase::new);
     }
 
     @Test
@@ -94,8 +94,16 @@ class UseCaseMetadataTest {
         Assertions.assertTrue(metadata.getId().isEmpty());
     }
 
-    @Edge(scopes = {SCOPE_ONE, SCOPE_TWO})
+    @Edge(scopes = "(" + SCOPE_ONE + " || EXTRA-ROLE) && " + SCOPE_TWO)
     public static class SomeScopeBasedProtectedUseCase extends RunnableUseCase{
+        @Override
+        protected void applyInternalLogic(ExecutionContext context) {
+            //does nothing
+        }
+    }
+
+    @Edge(scopes = "(A || B")
+    public static class SomeProblematicScopeExpressionUseCase extends RunnableUseCase{
         @Override
         protected void applyInternalLogic(ExecutionContext context) {
             //does nothing

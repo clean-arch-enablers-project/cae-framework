@@ -40,7 +40,7 @@ class ScopeBasedAutoauthTest {
 
     @Test
     @DisplayName("Should refuse execution for SimpleScopeBasedProtectedUseCase when Actor doesn't have the scope")
-    void shouldAllowExecutionForSimpleScopeBasedProtectedUseCaseWhenTheActorDoesNotHaveTheScope(){
+    void shouldRefuseExecutionForSimpleScopeBasedProtectedUseCaseWhenActorDoesNotHaveTheScope(){
         var useCase = new SimpleScopeBasedProtectedUseCase();
         Mockito.when(this.actor.getScopes()).thenReturn(List.of("SOME-OTHER-SCOPE"));
         Assertions.assertThrows(NotAllowedMappedException.class, () -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
@@ -70,7 +70,7 @@ class ScopeBasedAutoauthTest {
         Assertions.assertThrows(NotAllowedMappedException.class, () -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
     }
 
-    @Internal(scopes = {"A-SCOPE", "ANOTHER-SCOPE"})
+    @Internal(scopes = "A-SCOPE && ANOTHER-SCOPE")
     public static class SimpleLogicalAndScopeBasedProtectedUseCase extends RunnableUseCase{
         @Override
         protected void applyInternalLogic(ExecutionContext context) {}
@@ -93,6 +93,80 @@ class ScopeBasedAutoauthTest {
     }
 
     @Test
+    @DisplayName("Should allow execution for SimpleLogicalNotScopeBasedProtectedUseCase when Actor does NOT have the blocked scope")
+    void shouldAllowExecutionForSimpleLogicalNotScopeBasedProtectedUseCaseWhenActorDoesNotHaveBlockedScope(){
+        var useCase = new SimpleLogicalNotScopeBasedProtectedUseCase();
+        Mockito.when(this.actor.getScopes()).thenReturn(List.of("USER"));
+        Assertions.assertDoesNotThrow(() -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
+        Mockito.when(this.actor.getScopes()).thenReturn(List.of("ADMIN"));
+        Assertions.assertDoesNotThrow(() -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
+    }
+
+    @Test
+    @DisplayName("Should refuse execution for SimpleLogicalNotScopeBasedProtectedUseCase when Actor has the blocked scope")
+    void shouldRefuseExecutionForSimpleLogicalNotScopeBasedProtectedUseCaseWhenActorHasBlockedScope(){
+        var useCase = new SimpleLogicalNotScopeBasedProtectedUseCase();
+        Mockito.when(this.actor.getScopes()).thenReturn(List.of("BLOCKED"));
+        Assertions.assertThrows(NotAllowedMappedException.class, () -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
+        Mockito.when(this.actor.getScopes()).thenReturn(List.of("ADMIN", "BLOCKED"));
+        Assertions.assertThrows(NotAllowedMappedException.class, () -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
+    }
+
+    @Internal(scopes = "!BLOCKED")
+    public static class SimpleLogicalNotScopeBasedProtectedUseCase extends RunnableUseCase{
+        @Override
+        protected void applyInternalLogic(ExecutionContext context) {}
+    }
+
+    @Test
+    @DisplayName("Should allow execution for LogicalAndNotScopeBasedProtectedUseCase when Actor has required scope and not the blocked one")
+    void shouldAllowExecutionForLogicalAndNotScopeBasedProtectedUseCaseWhenActorHasRequiredAndNotBlocked(){
+        var useCase = new LogicalAndNotScopeBasedProtectedUseCase();
+        Mockito.when(this.actor.getScopes()).thenReturn(List.of("ADMIN"));
+        Assertions.assertDoesNotThrow(() -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
+    }
+
+    @Test
+    @DisplayName("Should refuse execution for LogicalAndNotScopeBasedProtectedUseCase when Actor has blocked scope or lacks required scope")
+    void shouldRefuseExecutionForLogicalAndNotScopeBasedProtectedUseCaseWhenActorHasBlockedOrLacksRequired(){
+        var useCase = new LogicalAndNotScopeBasedProtectedUseCase();
+        Mockito.when(this.actor.getScopes()).thenReturn(List.of("ADMIN", "BLOCKED"));
+        Assertions.assertThrows(NotAllowedMappedException.class, () -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
+        Mockito.when(this.actor.getScopes()).thenReturn(List.of("BLOCKED"));
+        Assertions.assertThrows(NotAllowedMappedException.class, () -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
+    }
+
+    @Internal(scopes = "ADMIN && !BLOCKED")
+    public static class LogicalAndNotScopeBasedProtectedUseCase extends RunnableUseCase{
+        @Override
+        protected void applyInternalLogic(ExecutionContext context) {}
+    }
+
+    @Test
+    @DisplayName("Should allow execution for LogicalOrAndNotScopeBasedProtectedUseCase when Actor has one role and not blocked")
+    void shouldAllowExecutionForLogicalOrAndNotScopeBasedProtectedUseCaseWhenActorHasRoleAndNotBlocked(){
+        var useCase = new LogicalOrAndNotScopeBasedProtectedUseCase();
+        Mockito.when(this.actor.getScopes()).thenReturn(List.of("ADMIN"));
+        Assertions.assertDoesNotThrow(() -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
+        Mockito.when(this.actor.getScopes()).thenReturn(List.of("MANAGER"));
+        Assertions.assertDoesNotThrow(() -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
+    }
+
+    @Test
+    @DisplayName("Should refuse execution for LogicalOrAndNotScopeBasedProtectedUseCase when Actor has blocked scope")
+    void shouldRefuseExecutionForLogicalOrAndNotScopeBasedProtectedUseCaseWhenActorHasBlockedScope(){
+        var useCase = new LogicalOrAndNotScopeBasedProtectedUseCase();
+        Mockito.when(this.actor.getScopes()).thenReturn(List.of("ADMIN", "BLOCKED"));
+        Assertions.assertThrows(NotAllowedMappedException.class, () -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
+    }
+
+    @Internal(scopes = "(ADMIN || MANAGER) && !BLOCKED")
+    public static class LogicalOrAndNotScopeBasedProtectedUseCase extends RunnableUseCase{
+        @Override
+        protected void applyInternalLogic(ExecutionContext context) {}
+    }
+
+    @Test
     @DisplayName("Should allow execution for ComplexLogicalAndScopeBasedProtectedUseCase when Actor has all of the required scopes")
     void shouldAllowExecutionForComplexLogicalAndScopeBasedProtectedUseCaseWhenActorHasAllOfTheRequiredScopes(){
         var useCase = new ComplexLogicalAndScopeBasedProtectedUseCase();
@@ -102,7 +176,7 @@ class ScopeBasedAutoauthTest {
         Assertions.assertDoesNotThrow(() -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
     }
 
-    @Internal(scopes = {"A-SCOPE", "ANOTHER-SCOPE", "AND-AGAIN", "ONE-MORE || OR-THIS"})
+    @Internal(scopes = "A-SCOPE && ANOTHER-SCOPE && AND-AGAIN && (ONE-MORE || OR-THIS)")
     public static class ComplexLogicalAndScopeBasedProtectedUseCase extends RunnableUseCase{
         @Override
         protected void applyInternalLogic(ExecutionContext context) {}
@@ -122,8 +196,26 @@ class ScopeBasedAutoauthTest {
         Assertions.assertDoesNotThrow(() -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
     }
 
-    @Internal(scopes = {"ONE || OR-ANOTHER || OR-THIS || OR-THAT", "AND-THIS"})
+    @Internal(scopes = "(ONE || OR-ANOTHER || OR-THIS || OR-THAT) && AND-THIS")
     public static class ComplexLogicalOrScopeBasedProtectedUseCase extends RunnableUseCase{
+        @Override
+        protected void applyInternalLogic(ExecutionContext context) {}
+    }
+
+    @Test
+    @DisplayName("Should evaluate nested logical expressions correctly")
+    void shouldEvaluateNestedLogicalExpressionsCorrectly(){
+        var useCase = new NestedScopeBasedProtectedUseCase();
+        Mockito.when(this.actor.getScopes()).thenReturn(List.of("ADMIN", "VISIT"));
+        Assertions.assertDoesNotThrow(() -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
+        Mockito.when(this.actor.getScopes()).thenReturn(List.of("MANAGER", "USER", "VISIT"));
+        Assertions.assertDoesNotThrow(() -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
+        Mockito.when(this.actor.getScopes()).thenReturn(List.of("ADMIN"));
+        Assertions.assertThrows(NotAllowedMappedException.class, () -> ScopeBasedAutoauth.handle(this.executionContext, useCase));
+    }
+
+    @Internal(scopes = "(ADMIN || MANAGER) && (USER || VISIT)")
+    public static class NestedScopeBasedProtectedUseCase extends RunnableUseCase{
         @Override
         protected void applyInternalLogic(ExecutionContext context) {}
     }
