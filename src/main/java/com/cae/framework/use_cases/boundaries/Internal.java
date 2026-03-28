@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target(value = ElementType.TYPE)
 public @interface Internal {
 
-    String[] scopes() default {};
+    String scopes() default "";
     String[] affectedOwners() default {};
     OperationTypes operationType() default OperationTypes.NOT_SPECIFIED;
 }
