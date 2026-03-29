@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
 public @interface Edge {
 
     AutoauthModes autoauth() default AutoauthModes.NOT_EXPLICITLY_INFORMED;
-    String[] scopes() default {};
+    String scopes() default "";
     String actionId() default "";
     String[] affectedOwners() default {};
     OperationTypes operationType() default OperationTypes.NOT_SPECIFIED;

@@ -1,6 +1,7 @@
 package com.cae.framework.use_cases.metadata;
 
 import com.cae.framework.autofeatures.autoauth.AutoauthModes;
+import com.cae.framework.autofeatures.autoauth.ScopeExpression;
 import com.cae.framework.autofeatures.autocache.Cacheable;
 import com.cae.framework.autofeatures.autocache.annotations.Autocache;
 import com.cae.framework.autofeatures.autocache.metadata.AutocacheMetadata;
@@ -10,8 +11,6 @@ import com.cae.framework.use_cases.boundaries.Internal;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import lombok.Getter;
 
-import java.util.Optional;
-
 @Getter
 public class UseCaseMetadata {
 
@@ -19,16 +18,13 @@ public class UseCaseMetadata {
     private final String name;
     private final boolean isProtected;
     private final String[] scopes;
+    private final ScopeExpression scopeExpression;
     private final boolean isRoleProtectionEnabled;
     private final AutocacheMetadata autocacheMetadata;
 
 
     public static <U extends UseCase> UseCaseMetadata of(U useCase) {
         var type = useCase.getClass();
-        return UseCaseMetadata.of(type);
-    }
-
-    public static <U extends UseCase> UseCaseMetadata of(Class<U> type) {
         UseCaseMetadata.findOutWhetherOrNotCached(type);
         return UseCaseMetadata.validateBoundaryAndAutoauth(type, type.getSimpleName());
     }
@@ -37,6 +33,7 @@ public class UseCaseMetadata {
         var foundNothing = true;
         var id = "";
         var requiredScopes = new String[]{};
+        ScopeExpression requiredScopeExpression = null;
         var rbac = false;
         var annotatedWithEdge = useCaseClass.isAnnotationPresent(Edge.class);
         var annotatedWithInternal = useCaseClass.isAnnotationPresent(Internal.class);
@@ -48,29 +45,32 @@ public class UseCaseMetadata {
         if (annotatedWithEdge){
             foundNothing = false;
             var annotation = useCaseClass.getAnnotation(Edge.class);
-            if (annotation.scopes().length> 0 && !(annotation.actionId().isBlank()))
+            var declaredScopeExpression = annotation.scopes();
+            var hasScopeExpression = declaredScopeExpression != null && !declaredScopeExpression.isBlank();
+            if (hasScopeExpression && !(annotation.actionId().isBlank()))
                 throw new InternalMappedException(
                     "Couldn't instantiate '" + useCaseClass.getSimpleName() + "'",
                     "Its type is annotated with @Edge and had both 'scopes' and 'actionId' setups. Pick one of them."
                 );
-            if (annotation.scopes().length > 0)
-                requiredScopes = annotation.scopes();
+            if (hasScopeExpression){
+                requiredScopes = new String[]{declaredScopeExpression};
+                requiredScopeExpression = ScopeExpression.compile(declaredScopeExpression, useCaseClass.getSimpleName());
+            }
             if (!annotation.actionId().isBlank()){
                 rbac = true;
                 id = annotation.actionId();
             }
             var autoauthMode = annotation.autoauth();
             if (autoauthMode == AutoauthModes.SCOPES){
-                if (annotation.scopes().length == 0)
+                if (!hasScopeExpression)
                     throw new InternalMappedException(
                         "Unable to instantiate '" + useCaseClass.getSimpleName() + "'",
                         "Its type is annotated with @Edge(autoauth = AutoauthModes.SCOPES) but had no scopes. " +
                         "Either provide some or remove the autoauth modification."
                     );
-                requiredScopes = annotation.scopes();
             }
             else if (autoauthMode == AutoauthModes.RBAC){
-                if (annotation.scopes().length > 0)
+                if (hasScopeExpression)
                     throw new InternalMappedException(
                         "Couldn't instantiate '" + useCaseClass.getSimpleName() + "'",
                         "Its type is annotated with @Edge(autoauth = AutoauthModes.RBAC) but declares scopes. " +
@@ -89,7 +89,12 @@ public class UseCaseMetadata {
         if (annotatedWithInternal){
             foundNothing = false;
             var annotation = useCaseClass.getAnnotation(Internal.class);
-            requiredScopes = Optional.ofNullable(annotation.scopes()).orElse(new String[]{});
+            var declaredScopeExpression = annotation.scopes();
+            var hasScopeExpression = declaredScopeExpression != null && !declaredScopeExpression.isBlank();
+            if (hasScopeExpression){
+                requiredScopes = new String[]{declaredScopeExpression};
+                requiredScopeExpression = ScopeExpression.compile(declaredScopeExpression, useCaseClass.getSimpleName());
+            }
         }
         if (foundNothing && useCaseClass != UseCase.class)
             return UseCaseMetadata.validateBoundaryAndAutoauth(useCaseClass.getSuperclass(), name);
@@ -99,6 +104,7 @@ public class UseCaseMetadata {
             name,
             (requiredScopes.length > 0 || rbac),
             requiredScopes,
+            requiredScopeExpression,
             rbac);
     }
 
@@ -122,11 +128,13 @@ public class UseCaseMetadata {
             String name,
             boolean isProtected,
             String[] scopes,
+            ScopeExpression scopeExpression,
             boolean isRoleProtectionEnabled) {
         this.id = id;
         this.name = name;
         this.isProtected = isProtected;
         this.scopes = scopes;
+        this.scopeExpression = scopeExpression;
         this.isRoleProtectionEnabled = isRoleProtectionEnabled;
         this.autocacheMetadata = AutocacheMetadata.of(this.getAutocacheAnnotationOutta(useCaseType));
     }

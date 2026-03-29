@@ -112,52 +112,32 @@ public class UseCaseDocumentation implements Documentation {
     }
 
     private static Boolean handleProtectionStatus(Class<?> useCaseClass, Class<?> rootUseCaseClass) {
-        return (
-            (useCaseClass.isAnnotationPresent(Internal.class) &&
-            useCaseClass.getAnnotation(Internal.class).scopes() != null &&
-            useCaseClass.getAnnotation(Internal.class).scopes().length > 0)
-            ||
-            (useCaseClass.isAnnotationPresent(Edge.class) &&
-            useCaseClass.getAnnotation(Edge.class).scopes() != null &&
-            useCaseClass.getAnnotation(Edge.class).scopes().length > 0)
-            ||
-            (useCaseClass.isAnnotationPresent(Edge.class) &&
-            useCaseClass.getAnnotation(Edge.class).autoauth() != null &&
-            useCaseClass.getAnnotation(Edge.class).autoauth() == AutoauthModes.RBAC)
-        )
-        ||
-        (
-            (rootUseCaseClass.isAnnotationPresent(Internal.class) &&
-            rootUseCaseClass.getAnnotation(Internal.class).scopes() != null &&
-            rootUseCaseClass.getAnnotation(Internal.class).scopes().length > 0)
-            ||
-            (rootUseCaseClass.isAnnotationPresent(Edge.class) &&
-            rootUseCaseClass.getAnnotation(Edge.class).scopes() != null &&
-            rootUseCaseClass.getAnnotation(Edge.class).scopes().length > 0)
-            ||
-            (rootUseCaseClass.isAnnotationPresent(Edge.class) &&
-            rootUseCaseClass.getAnnotation(Edge.class).autoauth() != null &&
-            rootUseCaseClass.getAnnotation(Edge.class).autoauth() == AutoauthModes.RBAC)
-        );
+        return isClassProtected(useCaseClass) || isClassProtected(rootUseCaseClass);
+    }
+
+    private static boolean isClassProtected(Class<?> clazz) {
+        return (clazz.isAnnotationPresent(Internal.class) && !clazz.getAnnotation(Internal.class).scopes().isBlank())
+            || (clazz.isAnnotationPresent(Edge.class) && !clazz.getAnnotation(Edge.class).scopes().isBlank())
+            || (clazz.isAnnotationPresent(Edge.class) && clazz.getAnnotation(Edge.class).autoauth() == AutoauthModes.RBAC);
     }
 
     private static List<String> handleScopes(Class<?> useCaseClass, Class<?> rootUseCaseClass) {
-        if (useCaseClass.isAnnotationPresent(Internal.class))
-            return Optional.ofNullable(useCaseClass.getAnnotation(Internal.class).scopes())
-                    .map(List::of)
-                    .orElse(new ArrayList<>());
-        if (rootUseCaseClass.isAnnotationPresent(Internal.class))
-            return Optional.ofNullable(rootUseCaseClass.getAnnotation(Internal.class).scopes())
-                    .map(List::of)
-                    .orElse(new ArrayList<>());
-        if (useCaseClass.isAnnotationPresent(Edge.class))
-            return Optional.ofNullable(useCaseClass.getAnnotation(Edge.class).scopes())
-                    .map(List::of)
-                    .orElse(new ArrayList<>());
-        if (rootUseCaseClass.isAnnotationPresent(Edge.class))
-            return Optional.ofNullable(rootUseCaseClass.getAnnotation(Edge.class).scopes())
-                    .map(List::of)
-                    .orElse(new ArrayList<>());
+        if (useCaseClass.isAnnotationPresent(Internal.class)) {
+            var scopes = useCaseClass.getAnnotation(Internal.class).scopes();
+            return scopes.isBlank() ? new ArrayList<>() : List.of(scopes);
+        }
+        if (rootUseCaseClass.isAnnotationPresent(Internal.class)) {
+            var scopes = rootUseCaseClass.getAnnotation(Internal.class).scopes();
+            return scopes.isBlank() ? new ArrayList<>() : List.of(scopes);
+        }
+        if (useCaseClass.isAnnotationPresent(Edge.class)) {
+            var scopes = useCaseClass.getAnnotation(Edge.class).scopes();
+            return scopes.isBlank() ? new ArrayList<>() : List.of(scopes);
+        }
+        if (rootUseCaseClass.isAnnotationPresent(Edge.class)) {
+            var scopes = rootUseCaseClass.getAnnotation(Edge.class).scopes();
+            return scopes.isBlank() ? new ArrayList<>() : List.of(scopes);
+        }
         return new ArrayList<>();
     }
 
