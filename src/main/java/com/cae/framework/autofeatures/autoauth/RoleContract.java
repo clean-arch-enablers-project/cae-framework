@@ -1,11 +1,9 @@
 package com.cae.framework.autofeatures.autoauth;
 
-import java.util.List;
-
 public interface RoleContract {
 
-    String getRoleIdentifier();
-    String getOwnerIdentifier();
-    List<RoleStatementContract> getStatements();
+    String getId();
+    String getOwnerId();
+    StatementGroupContract getStatementGroup();
 
 }

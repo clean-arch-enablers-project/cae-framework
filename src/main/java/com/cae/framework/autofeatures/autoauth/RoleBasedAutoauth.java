@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RoleBasedAutoauth {
@@ -81,7 +82,7 @@ public class RoleBasedAutoauth {
             throw new NotAuthorizedMappedException(
                     "The Actor of ID " + actor.getId() + " had no roles allowing the execution of the use case " + useCase.getUseCaseMetadata().getName() + "."
             );
-        var noMatchingRoleSharesSameOwnership = rolesThatMatchAndAllowTheUseCase.stream().noneMatch(role -> role.getOwnerIdentifier().equals(resourceOwnerId));
+        var noMatchingRoleSharesSameOwnership = rolesThatMatchAndAllowTheUseCase.stream().noneMatch(role -> role.getOwnerId().equals(resourceOwnerId));
         if (noMatchingRoleSharesSameOwnership)
             throw new NotAuthorizedMappedException(
                     "The Actor of ID " + actor.getId() + " has allowing roles, but none matched the ownership with the resource"
@@ -114,11 +115,17 @@ public class RoleBasedAutoauth {
     private static List<RoleContract> findOutWhichRolesMatch(List<RoleContract> actorRoles, String useCaseId) {
         var finalResult = new ArrayList<RoleContract>();
         for (var role : actorRoles){
-            var roleHasMatchingProperties = role.getStatements()
-                    .stream()
+            var statements = Optional.ofNullable(role.getStatementGroup())
+                    .map(StatementGroupContract::getStatements)
+                    .orElseThrow(() -> new InternalMappedException(
+                        "Couldn't proceed with autoauth",
+                        "Every provided role must have the following chain filled: role.statementGroup.statements"
+                    ));
+            var roleHasMatchingProperties = statements.stream()
                     .anyMatch(
-                            statement -> statement.getActionIds().stream().anyMatch(statementUseCaseId -> statementUseCaseId.equals(useCaseId))
-                            && statement.allows()
+                        statement -> statement.getActionIds()
+                            .stream()
+                            .anyMatch(statementUseCaseId -> statementUseCaseId.equals(useCaseId)) && statement.allows()
                     );
             if (roleHasMatchingProperties) finalResult.add(role);
         }

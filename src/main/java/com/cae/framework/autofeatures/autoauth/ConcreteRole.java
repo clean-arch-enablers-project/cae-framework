@@ -2,25 +2,15 @@ package com.cae.framework.autofeatures.autoauth;
 
 import lombok.*;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
+@Getter
 @Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class ConcreteRole implements RoleContract {
 
-    @Getter
-    private String roleIdentifier;
-    @Getter
-    private String ownerIdentifier;
-    private List<ConcreteRoleStatement> statements;
-
-    public List<RoleStatementContract> getStatements(){
-        return this.statements.stream()
-                .map(a -> (RoleStatementContract) a)
-                .collect(Collectors.toList());
-    }
+    private String id;
+    private String ownerId;
+    private StatementGroupContract statementGroup;
 
 }

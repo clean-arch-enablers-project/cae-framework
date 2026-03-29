@@ -9,14 +9,14 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConcreteRoleStatement implements RoleStatementContract {
+public class ConcreteStatement implements StatementContract {
 
-    private String roleStatementIdentifier;
+    private String id;
     private Boolean allows;
     private List<String> actionIds;
 
-    public Boolean allows(){
+    @Override
+    public boolean allows() {
         return this.allows;
     }
-
 }

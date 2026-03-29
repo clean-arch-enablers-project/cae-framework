@@ -2,12 +2,12 @@ package com.cae.framework.autofeatures.autoauth;
 
 import com.cae.context.ExecutionContext;
 import com.cae.context.actors.Actor;
-import com.cae.framework.use_cases.boundaries.Edge;
 import com.cae.framework.autofeatures.autoauth.annotations.ResourceIdentifier;
 import com.cae.framework.autofeatures.autoauth.annotations.ResourceOwnerIdentifier;
 import com.cae.framework.autofeatures.autolog.AutologProvider;
 import com.cae.framework.autofeatures.autolog.Logger;
 import com.cae.framework.use_cases.FunctionUseCase;
+import com.cae.framework.use_cases.boundaries.Edge;
 import com.cae.framework.use_cases.io.UseCaseInput;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import com.cae.mapped_exceptions.specifics.NotAuthorizedMappedException;
@@ -64,9 +64,9 @@ class RoleBasedAutoauthTest {
         Mockito.when(this.actor.getId()).thenReturn(this.actorId);
         var useCaseId = this.resourceOwnerIdBasedAutoauthUseCase.getUseCaseMetadata().getId();
         var allowingRole = ConcreteRole.builder()
-                .roleIdentifier(UUID.randomUUID().toString())
-                .ownerIdentifier("theOwner")
-                .statements(List.of(ConcreteRoleStatement.builder().allows(true).actionIds(List.of(useCaseId)).build()))
+                .id(UUID.randomUUID().toString())
+                .ownerId("theOwner")
+                .statementGroup(ConcreteStatementGroup.builder().statements(List.of(ConcreteStatement.builder().allows(true).actionIds(List.of(useCaseId)).build())).build())
                 .build();
         List<RoleContract> rolesRetrieved = List.of(allowingRole);
         Mockito.when(this.roleRetriever.getRolesBy(this.actorId, this.executionContext)).thenReturn(rolesRetrieved);
@@ -79,9 +79,9 @@ class RoleBasedAutoauthTest {
     void shouldThrowNotAuthorizedExceptionWhenTheRetrievedRoleHasNoAllowingStatementsForTheActionOfSameIDAsTheUseCase(){
         Mockito.when(this.actor.getId()).thenReturn(this.actorId);
         var notAllowingRole = ConcreteRole.builder()
-                .roleIdentifier(UUID.randomUUID().toString())
-                .ownerIdentifier("theOwner")
-                .statements(new ArrayList<>())
+                .id(UUID.randomUUID().toString())
+                .ownerId("theOwner")
+                .statementGroup(ConcreteStatementGroup.builder().statements(new ArrayList<>()).build())
                 .build();
         List<RoleContract> rolesRetrieved = List.of(notAllowingRole);
         Mockito.when(this.roleRetriever.getRolesBy(this.actorId, this.executionContext)).thenReturn(rolesRetrieved);
@@ -114,9 +114,9 @@ class RoleBasedAutoauthTest {
         Mockito.when(this.resourceOwnershipRetriever.findByResourceId(theInput.resourceId)).thenReturn(Optional.of(ownerId));
         var useCaseId = this.resourceIdBasedAutoauthUseCaseWithOwnershipRetriever.getUseCaseMetadata().getId();
         var allowingRole = ConcreteRole.builder()
-                .roleIdentifier(UUID.randomUUID().toString())
-                .ownerIdentifier(ownerId)
-                .statements(List.of(ConcreteRoleStatement.builder().allows(true).actionIds(List.of(useCaseId)).build()))
+                .id(UUID.randomUUID().toString())
+                .ownerId(ownerId)
+                .statementGroup(ConcreteStatementGroup.builder().statements(List.of(ConcreteStatement.builder().allows(true).actionIds(List.of(useCaseId)).build())).build())
                 .build();
         List<RoleContract> rolesRetrieved = List.of(allowingRole);
         Mockito.when(this.roleRetriever.getRolesBy(this.actorId, this.executionContext)).thenReturn(rolesRetrieved);
@@ -133,9 +133,9 @@ class RoleBasedAutoauthTest {
         Mockito.when(this.resourceOwnershipRetriever.findByResourceId(theInput.resourceId)).thenReturn(Optional.of(resourceOwnerId));
         var useCaseId = this.resourceIdBasedAutoauthUseCaseWithOwnershipRetriever.getUseCaseMetadata().getId();
         var allowingRole = ConcreteRole.builder()
-                .roleIdentifier(UUID.randomUUID().toString())
-                .ownerIdentifier(roleOwnerId)
-                .statements(List.of(ConcreteRoleStatement.builder().allows(true).actionIds(List.of(useCaseId)).build()))
+                .id(UUID.randomUUID().toString())
+                .ownerId(roleOwnerId)
+                .statementGroup(ConcreteStatementGroup.builder().statements(List.of(ConcreteStatement.builder().allows(true).actionIds(List.of(useCaseId)).build())).build())
                 .build();
         List<RoleContract> rolesRetrieved = List.of(allowingRole);
         Mockito.when(this.roleRetriever.getRolesBy(this.actorId, this.executionContext)).thenReturn(rolesRetrieved);

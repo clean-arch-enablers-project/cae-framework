@@ -2,9 +2,9 @@ package com.cae.framework.autofeatures.autoauth;
 
 import java.util.List;
 
-public interface RoleStatementContract {
+public interface StatementContract {
 
-    String getRoleStatementIdentifier();
-    Boolean allows();
+    String getId();
+    boolean allows();
     List<String> getActionIds();
 }
