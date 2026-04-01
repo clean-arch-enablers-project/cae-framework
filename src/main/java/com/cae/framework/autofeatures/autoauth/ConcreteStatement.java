@@ -9,7 +9,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConcreteStatement implements StatementContract {
+public class ConcreteStatement implements Statement {
 
     private String id;
     private Boolean allows;

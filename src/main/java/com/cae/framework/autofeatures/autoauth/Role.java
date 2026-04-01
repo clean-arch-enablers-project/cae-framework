@@ -1,9 +1,9 @@
 package com.cae.framework.autofeatures.autoauth;
 
-public interface RoleContract {
+public interface Role {
 
     String getId();
     String getOwnerId();
-    StatementGroupContract getStatementGroup();
+    StatementGroup getStatementGroup();
 
 }

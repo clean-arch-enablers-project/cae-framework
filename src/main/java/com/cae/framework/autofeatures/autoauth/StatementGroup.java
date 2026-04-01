@@ -2,9 +2,10 @@ package com.cae.framework.autofeatures.autoauth;
 
 import java.util.List;
 
-public interface StatementContract {
+public interface StatementGroup {
 
     String getId();
-    boolean allows();
-    List<String> getActionIds();
+    boolean isShared();
+    List<Statement> getStatements();
+
 }

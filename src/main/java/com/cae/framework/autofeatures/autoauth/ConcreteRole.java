@@ -7,10 +7,10 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ConcreteRole implements RoleContract {
+public class ConcreteRole implements Role {
 
     private String id;
     private String ownerId;
-    private StatementGroupContract statementGroup;
+    private StatementGroup statementGroup;
 
 }

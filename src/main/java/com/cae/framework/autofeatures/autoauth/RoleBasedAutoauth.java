@@ -98,7 +98,7 @@ public class RoleBasedAutoauth {
         );
     }
 
-    private static List<RoleContract> getRolesFor(Actor actor, String useCaseId, ExecutionContext context) {
+    private static List<Role> getRolesFor(Actor actor, String useCaseId, ExecutionContext context) {
         return RoleRetrieverRegistry.SINGLETON.getRoleRetrieverByUseCaseId(useCaseId)
                 .orElseGet(() -> RoleRetrieverRegistry.SINGLETON.getDefaultRetriever().orElseThrow(() ->
                         new InternalMappedException(
@@ -112,11 +112,11 @@ public class RoleBasedAutoauth {
                 .getRolesBy(actor.getId(), context);
     }
 
-    private static List<RoleContract> findOutWhichRolesMatch(List<RoleContract> actorRoles, String useCaseId) {
-        var finalResult = new ArrayList<RoleContract>();
+    private static List<Role> findOutWhichRolesMatch(List<Role> actorRoles, String useCaseId) {
+        var finalResult = new ArrayList<Role>();
         for (var role : actorRoles){
             var statements = Optional.ofNullable(role.getStatementGroup())
-                    .map(StatementGroupContract::getStatements)
+                    .map(StatementGroup::getStatements)
                     .orElseThrow(() -> new InternalMappedException(
                         "Couldn't proceed with autoauth",
                         "Every provided role must have the following chain filled: role.statementGroup.statements"

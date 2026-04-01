@@ -9,11 +9,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConcreteStatementGroup implements StatementGroupContract{
+public class ConcreteStatementGroup implements StatementGroup {
 
     private String id;
     private Boolean shared;
-    private List<StatementContract> statements;
+    private List<Statement> statements;
 
     @Override
     public boolean isShared() {
