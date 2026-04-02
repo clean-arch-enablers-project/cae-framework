@@ -3,6 +3,7 @@ package com.cae.framework.autofeatures.autoauth;
 import com.cae.context.ExecutionContext;
 import com.cae.context.actors.Actor;
 import com.cae.framework.autofeatures.autoauth.exceptions.NotAllowedMappedException;
+import com.cae.framework.autofeatures.autoauth.scope_expression.ScopeExpression;
 import com.cae.framework.use_cases.UseCase;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 

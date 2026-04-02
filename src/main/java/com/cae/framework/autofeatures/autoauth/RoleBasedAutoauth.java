@@ -2,6 +2,8 @@ package com.cae.framework.autofeatures.autoauth;
 
 import com.cae.context.ExecutionContext;
 import com.cae.context.actors.Actor;
+import com.cae.framework.autofeatures.autoauth.models.Policy;
+import com.cae.framework.autofeatures.autoauth.models.Role;
 import com.cae.framework.use_cases.UseCase;
 import com.cae.framework.use_cases.UseCaseWithInput;
 import com.cae.framework.use_cases.io.UseCaseInput;
@@ -115,8 +117,8 @@ public class RoleBasedAutoauth {
     private static List<Role> findOutWhichRolesMatch(List<Role> actorRoles, String useCaseId) {
         var finalResult = new ArrayList<Role>();
         for (var role : actorRoles){
-            var statements = Optional.ofNullable(role.getStatementGroup())
-                    .map(StatementGroup::getStatements)
+            var statements = Optional.ofNullable(role.getPolicy())
+                    .map(Policy::getStatements)
                     .orElseThrow(() -> new InternalMappedException(
                         "Couldn't proceed with autoauth",
                         "Every provided role must have the following chain filled: role.statementGroup.statements"

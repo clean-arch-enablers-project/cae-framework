@@ -1,4 +1,4 @@
-package com.cae.framework.autofeatures.autoauth;
+package com.cae.framework.autofeatures.autoauth.models;
 
 import java.util.List;
 

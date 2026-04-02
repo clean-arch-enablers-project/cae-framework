@@ -1,5 +1,6 @@
 package com.cae.framework.autofeatures.autoauth;
 
+import com.cae.framework.autofeatures.autoauth.scope_expression.ScopeExpression;
 import com.cae.mapped_exceptions.specifics.InternalMappedException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

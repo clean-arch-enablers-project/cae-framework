@@ -1,7 +1,7 @@
 package com.cae.framework.use_cases.metadata;
 
 import com.cae.framework.autofeatures.autoauth.AutoauthModes;
-import com.cae.framework.autofeatures.autoauth.ScopeExpression;
+import com.cae.framework.autofeatures.autoauth.scope_expression.ScopeExpression;
 import com.cae.framework.autofeatures.autocache.Cacheable;
 import com.cae.framework.autofeatures.autocache.annotations.Autocache;
 import com.cae.framework.autofeatures.autocache.metadata.AutocacheMetadata;

@@ -1,4 +1,4 @@
-package com.cae.framework.autofeatures.autoauth;
+package com.cae.framework.autofeatures.autoauth.models;
 
 import lombok.*;
 
@@ -11,6 +11,6 @@ public class ConcreteRole implements Role {
 
     private String id;
     private String ownerId;
-    private StatementGroup statementGroup;
+    private Policy policy;
 
 }

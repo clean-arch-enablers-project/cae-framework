@@ -4,6 +4,10 @@ import com.cae.context.ExecutionContext;
 import com.cae.context.actors.Actor;
 import com.cae.framework.autofeatures.autoauth.annotations.ResourceIdentifier;
 import com.cae.framework.autofeatures.autoauth.annotations.ResourceOwnerIdentifier;
+import com.cae.framework.autofeatures.autoauth.models.ConcretePolicy;
+import com.cae.framework.autofeatures.autoauth.models.ConcreteRole;
+import com.cae.framework.autofeatures.autoauth.models.ConcreteStatement;
+import com.cae.framework.autofeatures.autoauth.models.Role;
 import com.cae.framework.autofeatures.autolog.AutologProvider;
 import com.cae.framework.autofeatures.autolog.Logger;
 import com.cae.framework.use_cases.FunctionUseCase;
@@ -66,7 +70,7 @@ class RoleBasedAutoauthTest {
         var allowingRole = ConcreteRole.builder()
                 .id(UUID.randomUUID().toString())
                 .ownerId("theOwner")
-                .statementGroup(ConcreteStatementGroup.builder().statements(List.of(ConcreteStatement.builder().allows(true).actionIds(List.of(useCaseId)).build())).build())
+                .policy(ConcretePolicy.builder().statements(List.of(ConcreteStatement.builder().allows(true).actionIds(List.of(useCaseId)).build())).build())
                 .build();
         List<Role> rolesRetrieved = List.of(allowingRole);
         Mockito.when(this.roleRetriever.getRolesBy(this.actorId, this.executionContext)).thenReturn(rolesRetrieved);
@@ -81,7 +85,7 @@ class RoleBasedAutoauthTest {
         var notAllowingRole = ConcreteRole.builder()
                 .id(UUID.randomUUID().toString())
                 .ownerId("theOwner")
-                .statementGroup(ConcreteStatementGroup.builder().statements(new ArrayList<>()).build())
+                .policy(ConcretePolicy.builder().statements(new ArrayList<>()).build())
                 .build();
         List<Role> rolesRetrieved = List.of(notAllowingRole);
         Mockito.when(this.roleRetriever.getRolesBy(this.actorId, this.executionContext)).thenReturn(rolesRetrieved);
@@ -116,7 +120,7 @@ class RoleBasedAutoauthTest {
         var allowingRole = ConcreteRole.builder()
                 .id(UUID.randomUUID().toString())
                 .ownerId(ownerId)
-                .statementGroup(ConcreteStatementGroup.builder().statements(List.of(ConcreteStatement.builder().allows(true).actionIds(List.of(useCaseId)).build())).build())
+                .policy(ConcretePolicy.builder().statements(List.of(ConcreteStatement.builder().allows(true).actionIds(List.of(useCaseId)).build())).build())
                 .build();
         List<Role> rolesRetrieved = List.of(allowingRole);
         Mockito.when(this.roleRetriever.getRolesBy(this.actorId, this.executionContext)).thenReturn(rolesRetrieved);
@@ -135,7 +139,7 @@ class RoleBasedAutoauthTest {
         var allowingRole = ConcreteRole.builder()
                 .id(UUID.randomUUID().toString())
                 .ownerId(roleOwnerId)
-                .statementGroup(ConcreteStatementGroup.builder().statements(List.of(ConcreteStatement.builder().allows(true).actionIds(List.of(useCaseId)).build())).build())
+                .policy(ConcretePolicy.builder().statements(List.of(ConcreteStatement.builder().allows(true).actionIds(List.of(useCaseId)).build())).build())
                 .build();
         List<Role> rolesRetrieved = List.of(allowingRole);
         Mockito.when(this.roleRetriever.getRolesBy(this.actorId, this.executionContext)).thenReturn(rolesRetrieved);

@@ -1,7 +1,4 @@
-package com.cae.framework.autofeatures.autoauth;
-
-import com.cae.framework.autofeatures.autoauth.scope_expression.ScopeExpressionNode;
-import com.cae.framework.autofeatures.autoauth.scope_expression.ScopeExpressionParser;
+package com.cae.framework.autofeatures.autoauth.scope_expression;
 
 import java.util.HashSet;
 import java.util.List;

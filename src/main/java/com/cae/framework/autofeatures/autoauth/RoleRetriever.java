@@ -1,6 +1,7 @@
 package com.cae.framework.autofeatures.autoauth;
 
 import com.cae.context.ExecutionContext;
+import com.cae.framework.autofeatures.autoauth.models.Role;
 
 import java.util.List;
 
