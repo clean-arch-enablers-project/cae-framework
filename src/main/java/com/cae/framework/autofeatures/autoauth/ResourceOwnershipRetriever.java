@@ -1,9 +1,9 @@
 package com.cae.framework.autofeatures.autoauth;
 
-import java.util.Optional;
+import java.util.List;
 
 public interface ResourceOwnershipRetriever {
 
-    Optional<String> findByResourceId(Object resourceId);
+    List<String> findByResourceId(Object resourceId);
 
 }

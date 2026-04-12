@@ -3,7 +3,7 @@ package com.cae.framework.autofeatures.autoauth;
 import com.cae.context.ExecutionContext;
 import com.cae.context.actors.Actor;
 import com.cae.framework.autofeatures.autoauth.annotations.ResourceIdentifier;
-import com.cae.framework.autofeatures.autoauth.annotations.ResourceOwnerIdentifier;
+import com.cae.framework.autofeatures.autoauth.annotations.ResourceOwnerIdentifiers;
 import com.cae.framework.autofeatures.autoauth.models.ConcretePolicy;
 import com.cae.framework.autofeatures.autoauth.models.ConcreteRole;
 import com.cae.framework.autofeatures.autoauth.models.ConcreteStatement;
@@ -29,7 +29,6 @@ import utils.MockedAutofeaturesRunnerProvider;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @ExtendWith(MockitoExtension.class)
@@ -115,7 +114,7 @@ class RoleBasedAutoauthTest {
         Mockito.when(this.actor.getId()).thenReturn(this.actorId);
         var theInput = new RoleBasedProtectedUseCaseWithResourceIdWithOwnershipRetriever.Input();
         var ownerId = "ownerId";
-        Mockito.when(this.resourceOwnershipRetriever.findByResourceId(theInput.resourceId)).thenReturn(Optional.of(ownerId));
+        Mockito.when(this.resourceOwnershipRetriever.findByResourceId(theInput.resourceId)).thenReturn(List.of(ownerId));
         var useCaseId = this.resourceIdBasedAutoauthUseCaseWithOwnershipRetriever.getUseCaseMetadata().getId();
         var allowingRole = ConcreteRole.builder()
                 .id(UUID.randomUUID().toString())
@@ -134,7 +133,7 @@ class RoleBasedAutoauthTest {
         var theInput = new RoleBasedProtectedUseCaseWithResourceIdWithOwnershipRetriever.Input();
         var resourceOwnerId = "resourceOwnerId";
         var roleOwnerId = "roleOwnerId";
-        Mockito.when(this.resourceOwnershipRetriever.findByResourceId(theInput.resourceId)).thenReturn(Optional.of(resourceOwnerId));
+        Mockito.when(this.resourceOwnershipRetriever.findByResourceId(theInput.resourceId)).thenReturn(List.of(resourceOwnerId));
         var useCaseId = this.resourceIdBasedAutoauthUseCaseWithOwnershipRetriever.getUseCaseMetadata().getId();
         var allowingRole = ConcreteRole.builder()
                 .id(UUID.randomUUID().toString())
@@ -172,8 +171,8 @@ class RoleBasedAutoauthTest {
         @Getter
         @Setter
         public static class Input extends UseCaseInput {
-            @ResourceOwnerIdentifier
-            private String ownerId = "theOwner";
+            @ResourceOwnerIdentifiers
+            private List<String> ownerId = List.of("theOwner");
         }
         public static class Output{}
 

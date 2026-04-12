@@ -27,8 +27,8 @@ public class RoleBasedAutoauth {
         if (((UseCase) useCase).getUseCaseMetadata().isRoleProtectionEnabled()){
             var stepInsight = context.addStepInsightsOf("RoleBasedAutoauth");
             try{
-                var resourceOwnerId = input.getResourceOwnerIdentifier();
-                if (resourceOwnerId.isPresent()) handleByResourceOwnerId(resourceOwnerId.get(), context, (UseCase) useCase);
+                var resourceOwnerIds = input.getResourceOwnerIdentifiers();
+                if (!resourceOwnerIds.isEmpty()) handleByResourceOwnerId(resourceOwnerIds, context, (UseCase) useCase);
                 else handleByResourceId(input, context, useCase);
                 stepInsight.complete();
             } catch (Exception exception){
@@ -44,8 +44,8 @@ public class RoleBasedAutoauth {
             UseCaseWithInput useCase) {
         var resourceId = getResourceIdOutta(input, (UseCase) useCase);
         var resourceOwnershipRetriever = getResourceOwnershipRetrieverOutta(useCase);
-        var resourceOwnerId = getOwnerUsing(resourceId, resourceOwnershipRetriever);
-        handleByResourceOwnerId(resourceOwnerId, context, (UseCase) useCase);
+        var resourceOwnerIds = getOwnerUsing(resourceId, resourceOwnershipRetriever);
+        handleByResourceOwnerId(resourceOwnerIds, context, (UseCase) useCase);
     }
 
     private static String getResourceIdOutta(UseCaseInput input, UseCase useCase) {
@@ -65,15 +65,18 @@ public class RoleBasedAutoauth {
         ));
     }
 
-    private static String getOwnerUsing(String resourceId, ResourceOwnershipRetriever resourceOwnershipRetriever) {
-        return resourceOwnershipRetriever.findByResourceId(resourceId).orElseThrow(() -> new NotFoundMappedException(
+    private static List<String> getOwnerUsing(String resourceId, ResourceOwnershipRetriever resourceOwnershipRetriever) {
+        var ids = resourceOwnershipRetriever.findByResourceId(resourceId);
+        if (ids.isEmpty())
+            throw new NotFoundMappedException(
                 "The resource owner ID was not found for the resource ID of '" + resourceId + "'.",
                 "It is not possible to proceed with the role-based authorization since the ownership can't be validated."
-        ));
+            );
+        return ids;
     }
 
     private static void handleByResourceOwnerId(
-            String resourceOwnerId,
+            List<String> resourceOwnerIds,
             ExecutionContext context,
             UseCase useCase) {
         var useCaseId = useCase.getUseCaseMetadata().getId();
@@ -84,7 +87,7 @@ public class RoleBasedAutoauth {
             throw new NotAuthorizedMappedException(
                     "The Actor of ID " + actor.getId() + " had no roles allowing the execution of the use case " + useCase.getUseCaseMetadata().getName() + "."
             );
-        var noMatchingRoleSharesSameOwnership = rolesThatMatchAndAllowTheUseCase.stream().noneMatch(role -> role.getOwnerId().equals(resourceOwnerId));
+        var noMatchingRoleSharesSameOwnership = rolesThatMatchAndAllowTheUseCase.stream().noneMatch(role -> resourceOwnerIds.contains(role.getOwnerId()));
         if (noMatchingRoleSharesSameOwnership)
             throw new NotAuthorizedMappedException(
                     "The Actor of ID " + actor.getId() + " has allowing roles, but none matched the ownership with the resource"

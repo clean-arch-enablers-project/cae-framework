@@ -2,7 +2,7 @@ package com.cae.framework.use_cases.io;
 
 import com.cae.context.ExecutionContext;
 import com.cae.framework.autofeatures.autoauth.annotations.ResourceIdentifier;
-import com.cae.framework.autofeatures.autoauth.annotations.ResourceOwnerIdentifier;
+import com.cae.framework.autofeatures.autoauth.annotations.ResourceOwnerIdentifiers;
 import com.cae.framework.use_cases.io.annotations.NotBlankInputField;
 import com.cae.framework.use_cases.io.annotations.NotEmptyInputField;
 import com.cae.framework.use_cases.io.annotations.NotNullInputField;
@@ -15,6 +15,7 @@ import lombok.Builder;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.*;
 
 /**
@@ -153,14 +154,20 @@ public class UseCaseInput {
             throw new NullFieldException(this.getFullFieldName(field));
     }
 
-    public Optional<String> getResourceOwnerIdentifier() {
+    public List<String> getResourceOwnerIdentifiers() {
         //TODO: chained objects...
-        return this.getFieldAndGetterList()
+        var finalResult = new ArrayList<String>();
+        List<?> partial = this.getFieldAndGetterList()
                 .stream()
-                .filter(fieldAndGetter -> fieldAndGetter.field.isAnnotationPresent(ResourceOwnerIdentifier.class))
+                .filter(fieldAndGetter -> fieldAndGetter.field.isAnnotationPresent(ResourceOwnerIdentifiers.class))
                 .map(fieldAndGetter -> {
                     try {
-                        return fieldAndGetter.getter.invoke(this).toString();
+                        if (fieldIsListOfStrings(fieldAndGetter))
+                            return fieldAndGetter.getter.invoke(this);
+                        throw new InternalMappedException(
+                            "Unable to get resource owner identifiers",
+                            "You can only annotate fields with @ResourceOwnerIdentifier when they are List<String>"
+                        );
                     } catch (Exception e) {
                         throw new InternalMappedException(
                                 "Problem trying to invoke getter of '" + fieldAndGetter.field.getName()+"'",
@@ -168,7 +175,25 @@ public class UseCaseInput {
                         );
                     }
                 })
-                .findFirst();
+                .map(List.class::cast)
+                .findFirst()
+                .orElse(new ArrayList<String>());
+        partial.forEach(value -> finalResult.add(value.toString()));
+        return finalResult;
+    }
+
+    private static boolean fieldIsListOfStrings(FieldAndGetter fieldAndGetter) {
+        var field = fieldAndGetter.field;
+        if (!List.class.isAssignableFrom(field.getType()))
+            return false;
+        var genericType = field.getGenericType();
+        if (!(genericType instanceof ParameterizedType))
+            return false;
+        var pt = (ParameterizedType) genericType;
+        var typeArgs = pt.getActualTypeArguments();
+        if (typeArgs.length != 1)
+            return false;
+        return typeArgs[0] instanceof Class && typeArgs[0].equals(String.class);
     }
 
     public Optional<String> getResourceIdentifier(){

@@ -2,7 +2,7 @@ package com.cae.framework.use_cases.io;
 
 import com.cae.context.ExecutionContext;
 import com.cae.framework.autofeatures.autoauth.annotations.ResourceIdentifier;
-import com.cae.framework.autofeatures.autoauth.annotations.ResourceOwnerIdentifier;
+import com.cae.framework.autofeatures.autoauth.annotations.ResourceOwnerIdentifiers;
 import com.cae.framework.use_cases.io.annotations.NotBlankInputField;
 import com.cae.framework.use_cases.io.annotations.NotEmptyInputField;
 import com.cae.framework.use_cases.io.annotations.NotNullInputField;
@@ -154,10 +154,10 @@ class UseCaseInputTest {
     void shouldBeAbleToReturnTheResourceOwnerIdentifierAsExpected(){
         var input = new SomeInputWithRBACIdentifiers();
         var expectedValue = "11";
-        input.setSomeOtherId(expectedValue);
-        var actualReturn = input.getResourceOwnerIdentifier();
-        Assertions.assertTrue(actualReturn.isPresent());
-        Assertions.assertEquals(expectedValue, actualReturn.get());
+        input.setSomeOtherId(List.of(expectedValue));
+        var actualReturn = input.getResourceOwnerIdentifiers();
+        Assertions.assertFalse(actualReturn.isEmpty());
+        Assertions.assertTrue(actualReturn.contains(expectedValue));
     }
 
     @Test
@@ -170,7 +170,7 @@ class UseCaseInputTest {
     @Test
     @DisplayName("Should return empty Optional when there is no field annotated with ResourceOwnerIdentifier")
     void shouldReturnEmptyOptionalWhenThereIsNoFieldAnnotatedWithResourceOwnerIdentifier(){
-        var result = this.input.getResourceOwnerIdentifier();
+        var result = this.input.getResourceOwnerIdentifiers();
         Assertions.assertTrue(result.isEmpty());
     }
 
@@ -194,7 +194,7 @@ class UseCaseInputTest {
     void whenGetterOfResourceOwnerIdentifierFieldThrowsShouldBeAbleToMapTheExceptionToInternalMappedException(){
         var someInput = new SomeInputWithAProblematicGetter(1L, 2L);
         Assertions.assertThrows(RuntimeException.class, someInput::getAnotherField);
-        Assertions.assertThrows(InternalMappedException.class, someInput::getResourceOwnerIdentifier);
+        Assertions.assertThrows(InternalMappedException.class, someInput::getResourceOwnerIdentifiers);
     }
 
     @Getter
@@ -290,8 +290,8 @@ class UseCaseInputTest {
         @ResourceIdentifier
         private String someId;
 
-        @ResourceOwnerIdentifier
-        private String someOtherId;
+        @ResourceOwnerIdentifiers
+        private List<String> someOtherId;
 
     }
 
@@ -302,7 +302,7 @@ class UseCaseInputTest {
         @NotNullInputField
         private final Long someField;
 
-        @ResourceOwnerIdentifier
+        @ResourceOwnerIdentifiers
         @NotNullInputField
         private final Long anotherField;
 
