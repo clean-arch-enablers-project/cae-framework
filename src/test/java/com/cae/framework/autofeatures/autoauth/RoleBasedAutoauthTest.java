@@ -72,7 +72,7 @@ class RoleBasedAutoauthTest {
                 .policy(ConcretePolicy.builder().statements(List.of(ConcreteStatement.builder().allows(true).actionIds(List.of(useCaseId)).build())).build())
                 .build();
         List<Role> rolesRetrieved = List.of(allowingRole);
-        Mockito.when(this.roleRetriever.getRolesBy(this.actorId, this.executionContext)).thenReturn(rolesRetrieved);
+        Mockito.when(this.roleRetriever.getRolesBy(this.actorId, useCaseId, this.executionContext)).thenReturn(rolesRetrieved);
         var theInput = new RoleBasedProtectedUseCaseWithResourceOwnerId.Input();
         Assertions.assertDoesNotThrow(() -> this.resourceOwnerIdBasedAutoauthUseCase.execute(theInput, this.executionContext));
     }
@@ -87,7 +87,7 @@ class RoleBasedAutoauthTest {
                 .policy(ConcretePolicy.builder().statements(new ArrayList<>()).build())
                 .build();
         List<Role> rolesRetrieved = List.of(notAllowingRole);
-        Mockito.when(this.roleRetriever.getRolesBy(this.actorId, this.executionContext)).thenReturn(rolesRetrieved);
+        Mockito.when(this.roleRetriever.getRolesBy(this.actorId, "some_action_id", this.executionContext)).thenReturn(rolesRetrieved);
         var theInput = new RoleBasedProtectedUseCaseWithResourceOwnerId.Input();
         Assertions.assertThrows(NotAuthorizedMappedException.class, () -> this.resourceOwnerIdBasedAutoauthUseCase.execute(theInput, this.executionContext));
     }
@@ -122,7 +122,7 @@ class RoleBasedAutoauthTest {
                 .policy(ConcretePolicy.builder().statements(List.of(ConcreteStatement.builder().allows(true).actionIds(List.of(useCaseId)).build())).build())
                 .build();
         List<Role> rolesRetrieved = List.of(allowingRole);
-        Mockito.when(this.roleRetriever.getRolesBy(this.actorId, this.executionContext)).thenReturn(rolesRetrieved);
+        Mockito.when(this.roleRetriever.getRolesBy(this.actorId, useCaseId, this.executionContext)).thenReturn(rolesRetrieved);
         Assertions.assertDoesNotThrow(() -> this.resourceIdBasedAutoauthUseCaseWithOwnershipRetriever.execute(theInput, this.executionContext));
     }
 
@@ -141,7 +141,7 @@ class RoleBasedAutoauthTest {
                 .policy(ConcretePolicy.builder().statements(List.of(ConcreteStatement.builder().allows(true).actionIds(List.of(useCaseId)).build())).build())
                 .build();
         List<Role> rolesRetrieved = List.of(allowingRole);
-        Mockito.when(this.roleRetriever.getRolesBy(this.actorId, this.executionContext)).thenReturn(rolesRetrieved);
+        Mockito.when(this.roleRetriever.getRolesBy(this.actorId, useCaseId, this.executionContext)).thenReturn(rolesRetrieved);
         Assertions.assertThrows(
                 NotAuthorizedMappedException.class,
                 () -> this.resourceIdBasedAutoauthUseCaseWithOwnershipRetriever.execute(theInput, this.executionContext)

@@ -87,7 +87,10 @@ public class RoleBasedAutoauth {
             throw new NotAuthorizedMappedException(
                     "The Actor of ID " + actor.getId() + " had no roles allowing the execution of the use case " + useCase.getUseCaseMetadata().getName() + "."
             );
-        var noMatchingRoleSharesSameOwnership = rolesThatMatchAndAllowTheUseCase.stream().noneMatch(role -> resourceOwnerIds.contains(role.getOwnerId()));
+        var noMatchingRoleSharesSameOwnership = rolesThatMatchAndAllowTheUseCase.stream()
+                .noneMatch(role ->
+                        resourceOwnerIds.contains(role.getOwnerId()) ||
+                        resourceOwnerIds.stream().anyMatch(ownerId -> ownerId.equals(actor.getId())));
         if (noMatchingRoleSharesSameOwnership)
             throw new NotAuthorizedMappedException(
                     "The Actor of ID " + actor.getId() + " has allowing roles, but none matched the ownership with the resource"
@@ -114,7 +117,7 @@ public class RoleBasedAutoauth {
                                         "specific instance at the Use Case's constructor level."
                         )
                 ))
-                .getRolesBy(actor.getId(), context);
+                .getRolesBy(actor.getId(), useCaseId, context);
     }
 
     private static List<Role> findOutWhichRolesMatch(List<Role> actorRoles, String useCaseId) {

@@ -162,16 +162,18 @@ public class UseCaseInput {
                 .filter(fieldAndGetter -> fieldAndGetter.field.isAnnotationPresent(ResourceOwnerIdentifiers.class))
                 .map(fieldAndGetter -> {
                     try {
-                        if (fieldIsListOfStrings(fieldAndGetter))
+                        if (fieldIsListOfToStringables(fieldAndGetter))
                             return fieldAndGetter.getter.invoke(this);
+                        if (fieldIsDirectlyToStringable(fieldAndGetter))
+                            return  List.of(fieldAndGetter.getter.invoke(this));
                         throw new InternalMappedException(
                             "Unable to get resource owner identifiers",
-                            "You can only annotate fields with @ResourceOwnerIdentifier when they are List<String>"
+                            "You can only annotate fields with @ResourceOwnerIdentifiers when they are List<String | UUID | Integer | Long>, or directly String | UUID | Integer | Long."
                         );
                     } catch (Exception e) {
                         throw new InternalMappedException(
-                                "Problem trying to invoke getter of '" + fieldAndGetter.field.getName()+"'",
-                                "More details: " + e
+                            "Problem trying to invoke getter of '" + fieldAndGetter.field.getName()+"'",
+                            "More details: " + e
                         );
                     }
                 })
@@ -182,7 +184,13 @@ public class UseCaseInput {
         return finalResult;
     }
 
-    private static boolean fieldIsListOfStrings(FieldAndGetter fieldAndGetter) {
+    private boolean fieldIsDirectlyToStringable(FieldAndGetter fieldAndGetter) {
+        return fieldAndGetter.field.getType().equals(String.class) || fieldAndGetter.field.getType().equals(UUID.class)
+                || fieldAndGetter.field.getType().equals(Integer.class)
+                || fieldAndGetter.field.getType().equals(Long.class);
+    }
+
+    private static boolean fieldIsListOfToStringables(FieldAndGetter fieldAndGetter) {
         var field = fieldAndGetter.field;
         if (!List.class.isAssignableFrom(field.getType()))
             return false;
@@ -193,7 +201,7 @@ public class UseCaseInput {
         var typeArgs = pt.getActualTypeArguments();
         if (typeArgs.length != 1)
             return false;
-        return typeArgs[0] instanceof Class && typeArgs[0].equals(String.class);
+        return typeArgs[0] instanceof Class && (typeArgs[0].equals(String.class) || typeArgs[0].equals(UUID.class) || typeArgs[0].equals(Integer.class) || typeArgs[0].equals(Long.class));
     }
 
     public Optional<String> getResourceIdentifier(){

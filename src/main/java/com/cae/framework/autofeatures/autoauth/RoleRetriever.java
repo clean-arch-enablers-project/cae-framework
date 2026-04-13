@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface RoleRetriever {
 
-    List<Role> getRolesBy(String actorId, ExecutionContext context);
+    List<Role> getRolesBy(String actorId, String actionId, ExecutionContext context);
 
 }
