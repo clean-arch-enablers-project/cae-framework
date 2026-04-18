@@ -37,18 +37,18 @@
         <dependency>
             <groupId>com.clean-arch-enablers</groupId>
             <artifactId>cae-context</artifactId>
-            <version>6.0.0-RC1</version>
+            <version>6.0.0-RC2</version>
         </dependency>
         <dependency>
             <groupId>com.clean-arch-enablers</groupId>
             <artifactId>cae-env-vars</artifactId>
-            <version>5.0.0</version>
+            <version>6.0.0-RC1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>com.clean-arch-enablers</groupId>
             <artifactId>cae-http-client</artifactId>
-            <version>2.2.1</version>
+            <version>6.0.0-RC1</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
