@@ -9,11 +9,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConcretePolicy implements Policy {
+public class ConcreteCaePolicy implements CaePolicy {
 
     private String id;
     private Boolean automanaged;
-    private List<Statement> statements;
+    private List<CaeStatement> statements;
 
     @Override
     public boolean isAutomanaged() {

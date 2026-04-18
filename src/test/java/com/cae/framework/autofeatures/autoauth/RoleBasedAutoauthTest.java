@@ -4,10 +4,10 @@ import com.cae.context.ExecutionContext;
 import com.cae.context.actors.Actor;
 import com.cae.framework.autofeatures.autoauth.annotations.ResourceIdentifier;
 import com.cae.framework.autofeatures.autoauth.annotations.ResourceOwnerIdentifiers;
-import com.cae.framework.autofeatures.autoauth.models.ConcretePolicy;
-import com.cae.framework.autofeatures.autoauth.models.ConcreteRole;
-import com.cae.framework.autofeatures.autoauth.models.ConcreteStatement;
-import com.cae.framework.autofeatures.autoauth.models.Role;
+import com.cae.framework.autofeatures.autoauth.models.ConcreteCaePolicy;
+import com.cae.framework.autofeatures.autoauth.models.ConcreteCaeRole;
+import com.cae.framework.autofeatures.autoauth.models.ConcreteCaeStatement;
+import com.cae.framework.autofeatures.autoauth.models.CaeRole;
 import com.cae.framework.autofeatures.autolog.AutologProvider;
 import com.cae.framework.autofeatures.autolog.Logger;
 import com.cae.framework.use_cases.FunctionUseCase;
@@ -66,12 +66,12 @@ class RoleBasedAutoauthTest {
     void shouldAllowExecutionWhenARoleRetrievedForTheActorAllowsTheActionWithSameIDAsTheUseCase(){
         Mockito.when(this.actor.getId()).thenReturn(this.actorId);
         var useCaseId = this.resourceOwnerIdBasedAutoauthUseCase.getUseCaseMetadata().getId();
-        var allowingRole = ConcreteRole.builder()
+        var allowingRole = ConcreteCaeRole.builder()
                 .id(UUID.randomUUID().toString())
                 .ownerId("theOwner")
-                .policy(ConcretePolicy.builder().statements(List.of(ConcreteStatement.builder().allows(true).actionIds(List.of(useCaseId)).build())).build())
+                .policy(ConcreteCaePolicy.builder().statements(List.of(ConcreteCaeStatement.builder().allows(true).actionIds(List.of(useCaseId)).build())).build())
                 .build();
-        List<Role> rolesRetrieved = List.of(allowingRole);
+        List<CaeRole> rolesRetrieved = List.of(allowingRole);
         Mockito.when(this.roleRetriever.getRolesBy(this.actorId, useCaseId, this.executionContext)).thenReturn(rolesRetrieved);
         var theInput = new RoleBasedProtectedUseCaseWithResourceOwnerId.Input();
         Assertions.assertDoesNotThrow(() -> this.resourceOwnerIdBasedAutoauthUseCase.execute(theInput, this.executionContext));
@@ -81,12 +81,12 @@ class RoleBasedAutoauthTest {
     @DisplayName("Should throw NotAuthorizedException when the retrieved role has no allowing statements for the action of same ID as the use case")
     void shouldThrowNotAuthorizedExceptionWhenTheRetrievedRoleHasNoAllowingStatementsForTheActionOfSameIDAsTheUseCase(){
         Mockito.when(this.actor.getId()).thenReturn(this.actorId);
-        var notAllowingRole = ConcreteRole.builder()
+        var notAllowingRole = ConcreteCaeRole.builder()
                 .id(UUID.randomUUID().toString())
                 .ownerId("theOwner")
-                .policy(ConcretePolicy.builder().statements(new ArrayList<>()).build())
+                .policy(ConcreteCaePolicy.builder().statements(new ArrayList<>()).build())
                 .build();
-        List<Role> rolesRetrieved = List.of(notAllowingRole);
+        List<CaeRole> rolesRetrieved = List.of(notAllowingRole);
         Mockito.when(this.roleRetriever.getRolesBy(this.actorId, "some_action_id", this.executionContext)).thenReturn(rolesRetrieved);
         var theInput = new RoleBasedProtectedUseCaseWithResourceOwnerId.Input();
         Assertions.assertThrows(NotAuthorizedMappedException.class, () -> this.resourceOwnerIdBasedAutoauthUseCase.execute(theInput, this.executionContext));
@@ -116,12 +116,12 @@ class RoleBasedAutoauthTest {
         var ownerId = "ownerId";
         Mockito.when(this.resourceOwnershipRetriever.findByResourceId(theInput.resourceId)).thenReturn(List.of(ownerId));
         var useCaseId = this.resourceIdBasedAutoauthUseCaseWithOwnershipRetriever.getUseCaseMetadata().getId();
-        var allowingRole = ConcreteRole.builder()
+        var allowingRole = ConcreteCaeRole.builder()
                 .id(UUID.randomUUID().toString())
                 .ownerId(ownerId)
-                .policy(ConcretePolicy.builder().statements(List.of(ConcreteStatement.builder().allows(true).actionIds(List.of(useCaseId)).build())).build())
+                .policy(ConcreteCaePolicy.builder().statements(List.of(ConcreteCaeStatement.builder().allows(true).actionIds(List.of(useCaseId)).build())).build())
                 .build();
-        List<Role> rolesRetrieved = List.of(allowingRole);
+        List<CaeRole> rolesRetrieved = List.of(allowingRole);
         Mockito.when(this.roleRetriever.getRolesBy(this.actorId, useCaseId, this.executionContext)).thenReturn(rolesRetrieved);
         Assertions.assertDoesNotThrow(() -> this.resourceIdBasedAutoauthUseCaseWithOwnershipRetriever.execute(theInput, this.executionContext));
     }
@@ -135,12 +135,12 @@ class RoleBasedAutoauthTest {
         var roleOwnerId = "roleOwnerId";
         Mockito.when(this.resourceOwnershipRetriever.findByResourceId(theInput.resourceId)).thenReturn(List.of(resourceOwnerId));
         var useCaseId = this.resourceIdBasedAutoauthUseCaseWithOwnershipRetriever.getUseCaseMetadata().getId();
-        var allowingRole = ConcreteRole.builder()
+        var allowingRole = ConcreteCaeRole.builder()
                 .id(UUID.randomUUID().toString())
                 .ownerId(roleOwnerId)
-                .policy(ConcretePolicy.builder().statements(List.of(ConcreteStatement.builder().allows(true).actionIds(List.of(useCaseId)).build())).build())
+                .policy(ConcreteCaePolicy.builder().statements(List.of(ConcreteCaeStatement.builder().allows(true).actionIds(List.of(useCaseId)).build())).build())
                 .build();
-        List<Role> rolesRetrieved = List.of(allowingRole);
+        List<CaeRole> rolesRetrieved = List.of(allowingRole);
         Mockito.when(this.roleRetriever.getRolesBy(this.actorId, useCaseId, this.executionContext)).thenReturn(rolesRetrieved);
         Assertions.assertThrows(
                 NotAuthorizedMappedException.class,

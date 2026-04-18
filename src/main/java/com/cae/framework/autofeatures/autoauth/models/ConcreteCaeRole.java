@@ -7,10 +7,10 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ConcreteRole implements Role {
+public class ConcreteCaeRole implements CaeRole {
 
     private String id;
     private String ownerId;
-    private Policy policy;
+    private CaePolicy policy;
 
 }

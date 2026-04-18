@@ -2,10 +2,9 @@ package com.cae.framework.autofeatures.autoauth.models;
 
 import java.util.List;
 
-public interface Policy {
+public interface CaeStatement {
 
     String getId();
-    boolean isAutomanaged();
-    List<Statement> getStatements();
-
+    boolean allows();
+    List<String> getActionIds();
 }

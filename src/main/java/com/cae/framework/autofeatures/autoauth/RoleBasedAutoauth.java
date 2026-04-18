@@ -2,8 +2,8 @@ package com.cae.framework.autofeatures.autoauth;
 
 import com.cae.context.ExecutionContext;
 import com.cae.context.actors.Actor;
-import com.cae.framework.autofeatures.autoauth.models.Policy;
-import com.cae.framework.autofeatures.autoauth.models.Role;
+import com.cae.framework.autofeatures.autoauth.models.CaePolicy;
+import com.cae.framework.autofeatures.autoauth.models.CaeRole;
 import com.cae.framework.use_cases.UseCase;
 import com.cae.framework.use_cases.UseCaseWithInput;
 import com.cae.framework.use_cases.io.UseCaseInput;
@@ -88,9 +88,7 @@ public class RoleBasedAutoauth {
                     "The Actor of ID " + actor.getId() + " had no roles allowing the execution of the use case " + useCase.getUseCaseMetadata().getName() + "."
             );
         var noMatchingRoleSharesSameOwnership = rolesThatMatchAndAllowTheUseCase.stream()
-                .noneMatch(role ->
-                        resourceOwnerIds.contains(role.getOwnerId()) ||
-                        resourceOwnerIds.stream().anyMatch(ownerId -> ownerId.equals(actor.getId())));
+                .noneMatch(role -> resourceOwnerIds.contains(role.getOwnerId()));
         if (noMatchingRoleSharesSameOwnership)
             throw new NotAuthorizedMappedException(
                     "The Actor of ID " + actor.getId() + " has allowing roles, but none matched the ownership with the resource"
@@ -106,7 +104,7 @@ public class RoleBasedAutoauth {
         );
     }
 
-    private static List<Role> getRolesFor(Actor actor, String useCaseId, ExecutionContext context) {
+    private static List<CaeRole> getRolesFor(Actor actor, String useCaseId, ExecutionContext context) {
         return RoleRetrieverRegistry.SINGLETON.getRoleRetrieverByUseCaseId(useCaseId)
                 .orElseGet(() -> RoleRetrieverRegistry.SINGLETON.getDefaultRetriever().orElseThrow(() ->
                         new InternalMappedException(
@@ -120,11 +118,11 @@ public class RoleBasedAutoauth {
                 .getRolesBy(actor.getId(), useCaseId, context);
     }
 
-    private static List<Role> findOutWhichRolesMatch(List<Role> actorRoles, String useCaseId) {
-        var finalResult = new ArrayList<Role>();
+    private static List<CaeRole> findOutWhichRolesMatch(List<CaeRole> actorRoles, String useCaseId) {
+        var finalResult = new ArrayList<CaeRole>();
         for (var role : actorRoles){
             var statements = Optional.ofNullable(role.getPolicy())
-                    .map(Policy::getStatements)
+                    .map(CaePolicy::getStatements)
                     .orElseThrow(() -> new InternalMappedException(
                         "Couldn't proceed with autoauth",
                         "Every provided role must have the following chain filled: role.statementGroup.statements"

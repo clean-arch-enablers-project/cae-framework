@@ -1,9 +1,9 @@
 package com.cae.framework.autofeatures.autoauth.models;
 
-public interface Role {
+public interface CaeRole {
 
     String getId();
     String getOwnerId();
-    Policy getPolicy();
+    CaePolicy getPolicy();
 
 }
