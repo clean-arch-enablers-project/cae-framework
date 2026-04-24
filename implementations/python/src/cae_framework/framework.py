@@ -3,7 +3,11 @@ from abc import ABC, abstractmethod
 from typing import Generic, TypeVar, get_type_hints
 from cae_context import ExecutionContext
 from cae_trier import trier_of
-from cae_mapped_exceptions import MappedException, InternalMappedException
+from cae_mapped_exceptions import (
+    MappedException,
+    InternalMappedException,
+    InputMappedException
+)
 from collections.abc import Iterable
 
 INPUT = TypeVar("INPUT")
@@ -306,7 +310,7 @@ class NotNone(ValidationSubject):
             )
 
 
-class AutoverifyTypeErrorMappedException(MappedException):
+class AutoverifyTypeErrorMappedException(InternalMappedException):
 
     def __init__(
             self,
@@ -317,7 +321,7 @@ class AutoverifyTypeErrorMappedException(MappedException):
         super().__init__(brief_public_message, details, original)
 
 
-class InvalidInputFieldMappedException(MappedException):
+class InvalidInputFieldMappedException(InputMappedException):
 
     def __init__(
             self,
