@@ -483,7 +483,8 @@ class Autolog:
                 f"threw an exception and took about "
                 f"{context.get_latency()}ms: {context.exception}"
             )
-        steps = str(context.step_insights)
+        step_texts = [s.format_as_text() for s in context.step_insights]
+        steps = str(step_texts)
         input_prefix = "Input: "
         if context.input is not None:
             if hasattr(context.input, "__dict__"):
@@ -505,7 +506,9 @@ class Autolog:
             + status
             + pipe
             + steps
+            + pipe
             + input_data
+            + pipe
             + output_data
         )
         logger = CaeSetup.get_autolog_logger()
