@@ -25,6 +25,18 @@ class UseCase(ABC):
         super().__init__()
         self.metadata: UseCaseMetadata = UseCaseMetadata(self)
 
+    def _handle_unexpected_problems(
+            self,
+            problem: Exception
+    ) -> MappedException:
+        details = "You might want to handle this scenario, " +\
+            "transforming it into a MappedException"
+        return UseCaseExecutionMappedException(
+            "Some unexpected problem happened",
+            details,
+            problem
+        )
+
 
 class FunctionUseCase(UseCase, Generic[INPUT, OUTPUT]):
 
@@ -33,22 +45,21 @@ class FunctionUseCase(UseCase, Generic[INPUT, OUTPUT]):
 
     def execute(self, input: INPUT, context: ExecutionContext) -> OUTPUT:
         return trier_of(self.__run).\
-            on_unexpected_exceptions_do(self.__handle_unexpected_problems).\
+            on_unexpected_exceptions_do(self._handle_unexpected_problems).\
             execute(input, context)
 
     def __run(self, input: INPUT, context: ExecutionContext) -> OUTPUT:
+        context.set_subject_and_start_tracking(self.metadata.name, True)
+        context.input = input
         try:
-            context.set_subject_and_start_tracking(self.metadata.name, True)
             PreExecutionAutofeatures.run(input, context)
             output = self.__get_output_for(input, context)
             context.complete()
-            context.input = input
             context.output = output
             PostExecutionAutofeatures.run(context)
             return output
         except Exception as any_exception:
             context.complete_with_ex(any_exception)
-            context.input = input
             PostExecutionAutofeatures.run(context)
             raise any_exception
 
@@ -67,18 +78,6 @@ class FunctionUseCase(UseCase, Generic[INPUT, OUTPUT]):
     ) -> OUTPUT:
         pass
 
-    def __handle_unexpected_problems(
-            self,
-            problem: Exception
-    ) -> MappedException:
-        details = "You might want to handle this scenario, " +\
-            "transforming it into a MappedException"
-        return UseCaseExecutionMappedException(
-            "Some unexpected problem happened",
-            details,
-            problem
-        )
-
 
 class ConsumerUseCase(UseCase, Generic[INPUT]):
 
@@ -87,20 +86,19 @@ class ConsumerUseCase(UseCase, Generic[INPUT]):
 
     def execute(self, input: INPUT, context: ExecutionContext) -> None:
         trier_of(self.__run).\
-            on_unexpected_exceptions_do(self.__handle_unexpected_problems).\
+            on_unexpected_exceptions_do(self._handle_unexpected_problems).\
             execute(input, context)
 
     def __run(self, input: INPUT, context: ExecutionContext) -> None:
+        context.set_subject_and_start_tracking(self.metadata.name, True)
+        context.input = input
         try:
-            context.set_subject_and_start_tracking(self.metadata.name, True)
             PreExecutionAutofeatures.run(input, context)
             self.__apply_internal_logic(input, context)
             context.complete()
-            context.input = input
             PostExecutionAutofeatures.run(context)
         except Exception as any_exception:
             context.complete_with_ex(any_exception)
-            context.input = input
             PostExecutionAutofeatures.run(context)
             raise any_exception
 
@@ -112,18 +110,6 @@ class ConsumerUseCase(UseCase, Generic[INPUT]):
     ) -> None:
         pass
 
-    def __handle_unexpected_problems(
-            self,
-            problem: Exception
-    ) -> MappedException:
-        details = "You might want to handle this scenario, " +\
-            "transforming it into a MappedException"
-        return UseCaseExecutionMappedException(
-            "Some unexpected problem happened",
-            details,
-            problem
-        )
-
 
 class SupplierUseCase(UseCase, Generic[OUTPUT]):
 
@@ -132,7 +118,7 @@ class SupplierUseCase(UseCase, Generic[OUTPUT]):
 
     def execute(self, context: ExecutionContext) -> OUTPUT:
         return trier_of(self.__run).\
-            on_unexpected_exceptions_do(self.__handle_unexpected_problems).\
+            on_unexpected_exceptions_do(self._handle_unexpected_problems).\
             execute(context)
 
     def __run(self, context: ExecutionContext) -> OUTPUT:
@@ -162,18 +148,6 @@ class SupplierUseCase(UseCase, Generic[OUTPUT]):
     ) -> OUTPUT:
         pass
 
-    def __handle_unexpected_problems(
-            self,
-            problem: Exception
-    ) -> MappedException:
-        details = "You might want to handle this scenario, " +\
-            "transforming it into a MappedException"
-        return UseCaseExecutionMappedException(
-            "Some unexpected problem happened",
-            details,
-            problem
-        )
-
 
 class RunnableUseCase(UseCase):
 
@@ -182,7 +156,7 @@ class RunnableUseCase(UseCase):
 
     def execute(self, context: ExecutionContext) -> None:
         trier_of(self.__run).\
-            on_unexpected_exceptions_do(self.__handle_unexpected_problems).\
+            on_unexpected_exceptions_do(self._handle_unexpected_problems).\
             execute(context)
 
     def __run(self, context: ExecutionContext) -> None:
@@ -204,20 +178,167 @@ class RunnableUseCase(UseCase):
     ) -> None:
         pass
 
-    def __handle_unexpected_problems(
+
+class UseCaseExecutionMappedException(InternalMappedException):
+
+    def __init__(
+            self,
+            brief_public_message: str | None = None,
+            details: str | None = None,
+            original: Exception | None = None
+    ):
+        super().__init__(brief_public_message, details, original)
+
+
+class Port(ABC):
+
+    def __init__(self):
+        super().__init__()
+        self.port_name = type(self).__name__
+
+    def _handle_unexpected_problems(
             self,
             problem: Exception
     ) -> MappedException:
         details = "You might want to handle this scenario, " +\
             "transforming it into a MappedException"
-        return UseCaseExecutionMappedException(
+        return PortExecutionMappedException(
             "Some unexpected problem happened",
             details,
             problem
         )
 
 
-class UseCaseExecutionMappedException(InternalMappedException):
+class FunctionPort(Port, Generic[INPUT, OUTPUT]):
+
+    def __init__(self):
+        super().__init__()
+
+    def execute(self, input: INPUT, context: ExecutionContext) -> OUTPUT:
+        return trier_of(self.__run).\
+            on_unexpected_exceptions_do(self._handle_unexpected_problems).\
+            execute(input, context)
+
+    def __run(self, input: INPUT, context: ExecutionContext) -> OUTPUT:
+        step = context.add_step_insights_of(self.port_name)
+        step.input = input
+        try:
+            output = self.__get_output_for(input, context)
+            step.complete()
+            step.output = output
+            return output
+        except Exception as any_exception:
+            step.complete_with_ex(any_exception)
+            raise any_exception
+
+    def __get_output_for(
+            self,
+            input: INPUT,
+            context: ExecutionContext
+    ) -> OUTPUT:
+        return self.__apply_internal_logic(input, context)
+
+    @abstractmethod
+    def __apply_internal_logic(
+        self,
+        input: INPUT,
+        context: ExecutionContext
+    ) -> OUTPUT:
+        pass
+
+
+class ConsumerPort(Port, Generic[INPUT]):
+
+    def __init__(self):
+        super().__init__()
+
+    def execute(self, input: INPUT, context: ExecutionContext) -> None:
+        trier_of(self.__run).\
+            on_unexpected_exceptions_do(self._handle_unexpected_problems).\
+            execute(input, context)
+
+    def __run(self, input: INPUT, context: ExecutionContext) -> None:
+        step = context.add_step_insights_of(self.port_name)
+        step.input = input
+        try:
+            self.__apply_internal_logic(input, context)
+            step.complete()
+        except Exception as any_exception:
+            step.complete_with_ex(any_exception)
+            raise any_exception
+
+    @abstractmethod
+    def __apply_internal_logic(
+        self,
+        input: INPUT,
+        context: ExecutionContext
+    ) -> None:
+        pass
+
+
+class SupplierPort(Port, Generic[OUTPUT]):
+
+    def __init__(self):
+        super().__init__()
+
+    def execute(self, context: ExecutionContext) -> OUTPUT:
+        return trier_of(self.__run).\
+            on_unexpected_exceptions_do(self._handle_unexpected_problems).\
+            execute(context)
+
+    def __run(self, context: ExecutionContext) -> OUTPUT:
+        step = context.add_step_insights_of(self.port_name)
+        try:
+            output = self.__get_output_for(context)
+            step.complete()
+            step.output = output
+            return output
+        except Exception as any_exception:
+            step.complete_with_ex(any_exception)
+            raise any_exception
+
+    def __get_output_for(
+            self,
+            context: ExecutionContext
+    ) -> OUTPUT:
+        return self.__apply_internal_logic(context)
+
+    @abstractmethod
+    def __apply_internal_logic(
+        self,
+        context: ExecutionContext
+    ) -> OUTPUT:
+        pass
+
+
+class RunnablePort(Port):
+
+    def __init__(self):
+        super().__init__()
+
+    def execute(self, context: ExecutionContext) -> None:
+        trier_of(self.__run).\
+            on_unexpected_exceptions_do(self._handle_unexpected_problems).\
+            execute(context)
+
+    def __run(self, context: ExecutionContext) -> None:
+        step = context.add_step_insights_of(self.port_name)
+        try:
+            self.__apply_internal_logic(context)
+            step.complete()
+        except Exception as any_exception:
+            step.complete_with_ex(any_exception)
+            raise any_exception
+
+    @abstractmethod
+    def __apply_internal_logic(
+        self,
+        context: ExecutionContext
+    ) -> None:
+        pass
+
+
+class PortExecutionMappedException(InternalMappedException):
 
     def __init__(
             self,
