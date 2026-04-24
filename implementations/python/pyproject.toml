@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cae-framework"
+version = "1.0.0rc1"
+dependencies = [
+    "cae-utils-trier==1.0.0rc3",
+    "cae-utils-context==1.0.0rc3"
+]
+description = "CAE Framework for Python"
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.10"
+authors = [
+  { name = "Ze Lucio Jr" }
+]
+keywords = ["use-cases", "ports", "autofeatures", "autolog", "autometrics", "autoverify", "framework", "cae"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: OS Independent"
+]
+
+[project.urls]
+Homepage = "https://github.com/clean-arch-enablers-project/cae-framework"
+Repository = "https://github.com/clean-arch-enablers-project/cae-framework"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"cae_framework" = ["py.typed"]
