@@ -68,10 +68,10 @@ class FunctionUseCase(UseCase, Generic[INPUT, OUTPUT]):
             input: INPUT,
             context: ExecutionContext
     ) -> OUTPUT:
-        return self.__apply_internal_logic(input, context)
+        return self._apply_internal_logic(input, context)
 
     @abstractmethod
-    def __apply_internal_logic(
+    def _apply_internal_logic(
         self,
         input: INPUT,
         context: ExecutionContext
@@ -94,7 +94,7 @@ class ConsumerUseCase(UseCase, Generic[INPUT]):
         context.input = input
         try:
             PreExecutionAutofeatures.run(input, context)
-            self.__apply_internal_logic(input, context)
+            self._apply_internal_logic(input, context)
             context.complete()
             PostExecutionAutofeatures.run(context)
         except Exception as any_exception:
@@ -103,7 +103,7 @@ class ConsumerUseCase(UseCase, Generic[INPUT]):
             raise any_exception
 
     @abstractmethod
-    def __apply_internal_logic(
+    def _apply_internal_logic(
         self,
         input: INPUT,
         context: ExecutionContext
@@ -139,10 +139,10 @@ class SupplierUseCase(UseCase, Generic[OUTPUT]):
             self,
             context: ExecutionContext
     ) -> OUTPUT:
-        return self.__apply_internal_logic(context)
+        return self._apply_internal_logic(context)
 
     @abstractmethod
-    def __apply_internal_logic(
+    def _apply_internal_logic(
         self,
         context: ExecutionContext
     ) -> OUTPUT:
@@ -163,7 +163,7 @@ class RunnableUseCase(UseCase):
         try:
             context.set_subject_and_start_tracking(self.metadata.name, True)
             PreExecutionAutofeatures.run_with_no_input(context)
-            self.__apply_internal_logic(context)
+            self._apply_internal_logic(context)
             context.complete()
             PostExecutionAutofeatures.run(context)
         except Exception as any_exception:
@@ -172,7 +172,7 @@ class RunnableUseCase(UseCase):
             raise any_exception
 
     @abstractmethod
-    def __apply_internal_logic(
+    def _apply_internal_logic(
         self,
         context: ExecutionContext
     ) -> None:
@@ -236,10 +236,10 @@ class FunctionPort(Port, Generic[INPUT, OUTPUT]):
             input: INPUT,
             context: ExecutionContext
     ) -> OUTPUT:
-        return self.__apply_internal_logic(input, context)
+        return self._apply_internal_logic(input, context)
 
     @abstractmethod
-    def __apply_internal_logic(
+    def _apply_internal_logic(
         self,
         input: INPUT,
         context: ExecutionContext
@@ -261,14 +261,14 @@ class ConsumerPort(Port, Generic[INPUT]):
         step = context.add_step_insights_of(self.port_name)
         step.input = input
         try:
-            self.__apply_internal_logic(input, context)
+            self._apply_internal_logic(input, context)
             step.complete()
         except Exception as any_exception:
             step.complete_with_ex(any_exception)
             raise any_exception
 
     @abstractmethod
-    def __apply_internal_logic(
+    def _apply_internal_logic(
         self,
         input: INPUT,
         context: ExecutionContext
@@ -301,10 +301,10 @@ class SupplierPort(Port, Generic[OUTPUT]):
             self,
             context: ExecutionContext
     ) -> OUTPUT:
-        return self.__apply_internal_logic(context)
+        return self._apply_internal_logic(context)
 
     @abstractmethod
-    def __apply_internal_logic(
+    def _apply_internal_logic(
         self,
         context: ExecutionContext
     ) -> OUTPUT:
@@ -324,14 +324,14 @@ class RunnablePort(Port):
     def __run(self, context: ExecutionContext) -> None:
         step = context.add_step_insights_of(self.port_name)
         try:
-            self.__apply_internal_logic(context)
+            self._apply_internal_logic(context)
             step.complete()
         except Exception as any_exception:
             step.complete_with_ex(any_exception)
             raise any_exception
 
     @abstractmethod
-    def __apply_internal_logic(
+    def _apply_internal_logic(
         self,
         context: ExecutionContext
     ) -> None:
