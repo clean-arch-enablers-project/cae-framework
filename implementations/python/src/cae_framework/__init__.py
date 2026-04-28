@@ -5,6 +5,11 @@ from cae_framework.framework import (
     ConsumerUseCase,
     SupplierUseCase,
     RunnableUseCase,
+    Port,
+    FunctionPort,
+    ConsumerPort,
+    SupplierPort,
+    RunnablePort,
     UseCaseExecutionMappedException,
     PreExecutionAutofeatures,
     PostExecutionAutofeatures,
@@ -26,6 +31,11 @@ __all__ = [
     "ConsumerUseCase",
     "SupplierUseCase",
     "RunnableUseCase",
+    "Port",
+    "FunctionPort",
+    "ConsumerPort",
+    "SupplierPort",
+    "RunnablePort",
     "UseCaseExecutionMappedException",
     "PreExecutionAutofeatures",
     "PostExecutionAutofeatures",
@@ -40,4 +50,4 @@ __all__ = [
     "CaeSetup"
 ]
 
-__version__ = "1.0.0rc4"
+__version__ = "1.0.0rc5"
