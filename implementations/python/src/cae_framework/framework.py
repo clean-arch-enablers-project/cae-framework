@@ -412,14 +412,15 @@ class ValidationSubject(ABC):
 class NotBlank(ValidationSubject):
 
     def validate(self, value: object, field_name: str) -> None:
-        if not isinstance(value, str):
-            raise AutoverifyTypeErrorMappedException(
-                f"{field_name} must be a string to use @NotBlank"
-            )
-        if value.strip() == "":
-            raise InvalidInputFieldMappedException(
-                f"{field_name} can't be blank"
-            )
+        if value is not None:
+            if not isinstance(value, str):
+                raise AutoverifyTypeErrorMappedException(
+                    f"{field_name} must be a string to use @NotBlank"
+                )
+            if value.strip() == "":
+                raise InvalidInputFieldMappedException(
+                    f"{field_name} can't be blank"
+                )
 
 
 class NotNone(ValidationSubject):
@@ -471,21 +472,19 @@ class Autolog:
         pipe = " | "
         header = (
             f"Subject '{context.subject}' execution with correlation ID of "
-            f"{context.correlation_id} "
+            f"'{context.correlation_id}' took about {context.get_latency()}ms"
         )
         if context.was_successful():
-            status = (
-                f"finished successfully and took about "
-                f"{context.get_latency()}ms"
-            )
+            status = " and finished successfully"
         else:
+            ex_name = context.exception.__class__.__name__
             status = (
-                f"threw an exception and took about "
-                f"{context.get_latency()}ms: {context.exception}"
+                f" and threw an exception: {ex_name} "
+                f"({context.exception})"
             )
         step_texts = [s.format_as_text() for s in context.step_insights]
-        steps = str(step_texts)
-        input_prefix = "Input: "
+        steps = pipe + "Inner Steps: " + str(step_texts)
+        input_prefix = pipe + "Input: "
         if context.input is not None:
             if hasattr(context.input, "__dict__"):
                 input_data = input_prefix + str(vars(context.input))
@@ -493,7 +492,7 @@ class Autolog:
                 input_data = input_prefix + str(context.input)
         else:
             input_data = ""
-        output_prefix = "Output: "
+        output_prefix = pipe + "Output: "
         if context.output is not None:
             if hasattr(context.output, "__dict__"):
                 output_data = output_prefix + str(vars(context.output))
@@ -504,11 +503,8 @@ class Autolog:
         message = (
             header
             + status
-            + pipe
             + steps
-            + pipe
             + input_data
-            + pipe
             + output_data
         )
         logger = CaeSetup.get_autolog_logger()
